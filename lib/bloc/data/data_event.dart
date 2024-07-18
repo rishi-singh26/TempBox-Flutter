@@ -5,10 +5,17 @@ abstract class DataEvent extends Equatable {
   const DataEvent();
 }
 
-class AddAddressData extends DataEvent {
+class AddAddressDataEvent extends DataEvent {
   final AddressData address;
 
-  const AddAddressData(this.address);
+  const AddAddressDataEvent(this.address);
   @override
   List<Object> get props => [address];
+}
+
+class LoginToAccountsEvent extends DataEvent {
+  const LoginToAccountsEvent();
+
+  @override
+  List<Object> get props => [];
 }

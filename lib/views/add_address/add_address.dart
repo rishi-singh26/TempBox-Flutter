@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
@@ -66,17 +67,23 @@ class _AddAddressState extends State<AddAddress> {
   _createAddress(BuildContext dataBlocContext) async {
     setState(() => showSpinner = true);
     try {
+      final String password = passwordController.text.isNotEmpty && passwordBoxHeight != 0
+          ? passwordController.text
+          : _generateRandomString(12, useNumbers: true, useSpecialCharacters: true, useUpperCase: true);
       AuthenticatedUser authenticatedUser = await MailTm.register(
         username: addressController.text.isNotEmpty ? addressController.text : _generateRandomString(10),
-        password: passwordController.text.isNotEmpty && passwordBoxHeight != 0
-            ? passwordController.text
-            : _generateRandomString(12, useNumbers: true, useSpecialCharacters: true, useUpperCase: true),
+        password: password,
         domain: selectedDomain,
       );
 
       if (dataBlocContext.mounted) {
         BlocProvider.of<DataBloc>(dataBlocContext).add(
-          AddAddressData(AddressData(addressName: addressNameController.text, authenticatedUser: authenticatedUser)),
+          AddAddressDataEvent(AddressData(
+            addressName: addressNameController.text,
+            authenticatedUser: authenticatedUser,
+            isActive: true,
+            password: password,
+          )),
         );
         Navigator.canPop(dataBlocContext) ? Navigator.pop(dataBlocContext) : null;
       }
@@ -101,7 +108,7 @@ class _AddAddressState extends State<AddAddress> {
                       ? const SizedBox(
                           width: 20,
                           height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 3),
+                          child: CircularProgressIndicator.adaptive(strokeWidth: 3),
                         )
                       : const Text('Done'),
                 ),
@@ -118,7 +125,7 @@ class _AddAddressState extends State<AddAddress> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 30),
+                  padding: const EdgeInsets.symmetric(horizontal: 30),
                   child: Text('Address name appears on the address list screen', style: Theme.of(context).textTheme.labelMedium),
                 ),
                 vGap(30),
@@ -203,7 +210,7 @@ class _AddAddressState extends State<AddAddress> {
                 const PaddedCard(
                   color: Color(0x3CFFEE58),
                   child: ListTile(
-                    leading: Icon(Icons.info_rounded, color: Colors.yellow),
+                    leading: Icon(CupertinoIcons.info_circle_fill, color: Colors.yellow),
                     title: Text('The password ones set can not be reset or changed'),
                   ),
                 ),
