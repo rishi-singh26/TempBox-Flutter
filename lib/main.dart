@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:tempbox/bloc/data/data_bloc.dart';
+import 'package:tempbox/views/address_list/address_list.dart';
 
 const String title = 'TempBox';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  HydratedBloc.storage = await HydratedStorage.build(storageDirectory: await getApplicationDocumentsDirectory());
   runApp(const MyApp());
 }
 
@@ -21,42 +28,11 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF02BE18), brightness: Brightness.dark),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: title),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: const CustomScrollView(
-        slivers: [SliverAppBar.large(title: Text(title))],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          children: <Widget>[
-            IconButton(
-              tooltip: 'Settings',
-              icon: const Icon(Icons.settings_rounded),
-              onPressed: () {},
-            ),
-          ],
-        ),
+      home: MultiBlocProvider(
+        providers: [
+          BlocProvider<DataBloc>(create: (BuildContext context) => DataBloc()),
+        ],
+        child: const AddressList(title: title),
       ),
     );
   }

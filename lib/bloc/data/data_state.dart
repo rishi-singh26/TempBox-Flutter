@@ -1,36 +1,29 @@
 import 'package:equatable/equatable.dart';
+import 'package:tempbox/models/address_data.dart';
 
 class DataState extends Equatable {
-  final bool isAuthenticated;
-  final bool isLoading;
-  final String errMess;
+  final List<AddressData> addressList;
 
-  const DataState({
-    required this.errMess,
-    required this.isAuthenticated,
-    required this.isLoading,
-  });
+  const DataState({required this.addressList});
 
-  const DataState.initial()
-      : isAuthenticated = false,
-        isLoading = false,
-        errMess = '';
-
-  DataState.fromJson(Map<String, dynamic> json)
-      : isAuthenticated = json.containsKey('isAuthenticated') ? json['isAuthenticated'] as bool : false,
-        isLoading = json.containsKey('isLoading') ? json['isLoading'] as bool : false,
-        errMess = json.containsKey('errMess') ? json['errMess'] as String : '';
+  DataState.initial() : addressList = [];
 
   Map<String, dynamic> toJson() => {
-        'isAuthenticated': isAuthenticated,
-        'isLoading': isLoading,
-        'errMess': errMess,
+        'addressList': addressList.map((e) => e.toJson()).toList(),
       };
+
+  factory DataState.fromJson(Map<String, dynamic> json) => DataState(
+        addressList: (json['addressList'] as List).map((e) => AddressData.fromJson(e)).toList(),
+      );
 
   @override
   List<Object> get props => [
-        errMess,
-        isAuthenticated,
-        isLoading,
+        addressList,
       ];
+
+  copyWith({List<AddressData>? addressList}) {
+    return DataState(
+      addressList: addressList ?? this.addressList,
+    );
+  }
 }

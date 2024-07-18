@@ -1,14 +1,14 @@
 import 'package:equatable/equatable.dart';
+import 'package:tempbox/models/address_data.dart';
 
 abstract class DataEvent extends Equatable {
   const DataEvent();
 }
 
-// class SignUpStartEvent extends DataEvent {
-//   final String email;
-//   final String password;
+class AddAddressData extends DataEvent {
+  final AddressData address;
 
-//   const SignUpStartEvent(this.email, this.password);
-//   @override
-//   List<Object> get props => [email, password];
-// }
+  const AddAddressData(this.address);
+  @override
+  List<Object> get props => [address];
+}

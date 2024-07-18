@@ -3,7 +3,11 @@ import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 
 class DataBloc extends HydratedBloc<DataEvent, DataState> {
-  DataBloc() : super(const DataState.initial());
+  DataBloc() : super(DataState.initial()) {
+    on<AddAddressData>((AddAddressData event, Emitter<DataState> emit) {
+      emit(state.copyWith(addressList: [...state.addressList, event.address]));
+    });
+  }
 
   @override
   DataState fromJson(Map<String, dynamic> json) {
