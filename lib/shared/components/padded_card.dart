@@ -10,7 +10,7 @@ class PaddedCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: padding ?? const EdgeInsets.symmetric(horizontal: 10),
+      padding: padding ?? const EdgeInsets.symmetric(horizontal: 15),
       child: Card(
         clipBehavior: Clip.hardEdge,
         elevation: 0,
