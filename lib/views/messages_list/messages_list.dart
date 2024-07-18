@@ -4,6 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:mailtm_client/mailtm_client.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
+import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/ui_service.dart';
 import 'package:tempbox/views/messages_list/message_tile.dart';
 
@@ -16,40 +17,55 @@ class MessagesList extends StatelessWidget {
       if (dataState.selectedAddress == null) {
         return Scaffold(appBar: AppBar(), body: const Center(child: Text('No Address Selected!')));
       }
-      Stream<List<Message>> messagesStream = dataState.selectedAddress!.authenticatedUser.allMessages();
       return Scaffold(
         body: SlidableAutoCloseBehavior(
           child: CustomScrollView(
             slivers: [
               SliverAppBar.large(title: Text(UiService.getAccountName(dataState.selectedAddress!))),
-              StreamBuilder<List<Message>>(
-                stream: messagesStream,
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return SliverToBoxAdapter(
-                      child: Center(child: Text("Something went wrong ${snapshot.error.toString()}")),
-                    );
-                  }
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const SliverToBoxAdapter(child: CircularProgressIndicator.adaptive());
-                  }
-                  if (!snapshot.hasData || snapshot.data == null || snapshot.data!.isEmpty) {
-                    return const SliverToBoxAdapter(child: Center(child: Text("No items in inbox")));
-                  }
-                  return SliverList.separated(
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                      Message message = snapshot.data![index];
-                      return MessageTile(message: message, selectedAddress: dataState.selectedAddress!);
-                    },
-                    separatorBuilder: (context, index) => const Divider(indent: 20, height: 1),
-                  );
-                },
-              ),
+              MessageList(selectedAddress: dataState.selectedAddress!),
             ],
           ),
         ),
       );
     });
+  }
+}
+
+class MessageList extends StatefulWidget {
+  final AddressData selectedAddress;
+  const MessageList({super.key, required this.selectedAddress});
+
+  @override
+  State<MessageList> createState() => _MessageListState();
+}
+
+class _MessageListState extends State<MessageList> {
+  bool loading = true;
+  List<Message> messages = [];
+
+  _getMessages() async {
+    messages = await widget.selectedAddress.authenticatedUser.messagesAt(1);
+    setState(() => loading = false);
+  }
+
+  @override
+  void initState() {
+    _getMessages();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (loading) {
+      return const SliverToBoxAdapter(child: CircularProgressIndicator.adaptive());
+    }
+    return SliverList.separated(
+      itemCount: messages.length,
+      itemBuilder: (context, index) {
+        Message message = messages[index];
+        return MessageTile(message: message, selectedAddress: widget.selectedAddress);
+      },
+      separatorBuilder: (context, index) => const Divider(indent: 20, height: 1),
+    );
   }
 }
