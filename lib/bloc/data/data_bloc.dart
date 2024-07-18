@@ -26,6 +26,10 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
     on<SelectAddressEvent>((SelectAddressEvent event, Emitter<DataState> emit) {
       emit(state.copyWith(selectedAddress: event.addressData));
     });
+
+    on<SelectMessageEvent>((SelectMessageEvent event, Emitter<DataState> emit) {
+      emit(state.copyWith(selectedMessage: event.message));
+    });
   }
 
   @override

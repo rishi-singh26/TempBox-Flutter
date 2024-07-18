@@ -10,43 +10,18 @@ import 'package:tempbox/views/messages_list/message_tile.dart';
 class MessagesList extends StatelessWidget {
   const MessagesList({super.key});
 
-  // _openAddressInfoSheet(BuildContext context, BuildContext dataBlocContext, AddressData addressData) {
-  //   OverlayService.showOverLay(
-  //     context: context,
-  //     useSafeArea: true,
-  //     isScrollControlled: true,
-  //     clipBehavior: Clip.hardEdge,
-  //     enableDrag: true,
-  //     builder: (context) => BlocProvider.value(
-  //       value: BlocProvider.of<DataBloc>(dataBlocContext),
-  //       child: AddressInfo(addressData: addressData),
-  //     ),
-  //   );
-  // }mctomcagaq@belgianairways.com
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
       if (dataState.selectedAddress == null) {
-        return Scaffold(
-          appBar: AppBar(),
-          body: const Center(child: Text('No Address Selected!')),
-        );
+        return Scaffold(appBar: AppBar(), body: const Center(child: Text('No Address Selected!')));
       }
       Stream<List<Message>> messagesStream = dataState.selectedAddress!.authenticatedUser.allMessages();
       return Scaffold(
         body: SlidableAutoCloseBehavior(
           child: CustomScrollView(
             slivers: [
-              SliverAppBar.large(
-                title: Text(UiService.getAccountName(dataState.selectedAddress!)),
-                // actions: [
-                //   IconButton(
-                //     onPressed: () => _openAddressInfoSheet(context, dataBlocContext, dataState.selectedAddress!),
-                //     icon: const Icon(CupertinoIcons.info_circle_fill),
-                //   )
-                // ],
-              ),
+              SliverAppBar.large(title: Text(UiService.getAccountName(dataState.selectedAddress!))),
               StreamBuilder<List<Message>>(
                 stream: messagesStream,
                 builder: (context, snapshot) {
