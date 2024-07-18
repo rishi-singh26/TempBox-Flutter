@@ -6,7 +6,7 @@ import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/ui_service.dart';
-import 'package:tempbox/views/messages_list/bloc/messages_bloc.dart';
+import 'package:tempbox/bloc/messages/messages_bloc.dart';
 import 'package:tempbox/views/messages_list/message_tile.dart';
 
 class MessagesList extends StatelessWidget {

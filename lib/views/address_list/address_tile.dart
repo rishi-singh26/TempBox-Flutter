@@ -11,7 +11,7 @@ import 'package:tempbox/services/overlay_service.dart';
 import 'package:tempbox/services/ui_service.dart';
 import 'package:tempbox/shared/components/card_list_tile.dart';
 import 'package:tempbox/views/address_info/address_info.dart';
-import 'package:tempbox/views/messages_list/bloc/messages_bloc.dart';
+import 'package:tempbox/bloc/messages/messages_bloc.dart';
 import 'package:tempbox/views/messages_list/messages_list.dart';
 
 class AddressTile extends StatelessWidget {
@@ -32,13 +32,13 @@ class AddressTile extends StatelessWidget {
     );
   }
 
-  _navigateToMessagesList(BuildContext context, BuildContext dataBlocContext, AddressData addressData) {
+  _navigateToMessagesList(BuildContext context, BuildContext dataBlocContext, BuildContext messagesBlocContext, AddressData addressData) {
     BlocProvider.of<DataBloc>(dataBlocContext).add(SelectAddressEvent(addressData));
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => BlocProvider.value(
         value: BlocProvider.of<DataBloc>(dataBlocContext),
-        child: BlocProvider(
-          create: (context) => MessagesBloc(),
+        child: BlocProvider.value(
+          value: BlocProvider.of<MessagesBloc>(messagesBlocContext),
           child: const MessagesList(),
         ),
       ),
@@ -57,45 +57,47 @@ class AddressTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
-      AddressData addressData = dataState.addressList[index];
-      return CardListTile(
-        isFirst: index == 0,
-        isLast: index == dataState.addressList.length - 1,
-        child: Slidable(
-          groupTag: 'AddressItem',
-          key: ValueKey(addressData.authenticatedUser.account.id),
-          startActionPane: ActionPane(
-            motion: const DrawerMotion(),
-            children: [
-              SlidableAction(
-                onPressed: (context) => _openAddressInfoSheet(context, dataBlocContext, addressData),
-                backgroundColor: Colors.amber,
-                // backgroundColor: const Color(0XFFFED709),
-                foregroundColor: Colors.white,
-                icon: CupertinoIcons.info_circle_fill,
-              ),
-            ],
+      return BlocBuilder<MessagesBloc, MessagesState>(builder: (messagesBlocContext, messagesState) {
+        AddressData addressData = dataState.addressList[index];
+        return CardListTile(
+          isFirst: index == 0,
+          isLast: index == dataState.addressList.length - 1,
+          child: Slidable(
+            groupTag: 'AddressItem',
+            key: ValueKey(addressData.authenticatedUser.account.id),
+            startActionPane: ActionPane(
+              motion: const DrawerMotion(),
+              children: [
+                SlidableAction(
+                  onPressed: (context) => _openAddressInfoSheet(context, dataBlocContext, addressData),
+                  backgroundColor: Colors.amber,
+                  // backgroundColor: const Color(0XFFFED709),
+                  foregroundColor: Colors.white,
+                  icon: CupertinoIcons.info_circle_fill,
+                ),
+              ],
+            ),
+            endActionPane: ActionPane(
+              motion: const DrawerMotion(),
+              dismissible: DismissiblePane(onDismissed: () => _deleteAddress(context, dataBlocContext, addressData)),
+              children: [
+                SlidableAction(
+                  onPressed: (con) => _deleteAddress(con, dataBlocContext, addressData),
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  icon: CupertinoIcons.trash_fill,
+                ),
+              ],
+            ),
+            child: ListTile(
+              leading: Icon(CupertinoIcons.tray, color: Theme.of(context).buttonTheme.colorScheme?.primary ?? Colors.red),
+              title: Text(UiService.getAccountName(addressData)),
+              trailing: const Icon(CupertinoIcons.chevron_right, size: 17),
+              onTap: () => _navigateToMessagesList(context, dataBlocContext, messagesBlocContext, addressData),
+            ),
           ),
-          endActionPane: ActionPane(
-            motion: const DrawerMotion(),
-            dismissible: DismissiblePane(onDismissed: () => _deleteAddress(context, dataBlocContext, addressData)),
-            children: [
-              SlidableAction(
-                onPressed: (con) => _deleteAddress(con, dataBlocContext, addressData),
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-                icon: CupertinoIcons.trash_fill,
-              ),
-            ],
-          ),
-          child: ListTile(
-            leading: Icon(CupertinoIcons.tray, color: Theme.of(context).buttonTheme.colorScheme?.primary ?? Colors.red),
-            title: Text(UiService.getAccountName(addressData)),
-            trailing: const Icon(CupertinoIcons.chevron_right, size: 17),
-            onTap: () => _navigateToMessagesList(context, dataBlocContext, addressData),
-          ),
-        ),
-      );
+        );
+      });
     });
   }
 }

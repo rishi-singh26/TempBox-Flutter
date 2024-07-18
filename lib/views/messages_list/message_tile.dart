@@ -9,7 +9,7 @@ import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/ui_service.dart';
 import 'package:tempbox/shared/components/blank_badge.dart';
 import 'package:tempbox/views/message_detail/message_detail.dart';
-import 'package:tempbox/views/messages_list/bloc/messages_bloc.dart';
+import 'package:tempbox/bloc/messages/messages_bloc.dart';
 
 class MessageTile extends StatelessWidget {
   const MessageTile({

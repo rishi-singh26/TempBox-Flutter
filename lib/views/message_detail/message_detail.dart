@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mailtm_client/mailtm_client.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
-import 'package:tempbox/views/messages_list/bloc/messages_bloc.dart';
+import 'package:tempbox/bloc/messages/messages_bloc.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class MessageDetail extends StatelessWidget {

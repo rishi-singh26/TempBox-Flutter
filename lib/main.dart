@@ -4,6 +4,7 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/views/address_list/address_list.dart';
+import 'package:tempbox/bloc/messages/messages_bloc.dart';
 
 const String title = 'TempBox';
 
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
       home: MultiBlocProvider(
         providers: [
           BlocProvider<DataBloc>(create: (BuildContext context) => DataBloc()),
+          BlocProvider<MessagesBloc>(create: (BuildContext context) => MessagesBloc()),
         ],
         child: const AddressList(title: title),
       ),
