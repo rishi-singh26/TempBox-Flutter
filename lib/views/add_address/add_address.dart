@@ -163,7 +163,10 @@ class _AddAddressState extends State<AddAddress> {
                     title: RichText(
                       text: TextSpan(
                         text: 'Random address',
-                        style: TextStyle(color: Theme.of(context).buttonTheme.colorScheme?.primary ?? Colors.green, fontWeight: FontWeight.bold),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge
+                            ?.copyWith(color: Theme.of(context).buttonTheme.colorScheme?.primary ?? Colors.green),
                         recognizer: TapGestureRecognizer()..onTap = showSpinner ? null : _updateRandomAddress,
                       ),
                     ),
