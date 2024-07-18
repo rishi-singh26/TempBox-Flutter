@@ -19,3 +19,11 @@ class LoginToAccountsEvent extends DataEvent {
   @override
   List<Object> get props => [];
 }
+
+class SelectAddressEvent extends DataEvent {
+  final AddressData addressData;
+  const SelectAddressEvent(this.addressData);
+
+  @override
+  List<Object> get props => [addressData];
+}

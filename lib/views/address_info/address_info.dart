@@ -7,6 +7,7 @@ import 'package:mailtm_client/mailtm_client.dart';
 import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/byte_converter_service.dart';
 import 'package:tempbox/services/ui_service.dart';
+import 'package:tempbox/shared/components/blank_badge.dart';
 import 'package:tempbox/shared/components/padded_card.dart';
 
 class AddressInfo extends StatefulWidget {
@@ -66,15 +67,7 @@ class _AddressInfoState extends State<AddressInfo> {
                       children: [
                         const Text('Status:', style: TextStyle(fontWeight: FontWeight.bold)),
                         hGap(10),
-                        Container(
-                          clipBehavior: Clip.antiAlias,
-                          decoration: ShapeDecoration(
-                            color: _getStatusColor(authenticatedUser!),
-                            shape: const StadiumBorder(),
-                          ),
-                          height: 12,
-                          width: 12,
-                        ),
+                        BlankBadge(color: _getStatusColor(authenticatedUser!)),
                         hGap(10),
                         Text(_getStatusText(authenticatedUser!)),
                       ],

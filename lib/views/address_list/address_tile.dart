@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
+import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/overlay_service.dart';
 import 'package:tempbox/services/ui_service.dart';
 import 'package:tempbox/shared/components/card_list_tile.dart';
 import 'package:tempbox/views/address_info/address_info.dart';
+import 'package:tempbox/views/messages_list/messages_list.dart';
 
 class AddressTile extends StatelessWidget {
   final int index;
@@ -26,6 +28,16 @@ class AddressTile extends StatelessWidget {
         child: AddressInfo(addressData: addressData),
       ),
     );
+  }
+
+  _navigateToMessagesList(BuildContext context, BuildContext dataBlocContext, AddressData addressData) {
+    BlocProvider.of<DataBloc>(dataBlocContext).add(SelectAddressEvent(addressData));
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => BlocProvider.value(
+        value: BlocProvider.of<DataBloc>(dataBlocContext),
+        child: const MessagesList(),
+      ),
+    ));
   }
 
   @override
@@ -48,24 +60,12 @@ class AddressTile extends StatelessWidget {
                 foregroundColor: Colors.white,
                 icon: CupertinoIcons.info_circle_fill,
               ),
-              SlidableAction(
-                onPressed: (con) {},
-                backgroundColor: const Color(0XFF0B84FF),
-                foregroundColor: Colors.white,
-                icon: CupertinoIcons.refresh_circled_solid,
-              ),
             ],
           ),
           endActionPane: ActionPane(
             motion: const DrawerMotion(),
             dismissible: DismissiblePane(onDismissed: () {}),
             children: [
-              SlidableAction(
-                onPressed: (con) {},
-                backgroundColor: const Color(0XFF5F5BE6),
-                foregroundColor: Colors.white,
-                icon: CupertinoIcons.archivebox_fill,
-              ),
               SlidableAction(
                 onPressed: (con) {},
                 backgroundColor: Colors.red,
@@ -78,6 +78,7 @@ class AddressTile extends StatelessWidget {
             leading: Icon(CupertinoIcons.tray, color: Theme.of(context).buttonTheme.colorScheme?.primary ?? Colors.red),
             title: Text(UiService.getAccountName(addressData)),
             trailing: const Icon(CupertinoIcons.chevron_right, size: 17),
+            onTap: () => _navigateToMessagesList(context, dataBlocContext, addressData),
           ),
         ),
       );
