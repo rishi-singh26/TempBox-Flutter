@@ -16,7 +16,7 @@ class CardListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: margin ?? const EdgeInsets.symmetric(horizontal: 15),
+      margin: margin ?? const EdgeInsets.symmetric(horizontal: 20),
       clipBehavior: Clip.hardEdge,
       elevation: 0,
       shape: RoundedRectangleBorder(
