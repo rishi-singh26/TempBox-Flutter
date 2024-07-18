@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:mailtm_client/mailtm_client.dart';
 import 'package:tempbox/models/address_data.dart';
 
 abstract class DataEvent extends Equatable {
@@ -27,14 +26,6 @@ class SelectAddressEvent extends DataEvent {
 
   @override
   List<Object> get props => [addressData];
-}
-
-class SelectMessageEvent extends DataEvent {
-  final Message message;
-  const SelectMessageEvent(this.message);
-
-  @override
-  List<Object> get props => [message];
 }
 
 class DeleteAddressEvent extends DataEvent {

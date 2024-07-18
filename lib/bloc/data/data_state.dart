@@ -5,23 +5,19 @@ import 'package:tempbox/models/address_data.dart';
 class DataState extends Equatable {
   final List<AddressData> addressList;
   final AddressData? selectedAddress;
-  final Message? selectedMessage;
 
   const DataState({
     required this.addressList,
     required this.selectedAddress,
-    required this.selectedMessage,
   });
 
   DataState.initial()
       : addressList = [],
-        selectedAddress = null,
-        selectedMessage = null;
+        selectedAddress = null;
 
   Map<String, dynamic> toJson() => {
         'addressList': addressList.map((e) => e.toJson()).toList(),
         'selectedAddress': selectedAddress == null ? selectedAddress : selectedAddress!.toJson(),
-        'selectedMessage': selectedMessage == null ? selectedMessage : selectedMessage!.toJson(),
       };
 
   factory DataState.fromJson(Map<String, dynamic> json) => DataState(
@@ -31,15 +27,10 @@ class DataState extends Equatable {
                 ? null
                 : AddressData.fromJson(json['selectedAddress'])
             : null,
-        selectedMessage: json.containsKey('selectedMessage')
-            ? json['selectedMessage'] == null
-                ? null
-                : Message.fromJson(json['selectedMessage'])
-            : null,
       );
 
   @override
-  List<Object> get props => [addressList, selectedAddress ?? 'selectedAddress', selectedMessage ?? 'selectedMessage'];
+  List<Object> get props => [addressList, selectedAddress ?? 'selectedAddress'];
 
   copyWith({
     List<AddressData>? addressList,
@@ -49,7 +40,6 @@ class DataState extends Equatable {
     return DataState(
       addressList: addressList ?? this.addressList,
       selectedAddress: selectedAddress ?? this.selectedAddress,
-      selectedMessage: selectedMessage ?? this.selectedMessage,
     );
   }
 }

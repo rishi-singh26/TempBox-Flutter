@@ -11,6 +11,7 @@ import 'package:tempbox/services/overlay_service.dart';
 import 'package:tempbox/services/ui_service.dart';
 import 'package:tempbox/shared/components/card_list_tile.dart';
 import 'package:tempbox/views/address_info/address_info.dart';
+import 'package:tempbox/views/messages_list/bloc/messages_bloc.dart';
 import 'package:tempbox/views/messages_list/messages_list.dart';
 
 class AddressTile extends StatelessWidget {
@@ -36,7 +37,10 @@ class AddressTile extends StatelessWidget {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => BlocProvider.value(
         value: BlocProvider.of<DataBloc>(dataBlocContext),
-        child: const MessagesList(),
+        child: BlocProvider(
+          create: (context) => MessagesBloc(),
+          child: const MessagesList(),
+        ),
       ),
     ));
   }

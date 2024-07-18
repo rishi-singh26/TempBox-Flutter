@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mailtm_client/mailtm_client.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
+import 'package:tempbox/views/messages_list/bloc/messages_bloc.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class MessageDetail extends StatelessWidget {
@@ -13,14 +14,16 @@ class MessageDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DataBloc, DataState>(builder: (context, dataState) {
-      if (dataState.selectedMessage == null) {
-        return Scaffold(appBar: AppBar(), body: const Center(child: Text('No Message Selected!')));
-      }
-      return Scaffold(
-        appBar: AppBar(title: Text(dataState.selectedMessage!.from['name'] ?? '')),
-        body: RenderMessage(message: dataState.selectedMessage!, user: dataState.selectedAddress!.authenticatedUser),
-      );
+    return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
+      return BlocBuilder<MessagesBloc, MessagesState>(builder: (messagesBlocContext, messagesState) {
+        if (messagesState.selectedMessage == null) {
+          return Scaffold(appBar: AppBar(), body: const Center(child: Text('No Message Selected!')));
+        }
+        return Scaffold(
+          appBar: AppBar(title: Text(messagesState.selectedMessage!.from['name'] ?? '')),
+          body: RenderMessage(message: messagesState.selectedMessage!, user: dataState.selectedAddress!.authenticatedUser),
+        );
+      });
     });
   }
 }

@@ -6,6 +6,7 @@ import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/ui_service.dart';
+import 'package:tempbox/views/messages_list/bloc/messages_bloc.dart';
 import 'package:tempbox/views/messages_list/message_tile.dart';
 
 class MessagesList extends StatelessWidget {
@@ -14,19 +15,26 @@ class MessagesList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
-      if (dataState.selectedAddress == null) {
-        return Scaffold(appBar: AppBar(), body: const Center(child: Text('No Address Selected!')));
-      }
-      return Scaffold(
-        body: SlidableAutoCloseBehavior(
-          child: CustomScrollView(
-            slivers: [
-              SliverAppBar.large(title: Text(UiService.getAccountName(dataState.selectedAddress!))),
-              MessageList(selectedAddress: dataState.selectedAddress!),
-            ],
+      return BlocBuilder<MessagesBloc, MessagesState>(builder: (messagesBlocContext, messagesState) {
+        if (dataState.selectedAddress == null) {
+          return Scaffold(appBar: AppBar(), body: const Center(child: Text('No Address Selected!')));
+        }
+        return Scaffold(
+          body: SlidableAutoCloseBehavior(
+            child: RefreshIndicator(
+              onRefresh: () async {
+                BlocProvider.of<MessagesBloc>(messagesBlocContext).add(GetMessagesEvent(dataState.selectedAddress!));
+              },
+              child: CustomScrollView(
+                slivers: [
+                  SliverAppBar.large(title: Text(UiService.getAccountName(dataState.selectedAddress!))),
+                  MessageList(selectedAddress: dataState.selectedAddress!),
+                ],
+              ),
+            ),
           ),
-        ),
-      );
+        );
+      });
     });
   }
 }
@@ -40,32 +48,26 @@ class MessageList extends StatefulWidget {
 }
 
 class _MessageListState extends State<MessageList> {
-  bool loading = true;
-  List<Message> messages = [];
-
-  _getMessages() async {
-    messages = await widget.selectedAddress.authenticatedUser.messagesAt(1);
-    setState(() => loading = false);
-  }
-
   @override
   void initState() {
-    _getMessages();
+    BlocProvider.of<MessagesBloc>(context).add(GetMessagesEvent(widget.selectedAddress));
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (loading) {
-      return const SliverToBoxAdapter(child: CircularProgressIndicator.adaptive());
-    }
-    return SliverList.separated(
-      itemCount: messages.length,
-      itemBuilder: (context, index) {
-        Message message = messages[index];
-        return MessageTile(message: message, selectedAddress: widget.selectedAddress);
-      },
-      separatorBuilder: (context, index) => const Divider(indent: 20, height: 1),
-    );
+    return BlocBuilder<MessagesBloc, MessagesState>(builder: (context, messagesState) {
+      if (messagesState.isMessagesLoading) {
+        return const SliverToBoxAdapter(child: CircularProgressIndicator.adaptive());
+      }
+      return SliverList.separated(
+        itemCount: messagesState.messagesList.length,
+        itemBuilder: (context, index) {
+          Message message = messagesState.messagesList[index];
+          return MessageTile(message: message, selectedAddress: widget.selectedAddress);
+        },
+        separatorBuilder: (context, index) => const Divider(indent: 20, height: 1),
+      );
+    });
   }
 }
