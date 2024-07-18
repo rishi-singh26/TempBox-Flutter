@@ -30,6 +30,13 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
     on<SelectMessageEvent>((SelectMessageEvent event, Emitter<DataState> emit) {
       emit(state.copyWith(selectedMessage: event.message));
     });
+
+    on<DeleteAddressEvent>((DeleteAddressEvent event, Emitter<DataState> emit) {
+      List<AddressData> addresses =
+          state.addressList.where((a) => a.authenticatedUser.account.id != event.addressData.authenticatedUser.account.id).toList();
+      event.addressData.authenticatedUser.delete();
+      emit(state.copyWith(addressList: addresses));
+    });
   }
 
   @override

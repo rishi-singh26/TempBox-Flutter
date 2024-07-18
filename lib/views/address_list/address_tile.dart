@@ -6,6 +6,7 @@ import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/models/address_data.dart';
+import 'package:tempbox/services/alert_service.dart';
 import 'package:tempbox/services/overlay_service.dart';
 import 'package:tempbox/services/ui_service.dart';
 import 'package:tempbox/shared/components/card_list_tile.dart';
@@ -40,6 +41,15 @@ class AddressTile extends StatelessWidget {
     ));
   }
 
+  _deleteAddress(BuildContext context, BuildContext dataBlocContext, AddressData addressData) {
+    AlertService.getConformation(
+      context: context,
+      title: 'Alert',
+      content: 'Are you sure you want to delete this address?',
+      onConfirmation: () => BlocProvider.of<DataBloc>(dataBlocContext).add(DeleteAddressEvent(addressData)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
@@ -64,10 +74,10 @@ class AddressTile extends StatelessWidget {
           ),
           endActionPane: ActionPane(
             motion: const DrawerMotion(),
-            dismissible: DismissiblePane(onDismissed: () {}),
+            dismissible: DismissiblePane(onDismissed: () => _deleteAddress(context, dataBlocContext, addressData)),
             children: [
               SlidableAction(
-                onPressed: (con) {},
+                onPressed: (con) => _deleteAddress(con, dataBlocContext, addressData),
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
                 icon: CupertinoIcons.trash_fill,

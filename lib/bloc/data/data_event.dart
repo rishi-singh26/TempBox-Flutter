@@ -36,3 +36,11 @@ class SelectMessageEvent extends DataEvent {
   @override
   List<Object> get props => [message];
 }
+
+class DeleteAddressEvent extends DataEvent {
+  final AddressData addressData;
+  const DeleteAddressEvent(this.addressData);
+
+  @override
+  List<Object> get props => [addressData];
+}
