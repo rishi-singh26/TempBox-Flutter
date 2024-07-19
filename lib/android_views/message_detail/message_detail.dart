@@ -70,7 +70,7 @@ class _RenderMessageState extends State<RenderMessage> {
         throw Exception('Failed to load data');
       }
     } catch (e) {
-      print('Error: $e');
+      // print('Error: $e');
     } finally {
       client.close();
     }
