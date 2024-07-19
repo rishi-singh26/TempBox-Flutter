@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +5,7 @@ import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/models/address_data.dart';
+import 'package:tempbox/services/ui_service.dart';
 import 'package:tempbox/shared/components/card_list_tile.dart';
 import 'package:tempbox/shared/components/padded_card.dart';
 import 'package:tempbox/shared/styles/textfield.dart';
@@ -39,23 +38,8 @@ class _AddAddressState extends State<AddAddress> {
     super.initState();
   }
 
-  String _generateRandomString(int length, {bool useUpperCase = false, bool useNumbers = false, bool useSpecialCharacters = false}) {
-    String characters = 'abcdefghijklmnopqrstuvwxyz';
-    if (useUpperCase) {
-      characters += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    }
-    if (useNumbers) {
-      characters += '0123456789';
-    }
-    if (useSpecialCharacters) {
-      characters += "@\$%&*#()";
-    }
-    final random = Random();
-    return List.generate(length, (index) => characters[random.nextInt(characters.length)]).join();
-  }
-
   _updateRandomAddress() {
-    addressController.text = _generateRandomString(10);
+    addressController.text = UiService.generateRandomString(10);
   }
 
   _getDomains() async {
@@ -69,9 +53,9 @@ class _AddAddressState extends State<AddAddress> {
     try {
       final String password = passwordController.text.isNotEmpty && passwordBoxHeight != 0
           ? passwordController.text
-          : _generateRandomString(12, useNumbers: true, useSpecialCharacters: true, useUpperCase: true);
+          : UiService.generateRandomString(12, useNumbers: true, useSpecialCharacters: true, useUpperCase: true);
       AuthenticatedUser authenticatedUser = await MailTm.register(
-        username: addressController.text.isNotEmpty ? addressController.text : _generateRandomString(10),
+        username: addressController.text.isNotEmpty ? addressController.text : UiService.generateRandomString(10),
         password: password,
         domain: selectedDomain,
       );

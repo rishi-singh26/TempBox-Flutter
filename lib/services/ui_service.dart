@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/services.dart';
 import 'package:tempbox/models/address_data.dart';
 
@@ -34,5 +36,20 @@ class UiService {
 
     // Return the formatted time string
     return '$hour:$minuteStr $period';
+  }
+
+  static String generateRandomString(int length, {bool useUpperCase = false, bool useNumbers = false, bool useSpecialCharacters = false}) {
+    String characters = 'abcdefghijklmnopqrstuvwxyz';
+    if (useUpperCase) {
+      characters += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    }
+    if (useNumbers) {
+      characters += '0123456789';
+    }
+    if (useSpecialCharacters) {
+      characters += "@\$%&*#()";
+    }
+    final random = Random();
+    return List.generate(length, (index) => characters[random.nextInt(characters.length)]).join();
   }
 }
