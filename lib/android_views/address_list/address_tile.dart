@@ -10,9 +10,9 @@ import 'package:tempbox/services/alert_service.dart';
 import 'package:tempbox/services/overlay_service.dart';
 import 'package:tempbox/services/ui_service.dart';
 import 'package:tempbox/shared/components/card_list_tile.dart';
-import 'package:tempbox/views/address_info/address_info.dart';
+import 'package:tempbox/android_views/address_info/address_info.dart';
 import 'package:tempbox/bloc/messages/messages_bloc.dart';
-import 'package:tempbox/views/messages_list/messages_list.dart';
+import 'package:tempbox/android_views/messages_list/messages_list.dart';
 
 class AddressTile extends StatelessWidget {
   final int index;

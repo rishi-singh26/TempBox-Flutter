@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
-import 'package:tempbox/views/address_list/address_list.dart';
+import 'package:tempbox/android_views/address_list/address_list.dart';
 import 'package:tempbox/bloc/messages/messages_bloc.dart';
 
 const String title = 'TempBox';

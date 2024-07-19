@@ -5,8 +5,8 @@ import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/services/overlay_service.dart';
-import 'package:tempbox/views/add_address/add_address.dart';
-import 'package:tempbox/views/address_list/address_tile.dart';
+import 'package:tempbox/android_views/add_address/add_address.dart';
+import 'package:tempbox/android_views/address_list/address_tile.dart';
 import 'package:tempbox/bloc/messages/messages_bloc.dart';
 
 class AddressList extends StatefulWidget {
