@@ -20,7 +20,7 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
           updateAddressList.add(address);
         }
       }
-      emit(state.copyWith(addressList: updateAddressList));
+      emit(state.copyWith(addressList: updateAddressList, selectedAddress: updateAddressList.firstOrNull));
     });
 
     on<SelectAddressEvent>((SelectAddressEvent event, Emitter<DataState> emit) {
