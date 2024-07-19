@@ -1,17 +1,32 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:macos_ui/macos_ui.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/android_views/address_list/address_list.dart';
 import 'package:tempbox/bloc/messages/messages_bloc.dart';
+import 'package:tempbox/macos_views/macos_view.dart';
 
 const String title = 'TempBox';
+
+/// This method initializes macos_window_utils and styles the window.
+Future<void> _configureMacosWindowUtils() async {
+  const config = MacosWindowUtilsConfig();
+  await config.apply();
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HydratedBloc.storage = await HydratedStorage.build(storageDirectory: await getApplicationDocumentsDirectory());
-  runApp(const MyApp());
+  if (Platform.isMacOS) {
+    await _configureMacosWindowUtils();
+    runApp(const MacOSView());
+  } else {
+    runApp(const MyApp());
+  }
 }
 
 class MyApp extends StatelessWidget {
