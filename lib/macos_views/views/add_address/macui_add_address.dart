@@ -19,7 +19,7 @@ class _MacUIAddAddressState extends State<MacUIAddAddress> {
   bool showSpinner = false;
   Domain? selectedDomain;
   List<Domain> domainsList = [];
-  bool useRandomPassword = true;
+  bool useRandomPassword = false;
 
   late TextEditingController addressNameController;
   late TextEditingController addressController;
