@@ -9,6 +9,7 @@ import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/android_views/address_list/address_list.dart';
 import 'package:tempbox/bloc/messages/messages_bloc.dart';
 import 'package:tempbox/macos_views/macos_view.dart';
+import 'package:window_manager/window_manager.dart';
 
 const String title = 'TempBox';
 
@@ -22,6 +23,19 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HydratedBloc.storage = await HydratedStorage.build(storageDirectory: await getApplicationDocumentsDirectory());
   if (Platform.isMacOS) {
+    await windowManager.ensureInitialized();
+    WindowOptions windowOptions = const WindowOptions(
+      size: Size(1000, 550),
+      center: true,
+      backgroundColor: Colors.transparent,
+      skipTaskbar: false,
+      titleBarStyle: TitleBarStyle.hidden,
+      minimumSize: Size(1000, 550),
+    );
+    windowManager.waitUntilReadyToShow(windowOptions, () async {
+      await windowManager.show();
+      await windowManager.focus();
+    });
     await _configureMacosWindowUtils();
     runApp(const MacOSView());
   } else {
