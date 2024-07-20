@@ -62,7 +62,6 @@ class _RenderMessageState extends State<RenderMessage> {
         renderMode: RenderMode.listView,
         htmlData,
         onTapUrl: (url) async {
-          print(url);
           return true;
         },
         onTapImage: (p0) {},
