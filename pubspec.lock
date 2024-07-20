@@ -65,6 +65,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.3"
+  csslib:
+    dependency: transitive
+    description:
+      name: csslib
+      sha256: "706b5707578e0c1b4b7550f64078f0a0f19dec3f50a178ffae7006b0a9ca58fb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -160,6 +168,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_widget_from_html_core:
+    dependency: "direct main"
+    description:
+      name: flutter_widget_from_html_core
+      sha256: df7c7c9e5ea144f7ab0adfbad733b4d4f7d408ab733c94e6e9fdcb327af92aa1
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.15.1"
   freezed_annotation:
     dependency: transitive
     description:
@@ -184,6 +200,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.3"
+  html:
+    dependency: transitive
+    description:
+      name: html
+      sha256: "3a7812d5bcd2894edf53dfaf8cd640876cf6cef50a8f238745c8b8120ea74d3a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.15.4"
   http:
     dependency: transitive
     description:
@@ -248,6 +272,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
+  logging:
+    dependency: transitive
+    description:
+      name: logging
+      sha256: "623a88c9594aa774443aa3eb2d41807a48486b5613e67599fb4c41c0ad47c340"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   macos_ui:
     dependency: "direct main"
     description:
