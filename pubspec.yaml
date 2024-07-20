@@ -19,6 +19,7 @@ dependencies:
   webview_flutter: ^4.8.0
   macos_ui: ^2.0.2
   url_launcher: ^6.3.0
+  window_manager: ^0.3.9
   flutter_widget_from_html_core: ^0.15.1
 
 dev_dependencies:
