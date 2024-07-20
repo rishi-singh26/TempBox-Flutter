@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:mailtm_client/mailtm_client.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class RenderMessage extends StatefulWidget {
   final AuthenticatedUser user;
@@ -16,12 +16,11 @@ class RenderMessage extends StatefulWidget {
 
 class _RenderMessageState extends State<RenderMessage> {
   late Message messageData;
-  late final WebViewController _controller;
+  String htmlData = '<p>Loading...</p>';
 
   @override
   void initState() {
     messageData = widget.message;
-    _controller = WebViewController();
     fetchData(widget.user, widget.message);
     super.initState();
   }
@@ -41,7 +40,7 @@ class _RenderMessageState extends State<RenderMessage> {
         final responseBody = await response.transform(utf8.decoder).join();
         final jsonData = json.decode(responseBody);
         messageData = Message.fromJson(jsonData);
-        _controller.loadHtmlString(messageData.html.join(''));
+        htmlData = messageData.html.join('');
         setState(() {});
       } else {
         throw Exception('Failed to load data');
@@ -55,6 +54,21 @@ class _RenderMessageState extends State<RenderMessage> {
 
   @override
   Widget build(BuildContext context) {
-    return WebViewWidget(controller: _controller);
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))),
+      clipBehavior: Clip.hardEdge,
+      child: HtmlWidget(
+        renderMode: RenderMode.listView,
+        htmlData,
+        onTapUrl: (url) async {
+          print(url);
+          return true;
+        },
+        onTapImage: (p0) {},
+        enableCaching: true,
+        buildAsync: true,
+      ),
+    );
   }
 }
