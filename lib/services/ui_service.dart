@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/services.dart';
+import 'package:mailtm_client/mailtm_client.dart';
 import 'package:tempbox/models/address_data.dart';
 
 class UiService {
@@ -8,6 +9,14 @@ class UiService {
 
   static getAccountName(AddressData addressData) {
     return addressData.addressName.isNotEmpty ? addressData.addressName : addressData.authenticatedUser.account.address.split('@').first;
+  }
+
+  static getMessageFromName(Message message) {
+    if (message.from['name']!.isEmpty) {
+      return message.from['address'] ?? '';
+    } else {
+      return message.from['name'] ?? '';
+    }
   }
 
   static copyToClipboard(String text) {
