@@ -30,12 +30,25 @@ class _MacUIAddAddressState extends State<MacUIAddAddress> {
     addressNameController = TextEditingController();
     addressController = TextEditingController();
     passwordController = TextEditingController();
+
+    addressController.addListener(() => setState(() {}));
+    passwordController.addListener(() => setState(() {}));
+
     _getDomains();
     super.initState();
   }
 
+  @override
+  void dispose() {
+    addressNameController.dispose();
+    addressController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
   _updateRandomAddress() {
     addressController.text = UiService.generateRandomString(10);
+    setState(() {});
   }
 
   _getDomains() async {
@@ -179,8 +192,9 @@ class _MacUIAddAddressState extends State<MacUIAddAddress> {
                         const SizedBox(width: 10),
                         PushButton(
                           controlSize: ControlSize.regular,
-                          onPressed:
-                              addressController.text.isNotEmpty && passwordController.text.isNotEmpty ? () => _createAddress(dataBlocContext) : null,
+                          onPressed: addressController.text.isNotEmpty && passwordController.text.isNotEmpty && selectedDomain != null
+                              ? () => _createAddress(dataBlocContext)
+                              : null,
                           child: showSpinner ? const ProgressCircle(radius: 7.5) : const Text('Create'),
                         ),
                       ],
