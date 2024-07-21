@@ -50,6 +50,7 @@ class _AddressInfoState extends State<AddressInfo> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     SizedBox hGap(double size) => SizedBox(width: size);
     SizedBox vGap(double size) => SizedBox(height: size);
     Size screenSize = MediaQuery.of(context).size;
@@ -88,7 +89,7 @@ class _AddressInfoState extends State<AddressInfo> {
                     // dense: true,
                     trailing: IconButton(
                       onPressed: () => UiService.copyToClipboard(authenticatedUser!.account.address),
-                      icon: Icon(CupertinoIcons.doc_on_doc, color: Theme.of(context).buttonTheme.colorScheme?.primary ?? Colors.red),
+                      icon: Icon(CupertinoIcons.doc_on_doc, color: theme.buttonTheme.colorScheme?.primary ?? Colors.red),
                     ),
                     visualDensity: VisualDensity.compact,
                   ),
@@ -112,7 +113,7 @@ class _AddressInfoState extends State<AddressInfo> {
                     visualDensity: VisualDensity.compact,
                     trailing: IconButton(
                       onPressed: () => UiService.copyToClipboard(widget.addressData.password),
-                      icon: Icon(CupertinoIcons.doc_on_doc, color: Theme.of(context).buttonTheme.colorScheme?.primary ?? Colors.red),
+                      icon: Icon(CupertinoIcons.doc_on_doc, color: theme.buttonTheme.colorScheme?.primary ?? Colors.red),
                     ),
                     onTap: () => setState(() => showPassword = !showPassword),
                   ),
@@ -123,20 +124,20 @@ class _AddressInfoState extends State<AddressInfo> {
                 child: RichText(
                   text: TextSpan(
                     text: "If you wish to use this account on Web browser, You can copy the credentials to use on ",
-                    style: Theme.of(context).textTheme.labelMedium,
+                    style: theme.textTheme.labelMedium,
                     children: <TextSpan>[
                       TextSpan(
                         text: 'mail.tm',
-                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                              color: Theme.of(context).buttonTheme.colorScheme?.primary ?? Colors.red,
-                            ),
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          color: theme.buttonTheme.colorScheme?.primary ?? Colors.red,
+                        ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () async => await launchUrl(
                                 Uri.parse('https://mail.tm'),
                               ),
                       ),
                       TextSpan(
-                        style: Theme.of(context).textTheme.labelMedium,
+                        style: theme.textTheme.labelMedium,
                         text: ' official website. Please note, the password cannot be reset or changed.',
                       ),
                     ],
@@ -159,6 +160,13 @@ class _AddressInfoState extends State<AddressInfo> {
                   ),
                   vGap(10),
                 ]),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+                child: Text(
+                  'Ones you reach your Quota limit, you can not receive any more messages. Deleting your previous messages will free up your used Quota.',
+                  style: theme.textTheme.labelMedium,
+                ),
               ),
             ]),
         ],

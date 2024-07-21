@@ -53,6 +53,7 @@ class _MacuiAddressInfoState extends State<MacuiAddressInfo> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = MacosTheme.of(context);
     SizedBox hGap(double size) => SizedBox(width: size);
     SizedBox vGap(double size) => SizedBox(height: size);
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
@@ -67,7 +68,7 @@ class _MacuiAddressInfoState extends State<MacuiAddressInfo> {
               return Padding(
                 padding: const EdgeInsets.all(18.0),
                 child: Column(children: [
-                  Text('Address Detail', style: MacosTheme.of(context).typography.title1),
+                  Text('Address Detail', style: theme.typography.title1),
                   vGap(24),
                   const Text('No Address Selected'),
                   const Spacer(),
@@ -91,7 +92,7 @@ class _MacuiAddressInfoState extends State<MacuiAddressInfo> {
                   vGap(24),
                   Text(
                     UiService.getAccountName(dataState.selectedAddress!),
-                    style: MacosTheme.of(context).typography.title1,
+                    style: theme.typography.title1,
                   ),
                   vGap(24),
                   MacosCard(
@@ -149,15 +150,15 @@ class _MacuiAddressInfoState extends State<MacuiAddressInfo> {
                     child: RichText(
                       text: TextSpan(
                         text: "If you wish to use this account on Web browser, You can copy the credentials to use on ",
-                        style: MacosTheme.of(context).typography.callout,
+                        style: theme.typography.callout,
                         children: <TextSpan>[
                           TextSpan(
                             text: 'mail.tm',
-                            style: MacosTheme.of(context).typography.callout.copyWith(color: MacosTheme.of(context).primaryColor),
+                            style: theme.typography.callout.copyWith(color: theme.primaryColor),
                             recognizer: TapGestureRecognizer()..onTap = () async => await launchUrl(Uri.parse('https://mail.tm')),
                           ),
                           TextSpan(
-                            style: MacosTheme.of(context).typography.callout,
+                            style: theme.typography.callout,
                             text: ' official website. Please note, the password cannot be reset or changed.',
                           ),
                         ],
@@ -182,6 +183,13 @@ class _MacuiAddressInfoState extends State<MacuiAddressInfo> {
                     padding: const EdgeInsets.only(left: 15, right: 15, bottom: 12),
                     isLast: true,
                     child: CapacityIndicator(value: (authenticatedUser!.account.used / authenticatedUser!.account.quota) * 100),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    child: Text(
+                      'Ones you reach your Quota limit, you can not receive any more messages. Deleting your previous messages will free up your used Quota.',
+                      style: theme.typography.callout,
+                    ),
                   ),
                   const Spacer(),
                   Align(
