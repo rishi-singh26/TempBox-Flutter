@@ -78,11 +78,6 @@ class _MacOsHomeState extends State<MacOsHome> {
               ),
               minWidth: 240,
               builder: (context, scrollController) => SidebarView(scrollController: scrollController),
-              bottom: const MacosListTile(
-                leading: MacosIcon(CupertinoIcons.profile_circled),
-                title: Text('Tim Apple'),
-                subtitle: Text('tim@apple.com'),
-              ),
             ),
             child: const SelectedAddressView(),
           ),

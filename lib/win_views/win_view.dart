@@ -20,6 +20,7 @@ class WinApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return FluentApp(
       title: 'TempBox',
+      debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.system,
       darkTheme: FluentThemeData(
         brightness: Brightness.dark,
