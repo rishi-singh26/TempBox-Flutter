@@ -13,6 +13,7 @@ import 'package:tempbox/services/alert_service.dart';
 import 'package:tempbox/services/ui_service.dart';
 import 'package:tempbox/win_views/views/add_address/winui_add_address.dart';
 import 'package:tempbox/win_views/views/selected_address_view/winui_selected_address_view.dart';
+import 'package:tempbox/win_views/views/winui_address_info/winui_address_info.dart';
 import 'package:tempbox/win_views/window_buttons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:window_manager/window_manager.dart';
@@ -108,10 +109,109 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
       int? selectedIndex = dataState.selectedAddress == null ? null : _getSelectedIndex(dataState.selectedAddress!, dataState.addressList);
       return NavigationView(
-        appBar: const NavigationAppBar(
-          leading: FlutterLogo(),
-          title: DragToMoveArea(child: Align(alignment: AlignmentDirectional.centerStart, child: Text('TempBox'))),
-          actions: Row(mainAxisAlignment: MainAxisAlignment.end, children: [WindowButtons()]),
+        appBar: NavigationAppBar(
+          leading: const FlutterLogo(),
+          title: const DragToMoveArea(child: Align(alignment: AlignmentDirectional.centerStart, child: Text('TempBox'))),
+          actions: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+            Tooltip(
+              message: 'Refresh inbox',
+              child: IconButton(
+                icon: const Icon(CupertinoIcons.refresh_thick, size: 20),
+                onPressed: dataState.selectedAddress == null
+                    ? null
+                    : () {
+                        BlocProvider.of<DataBloc>(dataBlocContext).add(
+                          GetMessagesEvent(addressData: dataState.selectedAddress!, resetMessages: false),
+                        );
+                      },
+              ),
+            ),
+            const SizedBox(width: 10),
+            Tooltip(
+              message: 'Address information',
+              child: IconButton(
+                icon: const Icon(CupertinoIcons.info_circle, size: 20),
+                onPressed: dataState.selectedAddress == null
+                    ? null
+                    : () async {
+                        await showDialog(
+                          context: context,
+                          builder: (_) => BlocProvider.value(
+                            value: BlocProvider.of<DataBloc>(dataBlocContext),
+                            child: WinuiAddressInfo(addressData: dataState.selectedAddress!),
+                          ),
+                        );
+                      },
+              ),
+            ),
+            const SizedBox(width: 10),
+            Tooltip(
+              message: 'Delete address',
+              child: IconButton(
+                icon: const Icon(CupertinoIcons.trash, size: 20),
+                onPressed: dataState.selectedAddress == null
+                    ? null
+                    : () async {
+                        final choice = await AlertService.getConformation<bool>(
+                          context: context,
+                          title: 'Alert',
+                          content: 'Are you sure you want to delete this address?',
+                        );
+                        if (choice == true && dataBlocContext.mounted) {
+                          BlocProvider.of<DataBloc>(dataBlocContext).add(DeleteAddressEvent(dataState.selectedAddress!));
+                        }
+                      },
+              ),
+            ),
+            const SizedBox(width: 10),
+            const Divider(direction: Axis.vertical),
+            const SizedBox(width: 10),
+            Tooltip(
+              message: dataState.selectedMessage?.seen ?? false ? 'Mark message as unread' : 'Mark message as read',
+              child: IconButton(
+                icon: Icon(dataState.selectedMessage?.seen ?? false ? CupertinoIcons.envelope_badge : CupertinoIcons.envelope_open, size: 20),
+                onPressed: dataState.selectedMessage == null
+                    ? null
+                    : () => BlocProvider.of<DataBloc>(dataBlocContext).add(ToggleMessageReadUnread(
+                          addressData: dataState.selectedAddress!,
+                          message: dataState.selectedMessage!,
+                          resetMessages: false,
+                        )),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Tooltip(
+              message: 'Share message',
+              child: IconButton(
+                icon: const Icon(FluentIcons.share, size: 20),
+                onPressed: dataState.selectedMessage == null
+                    ? null
+                    : () => BlocProvider.of<DataBloc>(dataBlocContext).add(ToggleMessageReadUnread(
+                          addressData: dataState.selectedAddress!,
+                          message: dataState.selectedMessage!,
+                          resetMessages: false,
+                        )),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Tooltip(
+              message: 'Delete message',
+              child: IconButton(
+                icon: const Icon(CupertinoIcons.trash, size: 20),
+                onPressed: dataState.selectedMessage == null
+                    ? null
+                    : () => BlocProvider.of<DataBloc>(dataBlocContext).add(ToggleMessageReadUnread(
+                          addressData: dataState.selectedAddress!,
+                          message: dataState.selectedMessage!,
+                          resetMessages: false,
+                        )),
+              ),
+            ),
+            const SizedBox(width: 10),
+            const Divider(direction: Axis.vertical),
+            const SizedBox(width: 10),
+            const WindowButtons(),
+          ]),
         ),
         pane: NavigationPane(
           header: Card(
