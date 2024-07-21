@@ -46,7 +46,7 @@ class AddressTile extends StatelessWidget {
   }
 
   _deleteAddress(BuildContext context, BuildContext dataBlocContext, AddressData addressData) {
-    AlertService.getConformation(
+    AlertService.getConformationAndroid(
       context: context,
       title: 'Alert',
       content: 'Are you sure you want to delete this address?',

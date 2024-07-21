@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:macos_ui/macos_ui.dart';
 import 'package:tempbox/services/overlay_service.dart';
 import 'package:tempbox/shared/components/custom_alert_dialog.dart';
 import 'package:tempbox/shared/styles/button.dart';
 import 'package:tempbox/shared/styles/textfield.dart';
 
 class AlertService {
-  static Future<T?> showAlert<T>({
+  static Future<T?> showAlertAndroid<T>({
     required BuildContext context,
     required String title,
     String? content,
@@ -31,7 +32,7 @@ class AlertService {
     );
   }
 
-  static Future<T?> showAlertCustomContent<T>({
+  static Future<T?> showAlertCustomContentAndroid<T>({
     required BuildContext context,
     required Widget title,
     Widget? content,
@@ -50,24 +51,7 @@ class AlertService {
     );
   }
 
-  static Future<T?> showAttributeDataOverlay<T>({
-    required BuildContext context,
-    required Widget Function(BuildContext) builder,
-    bool enableDrag = true,
-    bool useSafeArea = false,
-  }) async {
-    return await OverlayService.showOverLay<T>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: useSafeArea,
-      clipBehavior: Clip.hardEdge,
-      enableDrag: enableDrag,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(15.0))),
-      builder: builder,
-    );
-  }
-
-  static Future<T?> showPrompt<T>({
+  static Future<T?> showPromptAndroid<T>({
     required BuildContext context,
     required String title,
     String? placeholder,
@@ -116,7 +100,7 @@ class AlertService {
     );
   }
 
-  static Future<T?> getConformation<T>({
+  static Future<T?> getConformationAndroid<T>({
     required BuildContext context,
     required String title,
     String? content,
@@ -154,6 +138,56 @@ class AlertService {
           ],
         );
       },
+    );
+  }
+
+  static Future<T?> showAlertMacos<T>({
+    required BuildContext context,
+    required String title,
+    required String content,
+    List<Widget> actions = const [],
+  }) async {
+    return await showMacosAlertDialog<T>(
+      context: context,
+      builder: (context) => MacosAlertDialog(
+        appIcon: const FlutterLogo(size: 64),
+        title: Text(title),
+        message: Text(content),
+        //horizontalActions: false,
+        primaryButton: PushButton(
+          controlSize: ControlSize.large,
+          onPressed: Navigator.of(context).pop,
+          child: const Text('Label'),
+        ),
+      ),
+    );
+  }
+
+  static Future<T?> getConformationMacos<T>({
+    required BuildContext context,
+    required String title,
+    required String content,
+    String confirmBtnTxt = 'Yes',
+  }) async {
+    return await showMacosAlertDialog<T>(
+      context: context,
+      builder: (context) => MacosAlertDialog(
+        appIcon: const FlutterLogo(size: 64),
+        title: Text(title),
+        message: Text(content, textAlign: TextAlign.center),
+        horizontalActions: false,
+        primaryButton: PushButton(
+          controlSize: ControlSize.large,
+          onPressed: () => Navigator.of(context).pop(true),
+          child: Text(confirmBtnTxt),
+        ),
+        secondaryButton: PushButton(
+          controlSize: ControlSize.large,
+          secondary: true,
+          onPressed: () => Navigator.of(context).pop(false),
+          child: const Text('Cancel'),
+        ),
+      ),
     );
   }
 }
