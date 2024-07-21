@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:mailtm_client/mailtm_client.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
@@ -11,16 +12,23 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
     });
 
     on<LoginToAccountsEvent>((LoginToAccountsEvent event, Emitter<DataState> emit) async {
-      List<AddressData> updateAddressList = [];
-      for (var address in state.addressList) {
-        AuthenticatedUser? loggedInUser = await MailTm.login(address: address.authenticatedUser.account.address, password: address.password);
-        if (loggedInUser == null) {
-          updateAddressList.add(address.copyWith(isActive: false));
-        } else {
-          updateAddressList.add(address);
+      try {
+        for (var address in state.addressList) {
+          await MailTm.login(address: address.authenticatedUser.account.address, password: address.password);
         }
+      } catch (e) {
+        debugPrint(e.toString());
       }
-      emit(state.copyWith(addressList: updateAddressList));
+      // List<AddressData> updateAddressList = [];
+      // for (var address in state.addressList) {
+      //   AuthenticatedUser? loggedInUser = await MailTm.login(address: address.authenticatedUser.account.address, password: address.password);
+      //   if (loggedInUser == null) {
+      //     updateAddressList.add(address.copyWith(isActive: false));
+      //   } else {
+      //     updateAddressList.add(address);
+      //   }
+      // }
+      // emit(state.copyWith(addressList: updateAddressList));
     });
 
     on<SelectAddressEvent>((SelectAddressEvent event, Emitter<DataState> emit) {

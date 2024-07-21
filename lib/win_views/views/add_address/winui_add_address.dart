@@ -51,9 +51,13 @@ class _WinuiAddAddressState extends State<WinuiAddAddress> {
   }
 
   _getDomains() async {
-    domainsList = await MailTm.domains();
-    selectedDomain = domainsList.firstOrNull;
-    setState(() {});
+    try {
+      domainsList = await MailTm.domains();
+      selectedDomain = domainsList.firstOrNull;
+      setState(() {});
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 
   _createAddress(BuildContext dataBlocContext) async {

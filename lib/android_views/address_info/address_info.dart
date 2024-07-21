@@ -24,7 +24,11 @@ class _AddressInfoState extends State<AddressInfo> {
   AuthenticatedUser? authenticatedUser;
   @override
   void initState() {
-    authenticatedUser = MailTm.getUser(widget.addressData.authenticatedUser.account.id);
+    try {
+      authenticatedUser = MailTm.getUser(widget.addressData.authenticatedUser.account.id);
+    } catch (e) {
+      debugPrint(e.toString());
+    }
     super.initState();
   }
 
