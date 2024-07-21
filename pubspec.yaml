@@ -21,7 +21,7 @@ dependencies:
   window_manager: ^0.3.9
   flutter_widget_from_html_core: ^0.15.1
   fluent_ui: ^4.9.0
-  flutter_acrylic: ^1.1.4
+  system_theme: ^3.0.0
 
 dev_dependencies:
   flutter_test:
