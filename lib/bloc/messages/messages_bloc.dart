@@ -9,7 +9,7 @@ part 'messages_state.dart';
 class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   MessagesBloc() : super(MessagesState.initial()) {
     on<GetMessagesEvent>((GetMessagesEvent event, Emitter<MessagesState> emit) async {
-      emit(state.copyWith(messagesList: [], isMessagesLoading: true));
+      event.resetMessages == true ? emit(state.copyWith(messagesList: [], isMessagesLoading: true)) : null;
       final messages = await event.addressData.authenticatedUser.messagesAt(1);
       emit(state.copyWith(messagesList: messages, isMessagesLoading: false));
     });
