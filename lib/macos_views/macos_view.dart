@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:macos_ui/macos_ui.dart';
@@ -9,6 +10,8 @@ import 'package:tempbox/macos_views/platform_menus.dart';
 import 'package:tempbox/macos_views/views/add_address/macui_add_address.dart';
 import 'package:tempbox/macos_views/views/selected_address_view/selected_address_view.dart';
 import 'package:tempbox/macos_views/views/sidebar_view/sidebar_view.dart';
+import 'package:tempbox/services/alert_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MacOSView extends StatelessWidget {
   const MacOSView({super.key});
@@ -61,8 +64,12 @@ class MacOsHome extends StatelessWidget {
               decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(5))),
               child: CupertinoListTile(
                 title: Text('New Address', style: typography.body),
-                trailing: const MacosIcon(CupertinoIcons.add_circled_solid, size: 18),
-                backgroundColor: CupertinoColors.systemGrey3.resolveFrom(context),
+                trailing: MacosIcon(
+                  CupertinoIcons.add_circled_solid,
+                  size: 18,
+                  color: CupertinoColors.systemGrey.resolveFrom(context),
+                ),
+                backgroundColor: CupertinoColors.systemGrey2.resolveFrom(context).withAlpha(44),
                 backgroundColorActivated: CupertinoColors.systemGrey4.resolveFrom(context),
                 onTap: () {
                   showMacosSheet(
@@ -78,6 +85,29 @@ class MacOsHome extends StatelessWidget {
             minWidth: 240,
             maxWidth: 270,
             builder: (context, scrollController) => SidebarView(scrollController: scrollController),
+            bottom: MacosListTile(
+                title: RichText(
+              text: TextSpan(
+                text: "Powered by ",
+                children: <TextSpan>[
+                  TextSpan(
+                    text: 'mail.tm',
+                    style: TextStyle(color: MacosTheme.of(context).primaryColor),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () async {
+                        bool? choice = await AlertService.getConformation(
+                          context: context,
+                          title: 'Do you wnat to continue?',
+                          content: 'This will open mail.tm website.',
+                        );
+                        if (choice == true) {
+                          await launchUrl(Uri.parse('https://mail.tm'));
+                        }
+                      },
+                  ),
+                ],
+              ),
+            )),
           ),
           child: const SelectedAddressView(),
         ),

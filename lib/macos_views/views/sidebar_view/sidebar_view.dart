@@ -29,7 +29,6 @@ class SidebarView extends StatelessWidget {
             BlocProvider.of<DataBloc>(dataBlocContext).add(SelectAddressEvent(dataState.addressList[i]));
           },
           scrollController: scrollController,
-          itemSize: SidebarItemSize.large,
           items: dataState.addressList
               .map((a) => SidebarItem(
                   leading: const MacosIcon(CupertinoIcons.tray, size: 15),

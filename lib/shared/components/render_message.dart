@@ -57,32 +57,27 @@ class _RenderMessageState extends State<RenderMessage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))),
-      clipBehavior: Clip.hardEdge,
-      child: HtmlWidget(
-        renderMode: RenderMode.listView,
-        htmlData,
-        onTapUrl: (url) async {
-          bool? choice = await AlertService.getConformation<bool>(
-            context: context,
-            title: 'Do you want to open this URL?',
-            content: url,
-            secondaryBtnTxt: 'Copy',
-            truncateContent: true,
-          );
-          if (choice == true) {
-            await launchUrl(Uri.parse(url));
-          } else if (choice == false) {
-            UiService.copyToClipboard(url);
-          }
-          return true;
-        },
-        onTapImage: (p0) {},
-        enableCaching: true,
-        buildAsync: true,
-      ),
+    return HtmlWidget(
+      renderMode: RenderMode.listView,
+      htmlData,
+      onTapUrl: (url) async {
+        bool? choice = await AlertService.getConformation<bool>(
+          context: context,
+          title: 'Do you want to open this URL?',
+          content: url,
+          secondaryBtnTxt: 'Copy',
+          truncateContent: true,
+        );
+        if (choice == true) {
+          await launchUrl(Uri.parse(url));
+        } else if (choice == false) {
+          UiService.copyToClipboard(url);
+        }
+        return true;
+      },
+      onTapImage: (p0) {},
+      enableCaching: true,
+      buildAsync: true,
     );
   }
 }
