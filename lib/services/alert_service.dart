@@ -1,3 +1,4 @@
+import 'package:fluent_ui/fluent_ui.dart' as fluent_ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:macos_ui/macos_ui.dart';
@@ -157,7 +158,7 @@ class AlertService {
         primaryButton: PushButton(
           controlSize: ControlSize.large,
           onPressed: Navigator.of(context).pop,
-          child: const Text('Label'),
+          child: const Text('Ok'),
         ),
       ),
     );
@@ -187,6 +188,44 @@ class AlertService {
           onPressed: () => Navigator.of(context).pop(false),
           child: const Text('Cancel'),
         ),
+      ),
+    );
+  }
+
+  static Future<T?> showAlertWindows<T>({
+    required BuildContext context,
+    required String title,
+    required String content,
+    List<Widget> actions = const [],
+  }) async {
+    return await fluent_ui.showDialog<T>(
+      context: context,
+      builder: (context) => fluent_ui.ContentDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: [fluent_ui.FilledButton(child: const Text('Ok'), onPressed: () => Navigator.of(context).pop(true))],
+      ),
+    );
+  }
+
+  static Future<T?> getConformationWindows<T>({
+    required BuildContext context,
+    required String title,
+    required String content,
+    String confirmBtnTxt = 'Yes',
+  }) async {
+    return await showDialog<T>(
+      context: context,
+      builder: (context) => fluent_ui.ContentDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: [
+          fluent_ui.Button(child: Text(confirmBtnTxt), onPressed: () => Navigator.of(context).pop(true)),
+          fluent_ui.FilledButton(
+            child: const Text('Cancel'),
+            onPressed: () => Navigator.of(context).pop(false),
+          ),
+        ],
       ),
     );
   }
