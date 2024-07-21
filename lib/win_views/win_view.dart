@@ -43,10 +43,25 @@ class WinApp extends StatelessWidget {
             child: MultiBlocProvider(providers: [
               BlocProvider<DataBloc>(create: (BuildContext context) => DataBloc()),
               BlocProvider<DataBloc>(create: (BuildContext context) => DataBloc()),
-            ], child: const WindowsView()),
+            ], child: const WinuiStarter()),
           ),
         );
       }),
+    );
+  }
+}
+
+class WinuiStarter extends StatelessWidget {
+  const WinuiStarter({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<DataBloc, DataState>(
+      buildWhen: (previous, current) => false,
+      builder: (dataBlocContext, dataState) {
+        BlocProvider.of<DataBloc>(dataBlocContext).add(const LoginToAccountsEvent());
+        return const WindowsView();
+      },
     );
   }
 }
@@ -77,8 +92,9 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
     super.dispose();
   }
 
-  int _getSelectedIndex(AddressData selected, List<AddressData> addresses) {
-    return addresses.indexWhere((a) => a.authenticatedUser.account.id == selected.authenticatedUser.account.id);
+  int? _getSelectedIndex(AddressData selected, List<AddressData> addresses) {
+    final index = addresses.indexWhere((a) => a.authenticatedUser.account.id == selected.authenticatedUser.account.id);
+    return index >= 0 ? index : null;
   }
 
   @override
@@ -113,7 +129,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
             PaneItemAction(
               icon: const Icon(FluentIcons.add_to),
               onTap: () async {
-                await showDialog<String>(
+                await showDialog(
                   context: context,
                   builder: (_) => BlocProvider.value(
                     value: BlocProvider.of<DataBloc>(dataBlocContext),
@@ -127,7 +143,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
         ),
         paneBodyBuilder: (item, child) {
           final name = item?.key is ValueKey ? (item!.key as ValueKey).value : null;
-          return FocusTraversalGroup(key: ValueKey('body$name'), child: const WinuiSelectedAddressView());
+          return FocusTraversalGroup(key: ValueKey('body$name'), child: WinuiSelectedAddressView());
         },
         // onDisplayModeChanged: (value) {},
         // onOpenSearch: () {},

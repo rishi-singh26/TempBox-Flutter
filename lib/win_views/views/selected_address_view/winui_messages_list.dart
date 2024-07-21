@@ -7,6 +7,7 @@ import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/ui_service.dart';
+import 'package:tempbox/shared/components/blank_badge.dart';
 
 class WinuiMessagesList extends StatefulWidget {
   final AddressData selectedAddress;
@@ -86,6 +87,7 @@ class _WinuiMessagesListState extends State<WinuiMessagesList> {
               },
               title: Text(UiService.getMessageFromName(message)),
               subtitle: Text(message.subject),
+              leading: !message.seen ? BlankBadge(color: Colors.blue) : null,
             );
           },
         ),
