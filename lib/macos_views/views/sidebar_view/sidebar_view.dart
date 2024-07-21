@@ -22,22 +22,24 @@ class SidebarView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
-      return SidebarItems(
-        currentIndex: _getSelectedIndex(dataState.selectedAddress, dataState.addressList),
-        onChanged: (i) {
-          BlocProvider.of<DataBloc>(dataBlocContext).add(SelectAddressEvent(dataState.addressList[i]));
-        },
-        scrollController: scrollController,
-        itemSize: SidebarItemSize.large,
-        items: dataState.addressList
-            .map((a) => SidebarItem(
-                leading: const MacosIcon(CupertinoIcons.tray, size: 15),
-                label: Text(
-                  UiService.getAccountName(a),
-                  style: MacosTheme.of(context).typography.body,
-                )))
-            .toList(),
-      );
+      return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
+        return SidebarItems(
+          currentIndex: _getSelectedIndex(dataState.selectedAddress, dataState.addressList),
+          onChanged: (i) {
+            BlocProvider.of<DataBloc>(dataBlocContext).add(SelectAddressEvent(dataState.addressList[i]));
+          },
+          scrollController: scrollController,
+          itemSize: SidebarItemSize.large,
+          items: dataState.addressList
+              .map((a) => SidebarItem(
+                  leading: const MacosIcon(CupertinoIcons.tray, size: 15),
+                  label: Text(
+                    UiService.getAccountName(a),
+                    style: MacosTheme.of(context).typography.body,
+                  )))
+              .toList(),
+        );
+      });
     });
   }
 }

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:mailtm_client/mailtm_client.dart';
 import 'package:tempbox/models/address_data.dart';
 
 abstract class DataEvent extends Equatable {
@@ -34,4 +35,42 @@ class DeleteAddressEvent extends DataEvent {
 
   @override
   List<Object> get props => [addressData];
+}
+
+class GetMessagesEvent extends DataEvent {
+  final AddressData addressData;
+  final bool? resetMessages;
+  const GetMessagesEvent({required this.addressData, this.resetMessages = true});
+
+  @override
+  List<Object> get props => [addressData];
+}
+
+class ToggleMessageReadUnread extends DataEvent {
+  final Message message;
+  final AddressData addressData;
+  final bool resetMessages;
+  const ToggleMessageReadUnread({required this.addressData, required this.message, this.resetMessages = true});
+
+  @override
+  List<Object> get props => [addressData, message];
+}
+
+class SelectMessageEvent extends DataEvent {
+  final AddressData addressData;
+  final Message message;
+  const SelectMessageEvent(this.message, this.addressData);
+
+  @override
+  List<Object> get props => [message, addressData];
+}
+
+class DeleteMessageEvent extends DataEvent {
+  final AddressData addressData;
+  final Message message;
+  final bool resetMessages;
+  const DeleteMessageEvent({required this.message, required this.addressData, this.resetMessages = true});
+
+  @override
+  List<Object> get props => [message, addressData];
 }

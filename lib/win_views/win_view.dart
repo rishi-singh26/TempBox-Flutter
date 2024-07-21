@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
-import 'package:tempbox/bloc/messages/messages_bloc.dart';
 import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/ui_service.dart';
 import 'package:tempbox/win_views/views/add_address/winui_add_address.dart';
@@ -43,7 +42,7 @@ class WinApp extends StatelessWidget {
             data: const NavigationPaneThemeData(backgroundColor: null),
             child: MultiBlocProvider(providers: [
               BlocProvider<DataBloc>(create: (BuildContext context) => DataBloc()),
-              BlocProvider<MessagesBloc>(create: (BuildContext context) => MessagesBloc()),
+              BlocProvider<DataBloc>(create: (BuildContext context) => DataBloc()),
             ], child: const WindowsView()),
           ),
         );
@@ -85,57 +84,54 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
-      return BlocBuilder<MessagesBloc, MessagesState>(builder: (messagesBlocContext, messagesState) {
-        int? selectedIndex = dataState.selectedAddress == null ? null : _getSelectedIndex(dataState.selectedAddress!, dataState.addressList);
-        return NavigationView(
-          appBar: const NavigationAppBar(
-            leading: FlutterLogo(),
-            title: DragToMoveArea(child: Align(alignment: AlignmentDirectional.centerStart, child: Text('TempBox'))),
-            actions: Row(mainAxisAlignment: MainAxisAlignment.end, children: [WindowButtons()]),
-          ),
-          pane: NavigationPane(
-            onItemPressed: (index) {
-              BlocProvider.of<DataBloc>(dataBlocContext).add(SelectAddressEvent(dataState.addressList[index]));
-              BlocProvider.of<MessagesBloc>(messagesBlocContext).add(const RemoveMessageSelectionEvent());
-            },
-            size: NavigationPaneSize(openWidth: MediaQuery.of(context).size.width / 5, openMinWidth: 250, openMaxWidth: 250),
-            items: dataState.addressList
-                .map((a) => PaneItem(
-                      key: Key(a.authenticatedUser.account.id),
-                      icon: const Icon(CupertinoIcons.tray),
-                      title: Text(UiService.getAccountName(a)),
-                      body: const SizedBox.shrink(),
-                    ))
-                .toList()
-                .cast<NavigationPaneItem>(),
-            displayMode: PaneDisplayMode.open,
-            toggleable: true,
-            selected: selectedIndex,
-            footerItems: [
-              PaneItemSeparator(),
-              PaneItemAction(
-                icon: const Icon(FluentIcons.add_to),
-                onTap: () async {
-                  await showDialog<String>(
-                    context: context,
-                    builder: (_) => BlocProvider.value(
-                      value: BlocProvider.of<DataBloc>(dataBlocContext),
-                      child: const WinuiAddAddress(),
-                    ),
-                  );
-                },
-                title: const Text('New Address'),
-              ),
-            ],
-          ),
-          paneBodyBuilder: (item, child) {
-            final name = item?.key is ValueKey ? (item!.key as ValueKey).value : null;
-            return FocusTraversalGroup(key: ValueKey('body$name'), child: const WinuiSelectedAddressView());
+      int? selectedIndex = dataState.selectedAddress == null ? null : _getSelectedIndex(dataState.selectedAddress!, dataState.addressList);
+      return NavigationView(
+        appBar: const NavigationAppBar(
+          leading: FlutterLogo(),
+          title: DragToMoveArea(child: Align(alignment: AlignmentDirectional.centerStart, child: Text('TempBox'))),
+          actions: Row(mainAxisAlignment: MainAxisAlignment.end, children: [WindowButtons()]),
+        ),
+        pane: NavigationPane(
+          onItemPressed: (index) {
+            BlocProvider.of<DataBloc>(dataBlocContext).add(SelectAddressEvent(dataState.addressList[index]));
           },
-          // onDisplayModeChanged: (value) {},
-          // onOpenSearch: () {},
-        );
-      });
+          size: NavigationPaneSize(openWidth: MediaQuery.of(context).size.width / 5, openMinWidth: 250, openMaxWidth: 250),
+          items: dataState.addressList
+              .map((a) => PaneItem(
+                    key: Key(a.authenticatedUser.account.id),
+                    icon: const Icon(CupertinoIcons.tray),
+                    title: Text(UiService.getAccountName(a)),
+                    body: const SizedBox.shrink(),
+                  ))
+              .toList()
+              .cast<NavigationPaneItem>(),
+          displayMode: PaneDisplayMode.open,
+          toggleable: true,
+          selected: selectedIndex,
+          footerItems: [
+            PaneItemSeparator(),
+            PaneItemAction(
+              icon: const Icon(FluentIcons.add_to),
+              onTap: () async {
+                await showDialog<String>(
+                  context: context,
+                  builder: (_) => BlocProvider.value(
+                    value: BlocProvider.of<DataBloc>(dataBlocContext),
+                    child: const WinuiAddAddress(),
+                  ),
+                );
+              },
+              title: const Text('New Address'),
+            ),
+          ],
+        ),
+        paneBodyBuilder: (item, child) {
+          final name = item?.key is ValueKey ? (item!.key as ValueKey).value : null;
+          return FocusTraversalGroup(key: ValueKey('body$name'), child: const WinuiSelectedAddressView());
+        },
+        // onDisplayModeChanged: (value) {},
+        // onOpenSearch: () {},
+      );
     });
   }
 

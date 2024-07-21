@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tempbox/android_views/address_list/address_list.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
-import 'package:tempbox/bloc/messages/messages_bloc.dart';
 
 const String title = 'TempBox';
 
@@ -24,7 +23,6 @@ class AndroidAppView extends StatelessWidget {
       home: MultiBlocProvider(
         providers: [
           BlocProvider<DataBloc>(create: (BuildContext context) => DataBloc()),
-          BlocProvider<MessagesBloc>(create: (BuildContext context) => MessagesBloc()),
         ],
         child: const AddressList(title: title),
       ),

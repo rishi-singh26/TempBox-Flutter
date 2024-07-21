@@ -9,6 +9,7 @@ import 'package:tempbox/services/byte_converter_service.dart';
 import 'package:tempbox/services/ui_service.dart';
 import 'package:tempbox/shared/components/blank_badge.dart';
 import 'package:tempbox/shared/components/padded_card.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AddressInfo extends StatefulWidget {
   final AddressData addressData;
@@ -129,7 +130,10 @@ class _AddressInfoState extends State<AddressInfo> {
                         style: Theme.of(context).textTheme.labelMedium?.copyWith(
                               color: Theme.of(context).buttonTheme.colorScheme?.primary ?? Colors.red,
                             ),
-                        recognizer: TapGestureRecognizer()..onTap = () {},
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () async => await launchUrl(
+                                Uri.parse('https://mail.tm'),
+                              ),
                       ),
                       TextSpan(
                         style: Theme.of(context).textTheme.labelMedium,

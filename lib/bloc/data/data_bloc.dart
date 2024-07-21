@@ -20,11 +20,11 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
           updateAddressList.add(address);
         }
       }
-      emit(state.copyWith(addressList: updateAddressList, selectedAddress: updateAddressList.firstOrNull));
+      emit(state.copyWith(addressList: updateAddressList));
     });
 
     on<SelectAddressEvent>((SelectAddressEvent event, Emitter<DataState> emit) {
-      emit(state.copyWith(selectedAddress: event.addressData));
+      emit(state.copyWith(selectedAddress: event.addressData, setSelectedMessageToNull: true));
     });
 
     on<DeleteAddressEvent>((DeleteAddressEvent event, Emitter<DataState> emit) {
@@ -32,6 +32,31 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
           state.addressList.where((a) => a.authenticatedUser.account.id != event.addressData.authenticatedUser.account.id).toList();
       event.addressData.authenticatedUser.delete();
       emit(state.copyWith(addressList: addresses));
+    });
+
+    on<GetMessagesEvent>((GetMessagesEvent event, Emitter<DataState> emit) async {
+      event.resetMessages == true ? emit(state.copyWith(messagesList: [], isMessagesLoading: true)) : null;
+      final messages = await event.addressData.authenticatedUser.messagesAt(1);
+      emit(state.copyWith(messagesList: messages, isMessagesLoading: false));
+    });
+
+    on<ToggleMessageReadUnread>((ToggleMessageReadUnread event, Emitter<DataState> emit) async {
+      if (event.message.seen) {
+        await event.addressData.authenticatedUser.unreadMessage(event.message.id);
+      } else {
+        await event.addressData.authenticatedUser.readMessage(event.message.id);
+      }
+      add(GetMessagesEvent(addressData: event.addressData));
+    });
+
+    on<SelectMessageEvent>((SelectMessageEvent event, Emitter<DataState> emit) async {
+      await event.addressData.authenticatedUser.readMessage(event.message.id);
+      emit(state.copyWith(selectedMessage: event.message));
+    });
+
+    on<DeleteMessageEvent>((DeleteMessageEvent event, Emitter<DataState> emit) async {
+      await event.addressData.authenticatedUser.deleteMessage(event.message.id);
+      emit(state.copyWith(messagesList: state.messagesList.where((m) => m.id != event.message.id).toList()));
     });
   }
 

@@ -7,7 +7,6 @@ import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/services/overlay_service.dart';
 import 'package:tempbox/android_views/add_address/add_address.dart';
 import 'package:tempbox/android_views/address_list/address_tile.dart';
-import 'package:tempbox/bloc/messages/messages_bloc.dart';
 
 class AddressList extends StatefulWidget {
   const AddressList({super.key, required this.title});
@@ -38,48 +37,45 @@ class _AddressListState extends State<AddressList> {
       buildWhen: (previous, current) => false,
       builder: (dataBlocContext, dataState) {
         BlocProvider.of<DataBloc>(dataBlocContext).add(const LoginToAccountsEvent());
-        return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
-          return BlocBuilder<MessagesBloc, MessagesState>(
-            buildWhen: (previous, current) => false,
-            builder: (messagesBlocContext, messagesState) {
-              return SlidableAutoCloseBehavior(
-                child: Scaffold(
-                  body: CustomScrollView(
-                    slivers: [
-                      SliverAppBar.large(title: Text(widget.title)),
-                      SliverList.builder(
-                        itemCount: dataState.addressList.length,
-                        itemBuilder: (context, index) => AddressTile(index: index),
+        return BlocBuilder<DataBloc, DataState>(
+          builder: (dataBlocContext, dataState) {
+            return SlidableAutoCloseBehavior(
+              child: Scaffold(
+                body: CustomScrollView(
+                  slivers: [
+                    SliverAppBar.large(title: Text(widget.title)),
+                    SliverList.builder(
+                      itemCount: dataState.addressList.length,
+                      itemBuilder: (context, index) => AddressTile(index: index),
+                    ),
+                  ],
+                ),
+                floatingActionButton: FloatingActionButton(
+                  onPressed: () => _openNewAddressSheet(dataBlocContext),
+                  tooltip: 'New Address',
+                  child: const Icon(Icons.add),
+                ),
+                floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
+                bottomNavigationBar: BottomAppBar(
+                  child: Row(
+                    children: <Widget>[
+                      IconButton(
+                        tooltip: 'Settings',
+                        icon: const Icon(Icons.settings_rounded),
+                        onPressed: () {},
                       ),
+                      IconButton(
+                        tooltip: 'Search',
+                        onPressed: () {},
+                        icon: const Icon(Icons.search_rounded),
+                      )
                     ],
                   ),
-                  floatingActionButton: FloatingActionButton(
-                    onPressed: () => _openNewAddressSheet(dataBlocContext),
-                    tooltip: 'New Address',
-                    child: const Icon(Icons.add),
-                  ),
-                  floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
-                  bottomNavigationBar: BottomAppBar(
-                    child: Row(
-                      children: <Widget>[
-                        IconButton(
-                          tooltip: 'Settings',
-                          icon: const Icon(Icons.settings_rounded),
-                          onPressed: () {},
-                        ),
-                        IconButton(
-                          tooltip: 'Search',
-                          onPressed: () {},
-                          icon: const Icon(Icons.search_rounded),
-                        )
-                      ],
-                    ),
-                  ),
                 ),
-              );
-            },
-          );
-        });
+              ),
+            );
+          },
+        );
       },
     );
   }
