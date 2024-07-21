@@ -43,8 +43,11 @@ void main() async {
   } else if (Platform.isWindows) {
     await configureWindowSize(minSize: const Size(1200, 550));
     SystemTheme.accentColor.load();
+    SystemTheme.fallbackColor = const Color(0xFFBA1F33);
     runApp(const WinApp());
   } else {
+    SystemTheme.accentColor.load();
+    SystemTheme.fallbackColor = const Color(0xFFBA1F33);
     runApp(const AndroidAppView());
   }
 }
