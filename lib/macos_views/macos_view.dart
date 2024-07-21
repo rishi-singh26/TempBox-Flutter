@@ -76,6 +76,7 @@ class MacOsHome extends StatelessWidget {
               ),
             ),
             minWidth: 240,
+            maxWidth: 270,
             builder: (context, scrollController) => SidebarView(scrollController: scrollController),
           ),
           child: const SelectedAddressView(),

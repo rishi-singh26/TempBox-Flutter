@@ -1,3 +1,5 @@
+import 'package:appkit_ui_element_colors/convenience/ui_element_color_builder.dart';
+import 'package:appkit_ui_element_colors/convenience/ui_element_color_container_instance_provider/owned_ui_element_color_container_instance_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -80,32 +82,37 @@ class _MacuiMessagesListState extends State<MacuiMessagesList> {
           }
           return KeyEventResult.ignored;
         },
-        child: ListView.builder(
-          itemCount: dataState.messagesList.length,
-          itemBuilder: (context, index) {
-            Message message = dataState.messagesList[index];
-            return MacuiMessageTile(
-              selectedIndex: _selectedIndex,
-              index: index,
-              select: () => setState(() {
-                _setSelectedIndex(index);
-                BlocProvider.of<DataBloc>(dataBlocContext).add(SelectMessageEvent(message, dataState.selectedAddress!));
-              }),
-              selectedColor: CupertinoColors.systemBlue,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+        child: UiElementColorBuilder(
+          uiElementColorContainerInstanceProvider: OwnedUiElementColorContainerInstanceProvider(),
+          builder: (context, colorContainer) {
+            return ListView.builder(
+              itemCount: dataState.messagesList.length,
+              itemBuilder: (context, index) {
+                Message message = dataState.messagesList[index];
+                return MacuiMessageTile(
+                  selectedIndex: _selectedIndex,
+                  index: index,
+                  select: () => setState(() {
+                    _setSelectedIndex(index);
+                    BlocProvider.of<DataBloc>(dataBlocContext).add(SelectMessageEvent(message, dataState.selectedAddress!));
+                  }),
+                  selectedColor: colorContainer.selectedContentBackgroundColor,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (!message.seen) BlankBadge(color: index == _selectedIndex ? MacosColors.white : MacosColors.systemBlueColor),
-                      if (!message.seen) const SizedBox(width: 7),
-                      Text(UiService.getMessageFromName(message), style: typography.body.copyWith(fontWeight: MacosFontWeight.w510), maxLines: 1),
+                      Row(
+                        children: [
+                          if (!message.seen) BlankBadge(color: index == _selectedIndex ? MacosColors.white : MacosColors.systemBlueColor),
+                          if (!message.seen) const SizedBox(width: 7),
+                          Text(UiService.getMessageFromName(message), style: typography.body.copyWith(fontWeight: MacosFontWeight.w510), maxLines: 1),
+                        ],
+                      ),
+                      Text(message.subject, style: secondaryTypography.callout, maxLines: 2),
+                      if (message.intro.isNotEmpty) Text(message.intro, style: secondaryTypography.callout, maxLines: 2),
                     ],
                   ),
-                  Text(message.subject, style: secondaryTypography.callout, maxLines: 2),
-                  if (message.intro.isNotEmpty) Text(message.intro, style: secondaryTypography.callout, maxLines: 2),
-                ],
-              ),
+                );
+              },
             );
           },
         ),
