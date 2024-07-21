@@ -15,7 +15,8 @@ class SidebarView extends StatelessWidget {
     if (selected == null) {
       return 0;
     }
-    return addresses.indexWhere((a) => a.authenticatedUser.account.id == selected.authenticatedUser.account.id);
+    int index = addresses.indexWhere((a) => a.authenticatedUser.account.id == selected.authenticatedUser.account.id);
+    return index >= 0 ? index : 0;
   }
 
   @override
