@@ -19,12 +19,12 @@ Future<void> _configureMacosWindowUtils() async {
 Future<void> configureWindowSize({Size minSize = const Size(1000, 550)}) async {
   await WindowManager.instance.ensureInitialized();
   WindowOptions windowOptions = WindowOptions(
-    size: const Size(1000, 550),
+    size: minSize,
     backgroundColor: Colors.transparent,
     skipTaskbar: false,
     titleBarStyle: TitleBarStyle.hidden,
     minimumSize: minSize,
-    windowButtonVisibility: false,
+    windowButtonVisibility: true,
   );
   windowManager.waitUntilReadyToShow(windowOptions).then((_) async {
     await windowManager.show();
@@ -37,7 +37,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HydratedBloc.storage = await HydratedStorage.build(storageDirectory: await getApplicationDocumentsDirectory());
   if (Platform.isMacOS) {
-    await configureWindowSize(minSize: const Size(1000, 550));
+    // await configureWindowSize(minSize: const Size(1000, 550));
     await _configureMacosWindowUtils();
     runApp(const MacOSView());
   } else if (Platform.isWindows) {
