@@ -2,16 +2,19 @@ import 'dart:io';
 
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
+import 'package:flutter/gestures.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:system_theme/system_theme.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/models/address_data.dart';
+import 'package:tempbox/services/alert_service.dart';
 import 'package:tempbox/services/ui_service.dart';
 import 'package:tempbox/win_views/views/add_address/winui_add_address.dart';
 import 'package:tempbox/win_views/views/selected_address_view/winui_selected_address_view.dart';
 import 'package:tempbox/win_views/window_buttons.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:window_manager/window_manager.dart';
 
 class WinApp extends StatelessWidget {
@@ -111,6 +114,23 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
           actions: Row(mainAxisAlignment: MainAxisAlignment.end, children: [WindowButtons()]),
         ),
         pane: NavigationPane(
+          header: Card(
+            margin: const EdgeInsets.only(right: 7),
+            padding: EdgeInsets.zero,
+            child: ListTile(
+              title: const Text('New Address'),
+              trailing: const Icon(CupertinoIcons.add_circled_solid),
+              onPressed: () async {
+                await showDialog(
+                  context: context,
+                  builder: (_) => BlocProvider.value(
+                    value: BlocProvider.of<DataBloc>(dataBlocContext),
+                    child: const WinuiAddAddress(),
+                  ),
+                );
+              },
+            ),
+          ),
           onItemPressed: (index) {
             BlocProvider.of<DataBloc>(dataBlocContext).add(SelectAddressEvent(dataState.addressList[index]));
           },
@@ -129,19 +149,35 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
           selected: selectedIndex,
           footerItems: [
             PaneItemSeparator(),
-            PaneItemAction(
-              icon: const Icon(FluentIcons.add_to),
-              onTap: () async {
-                await showDialog(
-                  context: context,
-                  builder: (_) => BlocProvider.value(
-                    value: BlocProvider.of<DataBloc>(dataBlocContext),
-                    child: const WinuiAddAddress(),
+            PaneItemHeader(
+              header: Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: RichText(
+                  text: TextSpan(
+                    text: "Powered by ",
+                    style: FluentTheme.of(context).typography.body,
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: 'mail.tm',
+                        style: TextStyle(color: FluentTheme.of(context).accentColor),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () async {
+                            bool? choice = await AlertService.getConformation(
+                              context: context,
+                              title: 'Do you wnat to continue?',
+                              content: 'This will open mail.tm website.',
+                            );
+                            if (choice == true) {
+                              await launchUrl(Uri.parse('https://mail.tm'));
+                            }
+                          },
+                      ),
+                    ],
                   ),
-                );
-              },
-              title: const Text('New Address'),
+                ),
+              ),
             ),
+            PaneItemSeparator(thickness: 0),
           ],
         ),
         paneBodyBuilder: (item, child) {

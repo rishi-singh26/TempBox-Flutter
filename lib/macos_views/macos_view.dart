@@ -86,28 +86,29 @@ class MacOsHome extends StatelessWidget {
             maxWidth: 270,
             builder: (context, scrollController) => SidebarView(scrollController: scrollController),
             bottom: MacosListTile(
-                title: RichText(
-              text: TextSpan(
-                text: "Powered by ",
-                children: <TextSpan>[
-                  TextSpan(
-                    text: 'mail.tm',
-                    style: TextStyle(color: MacosTheme.of(context).primaryColor),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () async {
-                        bool? choice = await AlertService.getConformation(
-                          context: context,
-                          title: 'Do you wnat to continue?',
-                          content: 'This will open mail.tm website.',
-                        );
-                        if (choice == true) {
-                          await launchUrl(Uri.parse('https://mail.tm'));
-                        }
-                      },
-                  ),
-                ],
+              title: RichText(
+                text: TextSpan(
+                  text: "Powered by ",
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: 'mail.tm',
+                      style: TextStyle(color: MacosTheme.of(context).primaryColor),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () async {
+                          bool? choice = await AlertService.getConformation(
+                            context: context,
+                            title: 'Do you wnat to continue?',
+                            content: 'This will open mail.tm website.',
+                          );
+                          if (choice == true) {
+                            await launchUrl(Uri.parse('https://mail.tm'));
+                          }
+                        },
+                    ),
+                  ],
+                ),
               ),
-            )),
+            ),
           ),
           child: const SelectedAddressView(),
         ),
