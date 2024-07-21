@@ -48,6 +48,7 @@ class DataState extends Equatable {
   copyWith({
     List<AddressData>? addressList,
     AddressData? selectedAddress,
+    bool? setSelectedAddressToNull,
     List<Message>? messagesList,
     bool? isMessagesLoading,
     Message? selectedMessage,
@@ -55,7 +56,7 @@ class DataState extends Equatable {
   }) {
     return DataState(
       addressList: addressList ?? this.addressList,
-      selectedAddress: selectedAddress ?? this.selectedAddress,
+      selectedAddress: setSelectedAddressToNull == true ? null : selectedAddress ?? this.selectedAddress,
       messagesList: messagesList ?? this.messagesList,
       isMessagesLoading: isMessagesLoading ?? this.isMessagesLoading,
       selectedMessage: setSelectedMessageToNull == true ? null : selectedMessage ?? this.selectedMessage,
