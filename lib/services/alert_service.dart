@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fluent_ui/fluent_ui.dart' as fluent_ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,29 +10,55 @@ import 'package:tempbox/shared/styles/button.dart';
 import 'package:tempbox/shared/styles/textfield.dart';
 
 class AlertService {
-  static Future<T?> showAlertAndroid<T>({
+  static Future<T?> showAlert<T>({
     required BuildContext context,
     required String title,
-    String? content,
+    required String content,
     List<Widget> actions = const [],
   }) async {
-    return await OverlayService.showOverLay<T>(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(15.0)),
-      ),
-      builder: (context) {
-        return CustomAlertDialog(
-          title: Text(
-            title,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+    if (Platform.isMacOS) {
+      return await showMacosAlertDialog<T>(
+        context: context,
+        builder: (context) => MacosAlertDialog(
+          appIcon: const FlutterLogo(size: 64),
+          title: Text(title),
+          message: Text(content),
+          //horizontalActions: false,
+          primaryButton: PushButton(
+            controlSize: ControlSize.large,
+            onPressed: Navigator.of(context).pop,
+            child: const Text('Ok'),
           ),
-          content: content == null ? null : Text(content),
-          actions: actions,
-        );
-      },
-    );
+        ),
+      );
+    } else if (Platform.isWindows) {
+      return await fluent_ui.showDialog<T>(
+        context: context,
+        builder: (context) => fluent_ui.ContentDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: [fluent_ui.FilledButton(child: const Text('Ok'), onPressed: () => Navigator.of(context).pop(true))],
+        ),
+      );
+    } else {
+      return await OverlayService.showOverLay<T>(
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(15.0)),
+        ),
+        builder: (context) {
+          return CustomAlertDialog(
+            title: Text(
+              title,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            content: Text(content),
+            actions: actions,
+          );
+        },
+      );
+    }
   }
 
   static Future<T?> showAlertCustomContentAndroid<T>({
@@ -101,132 +129,75 @@ class AlertService {
     );
   }
 
-  static Future<T?> getConformationAndroid<T>({
+  static Future<T?> getConformation<T>({
     required BuildContext context,
     required String title,
-    String? content,
-    required void Function() onConfirmation,
+    required String content,
     String confirmBtnTxt = 'Yes',
     bool useDestructiveBtn = true, // when true the action button style is descrictive
   }) async {
-    return await OverlayService.showOverLay<T>(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(15.0)),
-      ),
-      builder: (context) {
-        return CustomAlertDialog(
-          title: Text(
-            title,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+    if (Platform.isMacOS) {
+      return await showMacosAlertDialog<T>(
+        context: context,
+        builder: (context) => MacosAlertDialog(
+          appIcon: const FlutterLogo(size: 64),
+          title: Text(title),
+          message: Text(content, textAlign: TextAlign.center),
+          horizontalActions: false,
+          primaryButton: PushButton(
+            controlSize: ControlSize.large,
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(confirmBtnTxt),
           ),
-          content: content == null ? null : Text(content),
+          secondaryButton: PushButton(
+            controlSize: ControlSize.large,
+            secondary: true,
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+        ),
+      );
+    } else if (Platform.isWindows) {
+      return await showDialog<T>(
+        context: context,
+        builder: (context) => fluent_ui.ContentDialog(
+          title: Text(title),
+          content: Text(content),
           actions: [
-            FilledButton(
-              style: useDestructiveBtn ? ButtonStyles.destructive() : ButtonStyles.customBorderRadius(),
-              onPressed: () {
-                onConfirmation();
-                Navigator.of(context).canPop() ? Navigator.of(context).pop() : null;
-              },
-              child: Text(confirmBtnTxt),
-            ),
-            FilledButton.tonal(
-              style: ButtonStyles.customBorderRadius(),
-              onPressed: () => Navigator.of(context).canPop() ? Navigator.of(context).pop() : null,
+            fluent_ui.Button(child: Text(confirmBtnTxt), onPressed: () => Navigator.of(context).pop(true)),
+            fluent_ui.FilledButton(
               child: const Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(false),
             ),
           ],
-        );
-      },
-    );
-  }
-
-  static Future<T?> showAlertMacos<T>({
-    required BuildContext context,
-    required String title,
-    required String content,
-    List<Widget> actions = const [],
-  }) async {
-    return await showMacosAlertDialog<T>(
-      context: context,
-      builder: (context) => MacosAlertDialog(
-        appIcon: const FlutterLogo(size: 64),
-        title: Text(title),
-        message: Text(content),
-        //horizontalActions: false,
-        primaryButton: PushButton(
-          controlSize: ControlSize.large,
-          onPressed: Navigator.of(context).pop,
-          child: const Text('Ok'),
         ),
-      ),
-    );
-  }
-
-  static Future<T?> getConformationMacos<T>({
-    required BuildContext context,
-    required String title,
-    required String content,
-    String confirmBtnTxt = 'Yes',
-  }) async {
-    return await showMacosAlertDialog<T>(
-      context: context,
-      builder: (context) => MacosAlertDialog(
-        appIcon: const FlutterLogo(size: 64),
-        title: Text(title),
-        message: Text(content, textAlign: TextAlign.center),
-        horizontalActions: false,
-        primaryButton: PushButton(
-          controlSize: ControlSize.large,
-          onPressed: () => Navigator.of(context).pop(true),
-          child: Text(confirmBtnTxt),
+      );
+    } else {
+      return await OverlayService.showOverLay<T>(
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(15.0)),
         ),
-        secondaryButton: PushButton(
-          controlSize: ControlSize.large,
-          secondary: true,
-          onPressed: () => Navigator.of(context).pop(false),
-          child: const Text('Cancel'),
-        ),
-      ),
-    );
-  }
-
-  static Future<T?> showAlertWindows<T>({
-    required BuildContext context,
-    required String title,
-    required String content,
-    List<Widget> actions = const [],
-  }) async {
-    return await fluent_ui.showDialog<T>(
-      context: context,
-      builder: (context) => fluent_ui.ContentDialog(
-        title: Text(title),
-        content: Text(content),
-        actions: [fluent_ui.FilledButton(child: const Text('Ok'), onPressed: () => Navigator.of(context).pop(true))],
-      ),
-    );
-  }
-
-  static Future<T?> getConformationWindows<T>({
-    required BuildContext context,
-    required String title,
-    required String content,
-    String confirmBtnTxt = 'Yes',
-  }) async {
-    return await showDialog<T>(
-      context: context,
-      builder: (context) => fluent_ui.ContentDialog(
-        title: Text(title),
-        content: Text(content),
-        actions: [
-          fluent_ui.Button(child: Text(confirmBtnTxt), onPressed: () => Navigator.of(context).pop(true)),
-          fluent_ui.FilledButton(
-            child: const Text('Cancel'),
-            onPressed: () => Navigator.of(context).pop(false),
-          ),
-        ],
-      ),
-    );
+        builder: (context) {
+          return CustomAlertDialog(
+            title: Text(title, style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)),
+            content: Text(content),
+            actions: [
+              FilledButton(
+                style: useDestructiveBtn ? ButtonStyles.destructive() : ButtonStyles.customBorderRadius(),
+                onPressed: () => Navigator.of(context).canPop() ? Navigator.of(context).pop(true) : null,
+                child: Text(confirmBtnTxt),
+              ),
+              FilledButton.tonal(
+                style: ButtonStyles.customBorderRadius(),
+                onPressed: () => Navigator.of(context).canPop() ? Navigator.of(context).pop(false) : null,
+                child: const Text('Cancel'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 }

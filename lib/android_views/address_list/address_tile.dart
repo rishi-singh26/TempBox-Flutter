@@ -41,13 +41,15 @@ class AddressTile extends StatelessWidget {
     ));
   }
 
-  _deleteAddress(BuildContext context, BuildContext dataBlocContext, AddressData addressData) {
-    AlertService.getConformationAndroid(
+  _deleteAddress(BuildContext context, BuildContext dataBlocContext, AddressData addressData) async {
+    bool? choice = await AlertService.getConformation(
       context: context,
       title: 'Alert',
       content: 'Are you sure you want to delete this address?',
-      onConfirmation: () => BlocProvider.of<DataBloc>(dataBlocContext).add(DeleteAddressEvent(addressData)),
     );
+    if (choice == true && dataBlocContext.mounted) {
+      BlocProvider.of<DataBloc>(dataBlocContext).add(DeleteAddressEvent(addressData));
+    }
   }
 
   @override

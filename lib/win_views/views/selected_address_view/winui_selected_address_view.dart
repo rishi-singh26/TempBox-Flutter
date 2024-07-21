@@ -81,7 +81,7 @@ class WinuiSelectedAddressView extends StatelessWidget {
                                 onPressed: dataState.selectedAddress == null
                                     ? null
                                     : () async {
-                                        final choice = await AlertService.getConformationWindows<bool>(
+                                        final choice = await AlertService.getConformation<bool>(
                                           context: context,
                                           title: 'Alert',
                                           content: 'Are you sure you want to delete this address?',
@@ -162,7 +162,7 @@ class WinuiSelectedAddressView extends StatelessWidget {
                             onPressed: dataState.selectedMessage == null
                                 ? null
                                 : () async {
-                                    final choice = await AlertService.getConformationWindows<bool>(
+                                    final choice = await AlertService.getConformation<bool>(
                                       context: context,
                                       title: 'Alert',
                                       content: 'Are you sure you want to delete this message?',
