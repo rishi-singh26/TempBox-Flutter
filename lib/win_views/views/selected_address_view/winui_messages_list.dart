@@ -43,7 +43,6 @@ class _WinuiMessagesListState extends State<WinuiMessagesList> {
 
   @override
   Widget build(BuildContext context) {
-    // final typography = FluentTheme.of(context);
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
       if (dataState.selectedAddress == null) {
         return const Center(child: Text('No address selected'));
@@ -85,7 +84,16 @@ class _WinuiMessagesListState extends State<WinuiMessagesList> {
                 _setSelectedIndex(index);
                 BlocProvider.of<DataBloc>(dataBlocContext).add(SelectMessageEvent(message, dataState.selectedAddress!));
               },
-              title: Text(UiService.getMessageFromName(message)),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(UiService.getMessageFromName(message)),
+                  Text(
+                    UiService.formatTimeTo12Hour(message.createdAt),
+                    style: FluentTheme.of(context).typography.caption,
+                  ),
+                ],
+              ),
               subtitle: Text(message.subject),
               leading: !message.seen ? BlankBadge(color: Colors.blue) : null,
             );
