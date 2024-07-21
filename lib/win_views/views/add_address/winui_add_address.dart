@@ -96,7 +96,7 @@ class _WinuiAddAddressState extends State<WinuiAddAddress> {
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
       return ContentDialog(
         constraints: const BoxConstraints(maxWidth: 600),
-        title: const Text('Add Address'),
+        title: const Text('New Address'),
         content: SingleChildScrollView(
           child: ListBody(
             children: <Widget>[

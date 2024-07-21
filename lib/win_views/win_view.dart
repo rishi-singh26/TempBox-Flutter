@@ -123,7 +123,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
                     ),
                   );
                 },
-                title: const Text('Add Address'),
+                title: const Text('New Address'),
               ),
             ],
           ),

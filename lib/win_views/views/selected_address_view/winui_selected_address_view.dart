@@ -1,4 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
@@ -36,20 +37,28 @@ class WinuiSelectedAddressView extends StatelessWidget {
                       overflowBehavior: CommandBarOverflowBehavior.noWrap,
                       primaryItems: [
                         CommandBarBuilderItem(
-                          builder: (context, mode, w) => Tooltip(message: "Address information", child: w),
-                          wrappedItem: CommandBarButton(
-                            icon: const Icon(FluentIcons.info12),
-                            label: const Text('Info'),
-                            onPressed: () {},
+                          builder: (context, mode, w) => DropDownButton(
+                            trailing: const SizedBox.shrink(),
+                            title: const Icon(FluentIcons.more, size: 16),
+                            items: [
+                              MenuFlyoutItem(
+                                leading: const Icon(CupertinoIcons.refresh_thick),
+                                text: const Text('Refresh'),
+                                onPressed: () {},
+                              ),
+                              MenuFlyoutItem(
+                                leading: const Icon(FluentIcons.info12),
+                                text: const Text('Info'),
+                                onPressed: () {},
+                              ),
+                              MenuFlyoutItem(
+                                leading: const Icon(FluentIcons.delete),
+                                text: const Text('Delete'),
+                                onPressed: () {},
+                              ),
+                            ],
                           ),
-                        ),
-                        CommandBarBuilderItem(
-                          builder: (context, mode, w) => Tooltip(message: "Delete address", child: w),
-                          wrappedItem: CommandBarButton(
-                            icon: const Icon(FluentIcons.delete),
-                            label: const Text('Delete'),
-                            onPressed: () {},
-                          ),
+                          wrappedItem: const CommandBarButton(onPressed: null),
                         ),
                       ],
                     ),
