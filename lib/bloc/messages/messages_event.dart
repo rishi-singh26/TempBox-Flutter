@@ -9,7 +9,8 @@ sealed class MessagesEvent extends Equatable {
 
 class GetMessagesEvent extends MessagesEvent {
   final AddressData addressData;
-  const GetMessagesEvent(this.addressData);
+  final bool? resetMessages;
+  const GetMessagesEvent({required this.addressData, this.resetMessages = true});
 
   @override
   List<Object> get props => [addressData];

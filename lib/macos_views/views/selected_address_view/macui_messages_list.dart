@@ -24,7 +24,7 @@ class _MacuiMessagesListState extends State<MacuiMessagesList> {
 
   @override
   void initState() {
-    BlocProvider.of<MessagesBloc>(context).add(GetMessagesEvent(widget.selectedAddress));
+    BlocProvider.of<MessagesBloc>(context).add(GetMessagesEvent(addressData: widget.selectedAddress));
     super.initState();
   }
 

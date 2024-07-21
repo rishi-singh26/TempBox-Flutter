@@ -20,7 +20,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       } else {
         await event.addressData.authenticatedUser.readMessage(event.message.id);
       }
-      add(GetMessagesEvent(event.addressData));
+      add(GetMessagesEvent(addressData: event.addressData));
     });
 
     on<SelectMessageEvent>((SelectMessageEvent event, Emitter<MessagesState> emit) async {

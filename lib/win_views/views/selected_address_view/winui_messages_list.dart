@@ -22,7 +22,7 @@ class _WinuiMessagesListState extends State<WinuiMessagesList> {
 
   @override
   void initState() {
-    BlocProvider.of<MessagesBloc>(context).add(GetMessagesEvent(widget.selectedAddress));
+    BlocProvider.of<MessagesBloc>(context).add(GetMessagesEvent(addressData: widget.selectedAddress));
     super.initState();
   }
 

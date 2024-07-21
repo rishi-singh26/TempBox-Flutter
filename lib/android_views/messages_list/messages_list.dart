@@ -23,7 +23,7 @@ class MessagesList extends StatelessWidget {
           body: SlidableAutoCloseBehavior(
             child: RefreshIndicator(
               onRefresh: () async {
-                BlocProvider.of<MessagesBloc>(messagesBlocContext).add(GetMessagesEvent(dataState.selectedAddress!));
+                BlocProvider.of<MessagesBloc>(messagesBlocContext).add(GetMessagesEvent(addressData: dataState.selectedAddress!));
               },
               child: CustomScrollView(
                 slivers: [
@@ -50,7 +50,7 @@ class MessageList extends StatefulWidget {
 class _MessageListState extends State<MessageList> {
   @override
   void initState() {
-    BlocProvider.of<MessagesBloc>(context).add(GetMessagesEvent(widget.selectedAddress));
+    BlocProvider.of<MessagesBloc>(context).add(GetMessagesEvent(addressData: widget.selectedAddress));
     super.initState();
   }
 
