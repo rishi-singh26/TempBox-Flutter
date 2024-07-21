@@ -32,5 +32,9 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       await event.addressData.authenticatedUser.deleteMessage(event.message.id);
       emit(state.copyWith(messagesList: state.messagesList.where((m) => m.id != event.message.id).toList()));
     });
+
+    on<RemoveMessageSelectionEvent>((RemoveMessageSelectionEvent event, Emitter<MessagesState> emit) async {
+      emit(state.copyWith(setSelectedMessageToNull: true));
+    });
   }
 }

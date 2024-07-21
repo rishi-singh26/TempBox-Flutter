@@ -33,6 +33,13 @@ class SelectMessageEvent extends MessagesEvent {
   List<Object> get props => [message, addressData];
 }
 
+class RemoveMessageSelectionEvent extends MessagesEvent {
+  const RemoveMessageSelectionEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
 class DeleteMessageEvent extends MessagesEvent {
   final AddressData addressData;
   final Message message;

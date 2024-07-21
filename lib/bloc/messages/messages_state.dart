@@ -19,11 +19,16 @@ class MessagesState extends Equatable {
   @override
   List<Object> get props => [messagesList, isMessagesLoading, selectedMessage ?? 'SelectedMessage'];
 
-  MessagesState copyWith({List<Message>? messagesList, bool? isMessagesLoading, Message? selectedMessage}) {
+  MessagesState copyWith({
+    List<Message>? messagesList,
+    bool? isMessagesLoading,
+    Message? selectedMessage,
+    bool? setSelectedMessageToNull,
+  }) {
     return MessagesState(
       messagesList: messagesList ?? this.messagesList,
       isMessagesLoading: isMessagesLoading ?? this.isMessagesLoading,
-      selectedMessage: selectedMessage ?? this.selectedMessage,
+      selectedMessage: setSelectedMessageToNull == true ? selectedMessage : selectedMessage ?? this.selectedMessage,
     );
   }
 }
