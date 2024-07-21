@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
-import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:system_theme/system_theme.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
@@ -17,37 +19,38 @@ class WinApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FluentApp(
-      title: 'TempBox',
-      debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.system,
-      darkTheme: FluentThemeData(
-        brightness: Brightness.dark,
-        visualDensity: VisualDensity.compact,
-        focusTheme: FocusThemeData(glowFactor: is10footScreen(context) ? 2.0 : 0.0),
-      ),
-      theme: FluentThemeData(
-        visualDensity: VisualDensity.compact,
-        focusTheme: FocusThemeData(glowFactor: is10footScreen(context) ? 2.0 : 0.0),
-      ),
-      home: Builder(builder: (context) {
-        Window.setEffect(
-          effect: WindowEffect.acrylic,
-          color: FluentTheme.of(context).acrylicBackgroundColor,
-          dark: FluentTheme.of(context).brightness.isDark,
-        );
-        return Directionality(
-          textDirection: TextDirection.ltr,
-          child: NavigationPaneTheme(
-            data: const NavigationPaneThemeData(backgroundColor: null),
-            child: MultiBlocProvider(providers: [
-              BlocProvider<DataBloc>(create: (BuildContext context) => DataBloc()),
-              BlocProvider<DataBloc>(create: (BuildContext context) => DataBloc()),
-            ], child: const WinuiStarter()),
+    return Builder(builder: (context) {
+      return SystemThemeBuilder(builder: (context, accent) {
+        return FluentApp(
+          title: 'TempBox',
+          debugShowCheckedModeBanner: false,
+          themeMode: ThemeMode.system,
+          darkTheme: FluentThemeData(
+            accentColor: systemAccentColor(accent),
+            brightness: Brightness.dark,
+            visualDensity: VisualDensity.compact,
+            focusTheme: FocusThemeData(glowFactor: is10footScreen(context) ? 2.0 : 0.0),
           ),
+          theme: FluentThemeData(
+            accentColor: systemAccentColor(accent),
+            visualDensity: VisualDensity.compact,
+            focusTheme: FocusThemeData(glowFactor: is10footScreen(context) ? 2.0 : 0.0),
+          ),
+          home: Builder(builder: (context) {
+            return Directionality(
+              textDirection: TextDirection.ltr,
+              child: NavigationPaneTheme(
+                data: const NavigationPaneThemeData(backgroundColor: null),
+                child: MultiBlocProvider(providers: [
+                  BlocProvider<DataBloc>(create: (BuildContext context) => DataBloc()),
+                  BlocProvider<DataBloc>(create: (BuildContext context) => DataBloc()),
+                ], child: const WinuiStarter()),
+              ),
+            );
+          }),
         );
-      }),
-    );
+      });
+    });
   }
 }
 
@@ -159,4 +162,19 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
       debugPrint('Dont let close');
     }
   }
+}
+
+AccentColor systemAccentColor(SystemAccentColor accentColor) {
+  if (Platform.isAndroid || Platform.isWindows) {
+    return AccentColor.swatch({
+      'darkest': accentColor.darkest,
+      'darker': accentColor.darker,
+      'dark': accentColor.dark,
+      'normal': accentColor.accent,
+      'light': accentColor.light,
+      'lighter': accentColor.lighter,
+      'lightest': accentColor.lightest,
+    });
+  }
+  return Colors.blue;
 }

@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:macos_ui/macos_ui.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:system_theme/system_theme.dart';
 import 'package:tempbox/android_views/android_app_view.dart';
 import 'package:tempbox/macos_views/macos_view.dart';
 import 'package:tempbox/win_views/win_view.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:flutter_acrylic/flutter_acrylic.dart';
 
 /// This method initializes macos_window_utils and styles the window.
 Future<void> _configureMacosWindowUtils() async {
@@ -42,8 +42,7 @@ void main() async {
     runApp(const MacOSView());
   } else if (Platform.isWindows) {
     await configureWindowSize(minSize: const Size(1200, 550));
-    //TODO: SystemTheme.accentColor.load();
-    await Window.initialize();
+    SystemTheme.accentColor.load();
     runApp(const WinApp());
   } else {
     runApp(const AndroidAppView());
