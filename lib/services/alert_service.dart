@@ -134,6 +134,9 @@ class AlertService {
     required String title,
     required String content,
     String confirmBtnTxt = 'Yes',
+    String secondaryBtnTxt = 'Cancel',
+    bool truncateContent = false,
+    int truncateContentLength = 100,
     bool useDestructiveBtn = true, // when true the action button style is descrictive
   }) async {
     if (Platform.isMacOS) {
@@ -142,7 +145,11 @@ class AlertService {
         builder: (context) => MacosAlertDialog(
           appIcon: const FlutterLogo(size: 64),
           title: Text(title),
-          message: Text(content, textAlign: TextAlign.center),
+          message: Text(
+            truncateContent && content.length > truncateContentLength ? '${content.substring(0, truncateContentLength - 1)}...' : content,
+            textAlign: TextAlign.center,
+            style: MacosTheme.of(context).typography.caption1,
+          ),
           horizontalActions: false,
           primaryButton: PushButton(
             controlSize: ControlSize.large,
@@ -153,7 +160,7 @@ class AlertService {
             controlSize: ControlSize.large,
             secondary: true,
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(secondaryBtnTxt),
           ),
         ),
       );
@@ -162,11 +169,14 @@ class AlertService {
         context: context,
         builder: (context) => fluent_ui.ContentDialog(
           title: Text(title),
-          content: Text(content),
+          content: Text(
+            truncateContent ? '${content.substring(0, truncateContentLength - 1)}...' : content,
+            style: fluent_ui.FluentTheme.of(context).typography.caption,
+          ),
           actions: [
             fluent_ui.Button(child: Text(confirmBtnTxt), onPressed: () => Navigator.of(context).pop(true)),
             fluent_ui.FilledButton(
-              child: const Text('Cancel'),
+              child: Text(secondaryBtnTxt),
               onPressed: () => Navigator.of(context).pop(false),
             ),
           ],
@@ -182,7 +192,10 @@ class AlertService {
         builder: (context) {
           return CustomAlertDialog(
             title: Text(title, style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)),
-            content: Text(content),
+            content: Text(
+              truncateContent ? '${content.substring(0, truncateContentLength - 1)}...' : content,
+              style: Theme.of(context).textTheme.labelSmall,
+            ),
             actions: [
               FilledButton(
                 style: useDestructiveBtn ? ButtonStyles.destructive() : ButtonStyles.customBorderRadius(),
@@ -192,7 +205,7 @@ class AlertService {
               FilledButton.tonal(
                 style: ButtonStyles.customBorderRadius(),
                 onPressed: () => Navigator.of(context).canPop() ? Navigator.of(context).pop(false) : null,
-                child: const Text('Cancel'),
+                child: Text(secondaryBtnTxt),
               ),
             ],
           );
