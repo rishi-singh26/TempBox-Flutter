@@ -61,6 +61,13 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
                 tooltipMessage: 'Refresh inbox',
               ),
               ToolBarIconButton(
+                icon: const MacosIcon(CupertinoIcons.info_circle),
+                onPressed: () => debugPrint('New Folder...'),
+                label: 'Info',
+                showLabel: false,
+                tooltipMessage: 'Address information',
+              ),
+              ToolBarIconButton(
                 icon: const MacosIcon(CupertinoIcons.trash),
                 onPressed: () => debugPrint('New Folder...'),
                 label: 'Delete',
@@ -70,6 +77,14 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
               if (messagesState.selectedMessage != null) const ToolBarSpacer(),
               if (messagesState.selectedMessage != null) const ToolBarDivider(),
               if (messagesState.selectedMessage != null) const ToolBarSpacer(),
+              if (messagesState.selectedMessage != null)
+                ToolBarIconButton(
+                  icon: const MacosIcon(CupertinoIcons.share),
+                  onPressed: () => debugPrint('Sharing message...'),
+                  label: 'Share',
+                  showLabel: false,
+                  tooltipMessage: 'Share message',
+                ),
               if (messagesState.selectedMessage != null)
                 ToolBarIconButton(
                   icon: const MacosIcon(CupertinoIcons.trash),
