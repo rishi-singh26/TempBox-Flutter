@@ -4,29 +4,29 @@ import 'package:macos_ui/macos_ui.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
+import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/ui_service.dart';
 
-class SidebarView extends StatefulWidget {
+class SidebarView extends StatelessWidget {
   final ScrollController scrollController;
   const SidebarView({super.key, required this.scrollController});
 
-  @override
-  State<SidebarView> createState() => _SidebarViewState();
-}
-
-class _SidebarViewState extends State<SidebarView> {
-  int pageIndex = 0;
+  _getSelectedIndex(AddressData? selected, List<AddressData> addresses) {
+    if (selected == null) {
+      return 0;
+    }
+    return addresses.indexWhere((a) => a.authenticatedUser.account.id == selected.authenticatedUser.account.id);
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
       return SidebarItems(
-        currentIndex: pageIndex,
+        currentIndex: _getSelectedIndex(dataState.selectedAddress, dataState.addressList),
         onChanged: (i) {
-          setState(() => pageIndex = i);
           BlocProvider.of<DataBloc>(dataBlocContext).add(SelectAddressEvent(dataState.addressList[i]));
         },
-        scrollController: widget.scrollController,
+        scrollController: scrollController,
         itemSize: SidebarItemSize.large,
         items: dataState.addressList
             .map((a) => SidebarItem(
