@@ -101,10 +101,20 @@ class _MacuiMessagesListState extends State<MacuiMessagesList> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          if (!message.seen) BlankBadge(color: index == _selectedIndex ? MacosColors.white : MacosColors.systemBlueColor),
-                          if (!message.seen) const SizedBox(width: 7),
-                          Text(UiService.getMessageFromName(message), style: typography.body.copyWith(fontWeight: MacosFontWeight.w510), maxLines: 1),
+                          Row(
+                            children: [
+                              if (!message.seen) BlankBadge(color: index == _selectedIndex ? MacosColors.white : MacosColors.systemBlueColor),
+                              if (!message.seen) const SizedBox(width: 7),
+                              Text(UiService.getMessageFromName(message),
+                                  style: typography.body.copyWith(fontWeight: MacosFontWeight.w510), maxLines: 1),
+                            ],
+                          ),
+                          Text(
+                            UiService.formatTimeTo12Hour(message.createdAt),
+                            style: typography.callout,
+                          ),
                         ],
                       ),
                       Text(message.subject, style: secondaryTypography.callout, maxLines: 2),
