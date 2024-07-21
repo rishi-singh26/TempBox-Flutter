@@ -2,7 +2,7 @@
 # See https://dart.dev/tools/pub/glossary#lockfile
 packages:
   appkit_ui_element_colors:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: appkit_ui_element_colors
       sha256: c3e50f900aae314d339de489535736238627071457c4a4a2dbbb1545b4f04f22
