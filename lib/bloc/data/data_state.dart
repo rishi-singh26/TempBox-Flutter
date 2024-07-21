@@ -17,16 +17,12 @@ class DataState extends Equatable {
 
   Map<String, dynamic> toJson() => {
         'addressList': addressList.map((e) => e.toJson()).toList(),
-        'selectedAddress': selectedAddress == null ? selectedAddress : selectedAddress!.toJson(),
+        'selectedAddress': null,
       };
 
   factory DataState.fromJson(Map<String, dynamic> json) => DataState(
         addressList: (json['addressList'] as List).map((e) => AddressData.fromJson(e)).toList(),
-        selectedAddress: json.containsKey('selectedAddress')
-            ? json['selectedAddress'] == null
-                ? null
-                : AddressData.fromJson(json['selectedAddress'])
-            : null,
+        selectedAddress: null,
       );
 
   @override
