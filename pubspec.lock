@@ -89,6 +89,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.8"
+  cupertino_modal_sheet:
+    dependency: "direct main"
+    description:
+      name: cupertino_modal_sheet
+      sha256: "50cc00a18d01f62172bf1584d5efde1fc7a644db50d40865529dbf8f90c26587"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   dio:
     dependency: transitive
     description:
@@ -485,6 +493,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.2"
+  pull_down_button:
+    dependency: "direct main"
+    description:
+      name: pull_down_button
+      sha256: "48b928203afdeafa4a8be5dc96980523bc8a2ddbd04569f766071a722be22379"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.9.4"
   recase:
     dependency: transitive
     description:

@@ -23,6 +23,8 @@ dependencies:
   fluent_ui: ^4.9.0
   system_theme: ^3.0.0
   file_picker: ^8.0.0+1
+  cupertino_modal_sheet: ^1.1.0
+  pull_down_button: ^0.9.4
 
 dev_dependencies:
   flutter_test:
