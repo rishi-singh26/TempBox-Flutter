@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:fluent_ui/fluent_ui.dart' as fluent_ui;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:macos_ui/macos_ui.dart';
@@ -38,6 +39,17 @@ class AlertService {
           content: Text(content),
           actions: [
             fluent_ui.FilledButton(child: const Text('Ok'), onPressed: () => Navigator.of(context).pop(true)),
+          ],
+        ),
+      );
+    } else if (Platform.isIOS) {
+      return showCupertinoDialog(
+        context: context,
+        builder: (BuildContext context) => CupertinoAlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <CupertinoDialogAction>[
+            CupertinoDialogAction(onPressed: Navigator.of(context).pop, child: const Text('Ok')),
           ],
         ),
       );
@@ -185,6 +197,26 @@ class AlertService {
             fluent_ui.FilledButton(
               child: Text(secondaryBtnTxt),
               onPressed: () => Navigator.of(context).pop(false),
+            ),
+          ],
+        ),
+      );
+    } else if (Platform.isIOS) {
+      return await showCupertinoDialog(
+        context: context,
+        builder: (BuildContext context) => CupertinoAlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <CupertinoDialogAction>[
+            CupertinoDialogAction(
+              isDefaultAction: true,
+              isDestructiveAction: useDestructiveBtn,
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(confirmBtnTxt),
+            ),
+            CupertinoDialogAction(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(secondaryBtnTxt),
             ),
           ],
         ),

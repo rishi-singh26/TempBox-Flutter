@@ -5,11 +5,16 @@ import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/ios_ui/colors.dart';
+import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/ui_service.dart';
 import 'package:tempbox/shared/components/blank_badge.dart';
 
 class IosMessagesList extends StatelessWidget {
   const IosMessagesList({super.key});
+
+  _onRefresh(BuildContext dataBlocContext, AddressData address) async {
+    BlocProvider.of<DataBloc>(dataBlocContext).add(GetMessagesEvent(addressData: address));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,21 +23,14 @@ class IosMessagesList extends StatelessWidget {
       child: BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
         if (dataState.selectedAddress == null) {
           return const CustomScrollView(slivers: [
-            CupertinoSliverNavigationBar(
-              backgroundColor: AppColors.navBarColor,
-              largeTitle: Text('Inbox'),
-            ),
+            CupertinoSliverNavigationBar(backgroundColor: AppColors.navBarColor, largeTitle: Text('Inbox')),
             SliverToBoxAdapter(child: Center(child: Text('Address not selected'))),
           ]);
         }
         List<Message>? messages = dataState.accountIdToAddressesMap[dataState.selectedAddress!.authenticatedUser.account.id];
         if (messages == null || messages.isEmpty) {
           return CustomScrollView(slivers: [
-            CupertinoSliverRefreshControl(
-              onRefresh: () async {
-                BlocProvider.of<DataBloc>(dataBlocContext).add(const LoginToAccountsEvent());
-              },
-            ),
+            CupertinoSliverRefreshControl(onRefresh: () => _onRefresh(dataBlocContext, dataState.selectedAddress!)),
             CupertinoSliverNavigationBar(
               backgroundColor: AppColors.navBarColor,
               largeTitle: Text(dataState.selectedAddress!.addressName),
@@ -41,11 +39,7 @@ class IosMessagesList extends StatelessWidget {
           ]);
         }
         return CustomScrollView(slivers: [
-          CupertinoSliverRefreshControl(
-            onRefresh: () async {
-              BlocProvider.of<DataBloc>(dataBlocContext).add(const LoginToAccountsEvent());
-            },
-          ),
+          CupertinoSliverRefreshControl(onRefresh: () => _onRefresh(dataBlocContext, dataState.selectedAddress!)),
           CupertinoSliverNavigationBar(
             backgroundColor: AppColors.navBarColor,
             largeTitle: Text(dataState.selectedAddress!.addressName),
