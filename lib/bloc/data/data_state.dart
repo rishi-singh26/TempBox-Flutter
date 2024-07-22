@@ -10,12 +10,15 @@ class DataState extends Equatable {
   final bool isMessagesLoading;
   final Message? selectedMessage;
 
+  final Map<String, List<Message>> accountIdToAddressesMap; // map of account id to list of messages
+
   const DataState({
     required this.addressList,
     required this.selectedAddress,
     required this.messagesList,
     required this.isMessagesLoading,
     required this.selectedMessage,
+    required this.accountIdToAddressesMap,
   });
 
   DataState.initial()
@@ -23,7 +26,8 @@ class DataState extends Equatable {
         selectedAddress = null,
         messagesList = [],
         isMessagesLoading = true,
-        selectedMessage = null;
+        selectedMessage = null,
+        accountIdToAddressesMap = {};
 
   Map<String, dynamic> toJson() => {
         'addressList': addressList.map((e) => e.toJson()).toList(),
@@ -31,6 +35,9 @@ class DataState extends Equatable {
         'messagesList': [],
         'isMessagesLoading': true,
         'selectedMessage': null,
+        'accountIdToAddressesMap': accountIdToAddressesMap.map(
+          (key, value) => MapEntry(key, value.map((e) => e.toJson()).toList()),
+        ),
       };
 
   factory DataState.fromJson(Map<String, dynamic> json) => DataState(
@@ -39,11 +46,20 @@ class DataState extends Equatable {
         messagesList: const [],
         isMessagesLoading: true,
         selectedMessage: null,
+        accountIdToAddressesMap: (json['accountIdToAddressesMap'] as Map<String, dynamic>).map(
+          (key, value) => MapEntry(key, (value as List).map((e) => Message.fromJson(e)).toList()),
+        ),
       );
 
   @override
-  List<Object> get props =>
-      [addressList, selectedAddress ?? 'selectedAddress', messagesList, isMessagesLoading, selectedMessage ?? 'SelectedMessage'];
+  List<Object> get props => [
+        addressList,
+        selectedAddress ?? 'selectedAddress',
+        messagesList,
+        isMessagesLoading,
+        selectedMessage ?? 'SelectedMessage',
+        accountIdToAddressesMap
+      ];
 
   copyWith({
     List<AddressData>? addressList,
@@ -53,6 +69,7 @@ class DataState extends Equatable {
     bool? isMessagesLoading,
     Message? selectedMessage,
     bool? setSelectedMessageToNull,
+    Map<String, List<Message>>? accountIdToAddressesMap,
   }) {
     return DataState(
       addressList: addressList ?? this.addressList,
@@ -60,6 +77,7 @@ class DataState extends Equatable {
       messagesList: messagesList ?? this.messagesList,
       isMessagesLoading: isMessagesLoading ?? this.isMessagesLoading,
       selectedMessage: setSelectedMessageToNull == true ? null : selectedMessage ?? this.selectedMessage,
+      accountIdToAddressesMap: accountIdToAddressesMap ?? this.accountIdToAddressesMap,
     );
   }
 }

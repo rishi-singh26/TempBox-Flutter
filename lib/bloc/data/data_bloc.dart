@@ -14,15 +14,18 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
     on<LoginToAccountsEvent>((LoginToAccountsEvent event, Emitter<DataState> emit) async {
       try {
         List<AddressData> updateAddressList = [];
+        Map<String, List<Message>> accountIdToAddressesMap = {};
         for (var address in state.addressList) {
           AuthenticatedUser? loggedInUser = await MailTm.login(address: address.authenticatedUser.account.address, password: address.password);
           if (loggedInUser == null) {
             updateAddressList.add(address.copyWith(isActive: false));
           } else {
+            final messages = await loggedInUser.messagesAt(1);
+            accountIdToAddressesMap[loggedInUser.account.id] = messages;
             updateAddressList.add(address);
           }
         }
-        emit(state.copyWith(addressList: updateAddressList));
+        emit(state.copyWith(addressList: updateAddressList, accountIdToAddressesMap: accountIdToAddressesMap));
       } catch (e) {
         debugPrint(e.toString());
       }
@@ -33,6 +36,7 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
         return;
       }
       emit(state.copyWith(selectedAddress: event.addressData, setSelectedMessageToNull: true));
+      add(GetMessagesEvent(addressData: event.addressData));
     });
 
     on<DeleteAddressEvent>((DeleteAddressEvent event, Emitter<DataState> emit) async {
@@ -96,15 +100,40 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
     on<ImportAddresses>((ImportAddresses event, Emitter<DataState> emit) async {
       try {
         List<AddressData> loggedInAddresses = [];
+        Map<String, List<Message>> accountIdToAddressesMap = {};
         for (var address in event.addresses) {
           AuthenticatedUser? user = await MailTm.login(address: address.authenticatedUser.account.address, password: address.password);
+          if (user == null) {
+            loggedInAddresses.add(address.copyWith(isActive: false));
+          } else {
+            final messages = await user.messagesAt(1);
+            accountIdToAddressesMap[user.account.id] = messages;
+            address.copyWith(authenticatedUser: user);
+          }
           loggedInAddresses.add(user != null ? address.copyWith(authenticatedUser: user) : address.copyWith(isActive: false));
         }
-        emit(state.copyWith(addressList: [...state.addressList, ...loggedInAddresses]));
+        emit(state.copyWith(
+            addressList: [...state.addressList, ...loggedInAddresses],
+            accountIdToAddressesMap: _mergeMaps(state.accountIdToAddressesMap, accountIdToAddressesMap)));
       } catch (e) {
         debugPrint(e.toString());
       }
     });
+  }
+
+  Map<String, List<Message>> _mergeMaps(Map<String, List<Message>> map1, Map<String, List<Message>> map2) {
+    final result = <String, List<Message>>{};
+    map1.forEach((key, value) {
+      result[key] = List<Message>.from(value);
+    });
+    map2.forEach((key, value) {
+      if (result.containsKey(key)) {
+        result[key]!.addAll(value);
+      } else {
+        result[key] = List<Message>.from(value);
+      }
+    });
+    return result;
   }
 
   @override
