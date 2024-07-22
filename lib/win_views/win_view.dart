@@ -184,13 +184,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
               message: 'Share message',
               child: IconButton(
                 icon: const Icon(FluentIcons.share, size: 20),
-                onPressed: dataState.selectedMessage == null
-                    ? null
-                    : () => BlocProvider.of<DataBloc>(dataBlocContext).add(ToggleMessageReadUnread(
-                          addressData: dataState.selectedAddress!,
-                          message: dataState.selectedMessage!,
-                          resetMessages: false,
-                        )),
+                onPressed: dataState.selectedMessage == null ? null : () {},
               ),
             ),
             const SizedBox(width: 10),
@@ -200,11 +194,20 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
                 icon: const Icon(CupertinoIcons.trash, size: 20),
                 onPressed: dataState.selectedMessage == null
                     ? null
-                    : () => BlocProvider.of<DataBloc>(dataBlocContext).add(ToggleMessageReadUnread(
-                          addressData: dataState.selectedAddress!,
-                          message: dataState.selectedMessage!,
-                          resetMessages: false,
-                        )),
+                    : () async {
+                        final choice = await AlertService.getConformation<bool>(
+                          context: context,
+                          title: 'Alert',
+                          content: 'Are you sure you want to delete this message?',
+                        );
+                        if (choice == true && context.mounted) {
+                          BlocProvider.of<DataBloc>(dataBlocContext).add(DeleteMessageEvent(
+                            addressData: dataState.selectedAddress!,
+                            message: dataState.selectedMessage!,
+                            resetMessages: false,
+                          ));
+                        }
+                      },
               ),
             ),
             const SizedBox(width: 10),
