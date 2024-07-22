@@ -39,10 +39,11 @@ class _WinuiImportState extends State<WinuiImport> {
 
   List<int> _getAlredyAvailableAddressesIndices(List<AddressData> addressList) {
     List<int> alredyAvailableAddressesIndices = [];
-    for (var i = 0; i < addressList.length; i++) {
-      AddressData address = addressList[i];
-      AddressData? alredyAvailableAddress =
-          addressList.where((a) => a.addressName == address.addressName && a.password == address.password).firstOrNull;
+    for (var i = 0; i < widget.addresses.length; i++) {
+      AddressData address = widget.addresses[i];
+      AddressData? alredyAvailableAddress = addressList
+          .where((a) => a.authenticatedUser.account.address == address.authenticatedUser.account.address && a.password == address.password)
+          .firstOrNull;
       if (alredyAvailableAddress != null) {
         alredyAvailableAddressesIndices.add(i);
       }

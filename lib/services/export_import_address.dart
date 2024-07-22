@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/crypto_service.dart';
 import 'package:tempbox/services/fs_service.dart';
@@ -31,11 +30,11 @@ class _ExportVersionOne {
 class ExportImportAddress {
   static Future<bool?> exportAddreses(List<AddressData> addresses) async {
     try {
-      await FSService.saveStringToFile(
+      SaveFileResp saveFileResp = await FSService.saveStringToFile(
         CryptoService.textToBase64(json.encode(_ExportVersionOne(exportDate: DateTime.now(), addresses: addresses).toJson())),
         'TempBoxExport-${UiService.dateToUIString(DateTime.now())}.txt',
       );
-      return true;
+      return saveFileResp.status;
     } catch (e) {
       return null;
     }

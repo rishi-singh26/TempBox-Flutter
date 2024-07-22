@@ -20,9 +20,10 @@ class MessagesList extends StatelessWidget {
       }
       return Scaffold(
         body: SlidableAutoCloseBehavior(
-          child: RefreshIndicator(
+          child: RefreshIndicator.adaptive(
+            edgeOffset: 60,
             onRefresh: () async {
-              BlocProvider.of<DataBloc>(dataBlocContext).add(GetMessagesEvent(addressData: dataState.selectedAddress!));
+              BlocProvider.of<DataBloc>(dataBlocContext).add(GetMessagesEvent(addressData: dataState.selectedAddress!, resetMessages: false));
             },
             child: CustomScrollView(
               slivers: [
@@ -56,7 +57,7 @@ class _MessageListState extends State<MessageList> {
   Widget build(BuildContext context) {
     return BlocBuilder<DataBloc, DataState>(builder: (context, dataState) {
       if (dataState.isMessagesLoading) {
-        return const SliverToBoxAdapter(child: CircularProgressIndicator.adaptive());
+        return const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator.adaptive()));
       }
       return SliverList.separated(
         itemCount: dataState.messagesList.length,

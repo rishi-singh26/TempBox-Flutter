@@ -99,19 +99,22 @@ class _AddressInfoState extends State<AddressInfo> {
                   ),
                   ListTile(
                     contentPadding: const EdgeInsets.only(left: 15, right: 5),
-                    title: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Text('Password:', style: TextStyle(fontWeight: FontWeight.bold)),
-                        hGap(10),
-                        SizedBox(
-                          width: screenSize.width - 220,
-                          child: ImageFiltered(
-                            imageFilter: ImageFilter.blur(sigmaX: showPassword ? 0 : 5, sigmaY: showPassword ? 0 : 5),
-                            child: Text(widget.addressData.password.trim()),
+                    title: GestureDetector(
+                      onTap: () => setState(() => showPassword = !showPassword),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Text('Password:', style: TextStyle(fontWeight: FontWeight.bold)),
+                          hGap(10),
+                          SizedBox(
+                            width: screenSize.width - 220,
+                            child: ImageFiltered(
+                              imageFilter: ImageFilter.blur(sigmaX: showPassword ? 0 : 5, sigmaY: showPassword ? 0 : 5),
+                              child: Text(widget.addressData.password.trim()),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     // dense: true,
                     visualDensity: VisualDensity.compact,
@@ -119,7 +122,6 @@ class _AddressInfoState extends State<AddressInfo> {
                       onPressed: () => UiService.copyToClipboard(widget.addressData.password),
                       icon: Icon(CupertinoIcons.doc_on_doc, color: theme.buttonTheme.colorScheme?.primary ?? Colors.red),
                     ),
-                    onTap: () => setState(() => showPassword = !showPassword),
                   ),
                 ]),
               ),
