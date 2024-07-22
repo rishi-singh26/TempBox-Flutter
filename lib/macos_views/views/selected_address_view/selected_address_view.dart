@@ -196,10 +196,7 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
               if (dataState.selectedAddress == null) {
                 return const SizedBox();
               }
-              return MacuiMessagesList(
-                selectedAddress: dataState.selectedAddress!,
-                key: Key(dataState.selectedAddress!.authenticatedUser.account.id),
-              );
+              return MacuiMessagesList(key: Key(dataState.selectedAddress!.authenticatedUser.account.id));
             },
           ),
           ContentArea(

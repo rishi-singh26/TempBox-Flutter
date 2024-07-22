@@ -26,7 +26,7 @@ class WinuiSelectedAddressView extends StatelessWidget {
                   if (dataState.selectedAddress == null) {
                     return const Center(child: Text('No Address Selected'));
                   }
-                  return WinuiMessagesList(selectedAddress: dataState.selectedAddress!);
+                  return const WinuiMessagesList();
                 }),
               );
             }),

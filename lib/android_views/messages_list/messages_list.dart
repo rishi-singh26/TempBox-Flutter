@@ -5,7 +5,6 @@ import 'package:mailtm_client/mailtm_client.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
-import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/ui_service.dart';
 import 'package:tempbox/android_views/messages_list/message_tile.dart';
 
@@ -28,7 +27,7 @@ class MessagesList extends StatelessWidget {
             child: CustomScrollView(
               slivers: [
                 SliverAppBar.large(title: Text(UiService.getAccountName(dataState.selectedAddress!))),
-                MessageList(selectedAddress: dataState.selectedAddress!),
+                const MessageList(),
               ],
             ),
           ),
@@ -38,20 +37,8 @@ class MessagesList extends StatelessWidget {
   }
 }
 
-class MessageList extends StatefulWidget {
-  final AddressData selectedAddress;
-  const MessageList({super.key, required this.selectedAddress});
-
-  @override
-  State<MessageList> createState() => _MessageListState();
-}
-
-class _MessageListState extends State<MessageList> {
-  @override
-  void initState() {
-    BlocProvider.of<DataBloc>(context).add(GetMessagesEvent(addressData: widget.selectedAddress));
-    super.initState();
-  }
+class MessageList extends StatelessWidget {
+  const MessageList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -59,11 +46,14 @@ class _MessageListState extends State<MessageList> {
       if (dataState.isMessagesLoading) {
         return const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator.adaptive()));
       }
+      if (dataState.selectedAddress == null) {
+        return const SliverToBoxAdapter(child: Center(child: Text('Address not selected')));
+      }
       return SliverList.separated(
         itemCount: dataState.messagesList.length,
         itemBuilder: (context, index) {
           Message message = dataState.messagesList[index];
-          return MessageTile(message: message, selectedAddress: widget.selectedAddress);
+          return MessageTile(message: message, selectedAddress: dataState.selectedAddress!);
         },
         separatorBuilder: (context, index) => const Divider(indent: 20, height: 1),
       );

@@ -5,13 +5,11 @@ import 'package:mailtm_client/mailtm_client.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
-import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/ui_service.dart';
 import 'package:tempbox/shared/components/blank_badge.dart';
 
 class WinuiMessagesList extends StatefulWidget {
-  final AddressData selectedAddress;
-  const WinuiMessagesList({super.key, required this.selectedAddress});
+  const WinuiMessagesList({super.key});
 
   @override
   State<WinuiMessagesList> createState() => _WinuiMessagesListState();
@@ -20,12 +18,6 @@ class WinuiMessagesList extends StatefulWidget {
 class _WinuiMessagesListState extends State<WinuiMessagesList> {
   final FocusNode _focusNode = FocusNode();
   int _selectedIndex = -1;
-
-  @override
-  void initState() {
-    BlocProvider.of<DataBloc>(context).add(GetMessagesEvent(addressData: widget.selectedAddress));
-    super.initState();
-  }
 
   void _setSelectedIndex(int newIndex) {
     _selectedIndex = newIndex;

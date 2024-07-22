@@ -7,13 +7,11 @@ import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/macos_views/provide_color.dart';
-import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/ui_service.dart';
 import 'package:tempbox/shared/components/blank_badge.dart';
 
 class MacuiMessagesList extends StatefulWidget {
-  final AddressData selectedAddress;
-  const MacuiMessagesList({super.key, required this.selectedAddress});
+  const MacuiMessagesList({super.key});
 
   @override
   State<MacuiMessagesList> createState() => _MacuiMessagesListState();
@@ -22,12 +20,6 @@ class MacuiMessagesList extends StatefulWidget {
 class _MacuiMessagesListState extends State<MacuiMessagesList> {
   final FocusNode _focusNode = FocusNode();
   int _selectedIndex = 0;
-
-  @override
-  void initState() {
-    BlocProvider.of<DataBloc>(context).add(GetMessagesEvent(addressData: widget.selectedAddress));
-    super.initState();
-  }
 
   void _setSelectedIndex(int newIndex) {
     _selectedIndex = newIndex;
