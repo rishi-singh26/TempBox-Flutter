@@ -97,7 +97,7 @@ class MacOsHome extends StatelessWidget {
                         ..onTap = () async {
                           bool? choice = await AlertService.getConformation(
                             context: context,
-                            title: 'Do you wnat to continue?',
+                            title: 'Do you want to continue?',
                             content: 'This will open mail.tm website.',
                           );
                           if (choice == true) {

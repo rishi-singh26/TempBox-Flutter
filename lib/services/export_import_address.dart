@@ -6,7 +6,7 @@ import 'package:tempbox/services/fs_service.dart';
 import 'package:tempbox/services/ui_service.dart';
 
 class _ExportVersionOne {
-  final String version = '1';
+  final String version = '1.0.0';
   final DateTime exportDate;
   final List<AddressData> addresses;
 

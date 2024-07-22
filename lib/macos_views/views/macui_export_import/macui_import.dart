@@ -57,7 +57,6 @@ class _MacuiImportState extends State<MacuiImport> {
     final theme = MacosTheme.of(context);
     SizedBox vGap(double size) => SizedBox(height: size);
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
-      List<int> alredyAvailableAddressesIndices = _getAlredyAvailableAddressesIndices(dataState.addressList);
       return LayoutBuilder(builder: (context, constraints) {
         return MacosSheet(
           insetPadding: EdgeInsets.symmetric(
@@ -84,6 +83,7 @@ class _MacuiImportState extends State<MacuiImport> {
                 ]),
               );
             }
+            List<int> alredyAvailableAddressesIndices = _getAlredyAvailableAddressesIndices(dataState.addressList);
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Column(

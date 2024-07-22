@@ -10,11 +10,13 @@ import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/alert_service.dart';
+import 'package:tempbox/services/export_import_address.dart';
 import 'package:tempbox/services/ui_service.dart';
 import 'package:tempbox/win_views/views/add_address/winui_add_address.dart';
 import 'package:tempbox/win_views/views/selected_address_view/winui_selected_address_view.dart';
 import 'package:tempbox/win_views/views/winui_address_info/winui_address_info.dart';
 import 'package:tempbox/win_views/views/winui_import_export/winui_export.dart';
+import 'package:tempbox/win_views/views/winui_import_export/winui_import.dart';
 import 'package:tempbox/win_views/window_buttons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:window_manager/window_manager.dart';
@@ -103,6 +105,19 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
   int? _getSelectedIndex(AddressData selected, List<AddressData> addresses) {
     final index = addresses.indexWhere((a) => a.authenticatedUser.account.id == selected.authenticatedUser.account.id);
     return index >= 0 ? index : null;
+  }
+
+  _importAddresses(BuildContext context, BuildContext dataBlocContext) async {
+    List<AddressData>? addresses = await ExportImportAddress.importAddreses();
+    if (context.mounted && addresses != null) {
+      showDialog(
+        context: context,
+        builder: (_) => BlocProvider.value(
+          value: BlocProvider.of<DataBloc>(dataBlocContext),
+          child: WinuiImport(addresses: addresses),
+        ),
+      );
+    }
   }
 
   _exportAddresses(BuildContext context, BuildContext dataBlocContext) async {
@@ -225,16 +240,16 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
             const Divider(direction: Axis.vertical),
             const SizedBox(width: 10),
             Tooltip(
-              message: 'Import messages',
+              message: 'Import addresses',
               child: IconButton(
                 icon: const Icon(FluentIcons.import, size: 20),
-                onPressed: () {},
+                onPressed: () => _importAddresses(context, dataBlocContext),
               ),
             ),
             if (dataState.addressList.isNotEmpty) const SizedBox(width: 10),
             if (dataState.addressList.isNotEmpty)
               Tooltip(
-                message: 'Export messages',
+                message: 'Export addresses',
                 child: IconButton(
                   icon: const Icon(FluentIcons.export, size: 20),
                   onPressed: () => _exportAddresses(context, dataBlocContext),
@@ -297,7 +312,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
                           ..onTap = () async {
                             bool? choice = await AlertService.getConformation(
                               context: context,
-                              title: 'Do you wnat to continue?',
+                              title: 'Do you want to continue?',
                               content: 'This will open mail.tm website.',
                             );
                             if (choice == true) {

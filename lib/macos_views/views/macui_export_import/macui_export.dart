@@ -124,10 +124,12 @@ class _MacuiExportState extends State<MacuiExport> {
                       PushButton(controlSize: ControlSize.regular, onPressed: Navigator.of(context).pop, secondary: true, child: const Text('Close')),
                       PushButton(
                           controlSize: ControlSize.regular,
-                          onPressed: () async {
-                            await exportAddresses(dataState.addressList, context);
-                            context.mounted ? Navigator.of(context).pop() : null;
-                          },
+                          onPressed: selectedAddressIndices.isEmpty
+                              ? null
+                              : () async {
+                                  await exportAddresses(dataState.addressList, context);
+                                  context.mounted ? Navigator.of(context).pop() : null;
+                                },
                           child: const Text('Export')),
                     ],
                   ),
