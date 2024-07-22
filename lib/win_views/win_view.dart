@@ -14,6 +14,7 @@ import 'package:tempbox/services/ui_service.dart';
 import 'package:tempbox/win_views/views/add_address/winui_add_address.dart';
 import 'package:tempbox/win_views/views/selected_address_view/winui_selected_address_view.dart';
 import 'package:tempbox/win_views/views/winui_address_info/winui_address_info.dart';
+import 'package:tempbox/win_views/views/winui_import_export/winui_export.dart';
 import 'package:tempbox/win_views/window_buttons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:window_manager/window_manager.dart';
@@ -102,6 +103,16 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
   int? _getSelectedIndex(AddressData selected, List<AddressData> addresses) {
     final index = addresses.indexWhere((a) => a.authenticatedUser.account.id == selected.authenticatedUser.account.id);
     return index >= 0 ? index : null;
+  }
+
+  _exportAddresses(BuildContext context, BuildContext dataBlocContext) async {
+    showDialog(
+      context: context,
+      builder: (_) => BlocProvider.value(
+        value: BlocProvider.of<DataBloc>(dataBlocContext),
+        child: const WinuiExport(),
+      ),
+    );
   }
 
   @override
@@ -213,15 +224,34 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
             const SizedBox(width: 10),
             const Divider(direction: Axis.vertical),
             const SizedBox(width: 10),
+            Tooltip(
+              message: 'Import messages',
+              child: IconButton(
+                icon: const Icon(FluentIcons.import, size: 20),
+                onPressed: () {},
+              ),
+            ),
+            if (dataState.addressList.isNotEmpty) const SizedBox(width: 10),
+            if (dataState.addressList.isNotEmpty)
+              Tooltip(
+                message: 'Export messages',
+                child: IconButton(
+                  icon: const Icon(FluentIcons.export, size: 20),
+                  onPressed: () => _exportAddresses(context, dataBlocContext),
+                ),
+              ),
+            const SizedBox(width: 10),
+            const Divider(direction: Axis.vertical),
+            const SizedBox(width: 10),
             const WindowButtons(),
           ]),
         ),
         pane: NavigationPane(
           header: Card(
-            margin: const EdgeInsets.only(right: 7),
+            margin: const EdgeInsets.only(right: 15, left: 8, bottom: 15),
             padding: EdgeInsets.zero,
             child: ListTile(
-              title: const Text('New Address'),
+              title: Text('New Address', style: FluentTheme.of(context).typography.body),
               trailing: const Icon(CupertinoIcons.add_circled_solid),
               onPressed: () async {
                 await showDialog(
