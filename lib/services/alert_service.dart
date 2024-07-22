@@ -14,7 +14,6 @@ class AlertService {
     required BuildContext context,
     required String title,
     required String content,
-    List<Widget> actions = const [],
   }) async {
     if (Platform.isMacOS) {
       return await showMacosAlertDialog<T>(
@@ -37,7 +36,9 @@ class AlertService {
         builder: (context) => fluent_ui.ContentDialog(
           title: Text(title),
           content: Text(content),
-          actions: [fluent_ui.FilledButton(child: const Text('Ok'), onPressed: () => Navigator.of(context).pop(true))],
+          actions: [
+            fluent_ui.FilledButton(child: const Text('Ok'), onPressed: () => Navigator.of(context).pop(true)),
+          ],
         ),
       );
     } else {
@@ -54,7 +55,13 @@ class AlertService {
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             content: Text(content),
-            actions: actions,
+            actions: [
+              FilledButton.tonal(
+                style: ButtonStyles.customBorderRadius(),
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Ok'),
+              ),
+            ],
           );
         },
       );

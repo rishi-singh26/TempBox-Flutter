@@ -13,22 +13,19 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
 
     on<LoginToAccountsEvent>((LoginToAccountsEvent event, Emitter<DataState> emit) async {
       try {
+        List<AddressData> updateAddressList = [];
         for (var address in state.addressList) {
-          await MailTm.login(address: address.authenticatedUser.account.address, password: address.password);
+          AuthenticatedUser? loggedInUser = await MailTm.login(address: address.authenticatedUser.account.address, password: address.password);
+          if (loggedInUser == null) {
+            updateAddressList.add(address.copyWith(isActive: false));
+          } else {
+            updateAddressList.add(address);
+          }
         }
+        emit(state.copyWith(addressList: updateAddressList));
       } catch (e) {
         debugPrint(e.toString());
       }
-      // List<AddressData> updateAddressList = [];
-      // for (var address in state.addressList) {
-      //   AuthenticatedUser? loggedInUser = await MailTm.login(address: address.authenticatedUser.account.address, password: address.password);
-      //   if (loggedInUser == null) {
-      //     updateAddressList.add(address.copyWith(isActive: false));
-      //   } else {
-      //     updateAddressList.add(address);
-      //   }
-      // }
-      // emit(state.copyWith(addressList: updateAddressList));
     });
 
     on<SelectAddressEvent>((SelectAddressEvent event, Emitter<DataState> emit) {
@@ -41,7 +38,7 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
     on<DeleteAddressEvent>((DeleteAddressEvent event, Emitter<DataState> emit) async {
       List<AddressData> addresses =
           state.addressList.where((a) => a.authenticatedUser.account.id != event.addressData.authenticatedUser.account.id).toList();
-      await event.addressData.authenticatedUser.delete();
+      // await event.addressData.authenticatedUser.delete();
       if (state.selectedAddress != null) {
         AddressData? selectedAddress =
             addresses.where((a) => a.authenticatedUser.account.id == state.selectedAddress!.authenticatedUser.account.id).firstOrNull;
@@ -94,6 +91,19 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
         }
       }
       emit(state.copyWith(messagesList: messages));
+    });
+
+    on<ImportAddresses>((ImportAddresses event, Emitter<DataState> emit) async {
+      try {
+        List<AddressData> loggedInAddresses = [];
+        for (var address in event.addresses) {
+          AuthenticatedUser? user = await MailTm.login(address: address.authenticatedUser.account.address, password: address.password);
+          loggedInAddresses.add(user != null ? address.copyWith(authenticatedUser: user) : address.copyWith(isActive: false));
+        }
+        emit(state.copyWith(addressList: [...state.addressList, ...loggedInAddresses]));
+      } catch (e) {
+        debugPrint(e.toString());
+      }
     });
   }
 

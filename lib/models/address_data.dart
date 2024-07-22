@@ -28,10 +28,10 @@ class AddressData extends Equatable {
         password: json['password'],
       );
 
-  AddressData copyWith({bool? isActive}) {
+  AddressData copyWith({bool? isActive, AuthenticatedUser? authenticatedUser}) {
     return AddressData(
       addressName: addressName,
-      authenticatedUser: authenticatedUser,
+      authenticatedUser: authenticatedUser ?? this.authenticatedUser,
       isActive: isActive ?? this.isActive,
       password: password,
     );
