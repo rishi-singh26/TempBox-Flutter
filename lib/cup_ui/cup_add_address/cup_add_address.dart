@@ -115,7 +115,7 @@ class _CupAddAddressState extends State<CupAddAddress> {
                         height: 20,
                         child: CupertinoActivityIndicator(),
                       )
-                    : const Text('Done'),
+                    : const Text('Done', style: TextStyle(fontWeight: FontWeight.bold)),
               ),
             ),
             SliverList.list(
