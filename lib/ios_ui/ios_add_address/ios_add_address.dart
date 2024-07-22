@@ -5,18 +5,18 @@ import 'package:pull_down_button/pull_down_button.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
-import 'package:tempbox/cup_ui/colors.dart';
+import 'package:tempbox/ios_ui/colors.dart';
 import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/ui_service.dart';
 
-class CupAddAddress extends StatefulWidget {
-  const CupAddAddress({super.key});
+class IosAddAddress extends StatefulWidget {
+  const IosAddAddress({super.key});
 
   @override
-  State<CupAddAddress> createState() => _CupAddAddressState();
+  State<IosAddAddress> createState() => _IosAddAddressState();
 }
 
-class _CupAddAddressState extends State<CupAddAddress> {
+class _IosAddAddressState extends State<IosAddAddress> {
   bool showSpinner = false;
   Domain? selectedDomain;
   List<Domain> domainsList = [];

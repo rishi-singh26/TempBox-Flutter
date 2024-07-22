@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
-class CupMessagesList extends StatelessWidget {
-  const CupMessagesList({super.key});
+class IosMessagesList extends StatelessWidget {
+  const IosMessagesList({super.key});
 
   @override
   Widget build(BuildContext context) {

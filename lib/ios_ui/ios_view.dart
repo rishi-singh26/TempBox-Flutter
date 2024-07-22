@@ -4,12 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
-import 'package:tempbox/cup_ui/cup_addresses_list/cup_addresses_list.dart';
+import 'package:tempbox/ios_ui/ios_addresses_list/ios_addresses_list.dart';
 
 const String title = 'TempBox';
 
-class CupView extends StatelessWidget {
-  const CupView({super.key});
+class IosView extends StatelessWidget {
+  const IosView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,14 +24,14 @@ class CupView extends StatelessWidget {
       theme: const CupertinoThemeData(primaryColor: Color(0xFFBA1F33)),
       home: MultiBlocProvider(
         providers: [BlocProvider<DataBloc>(create: (BuildContext context) => DataBloc())],
-        child: const CupUIStarter(),
+        child: const IosStarter(),
       ),
     );
   }
 }
 
-class CupUIStarter extends StatelessWidget {
-  const CupUIStarter({super.key});
+class IosStarter extends StatelessWidget {
+  const IosStarter({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +39,7 @@ class CupUIStarter extends StatelessWidget {
       buildWhen: (previous, current) => false,
       builder: (dataBlocContext, dataState) {
         BlocProvider.of<DataBloc>(dataBlocContext).add(const LoginToAccountsEvent());
-        return const CupAddressesList();
+        return const IosAddressesList();
       },
     );
   }

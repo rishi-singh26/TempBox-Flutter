@@ -3,21 +3,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
-import 'package:tempbox/cup_ui/colors.dart';
-import 'package:tempbox/cup_ui/cup_addresses_list/bottom_bar.dart';
-import 'package:tempbox/cup_ui/cup_messages_list/cup_messages_list.dart';
+import 'package:tempbox/ios_ui/colors.dart';
+import 'package:tempbox/ios_ui/ios_addresses_list/bottom_bar.dart';
+import 'package:tempbox/ios_ui/ios_messages_list/ios_messages_list.dart';
 import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/ui_service.dart';
 
-class CupAddressesList extends StatelessWidget {
-  const CupAddressesList({super.key});
+class IosAddressesList extends StatelessWidget {
+  const IosAddressesList({super.key});
 
   _navigateToMessagesList(BuildContext context, BuildContext dataBlocContext, AddressData addressData) {
     BlocProvider.of<DataBloc>(dataBlocContext).add(SelectAddressEvent(addressData));
     Navigator.of(context).push(CupertinoPageRoute(
       builder: (context) => BlocProvider.value(
         value: BlocProvider.of<DataBloc>(dataBlocContext),
-        child: const CupMessagesList(),
+        child: const IosMessagesList(),
       ),
     ));
   }

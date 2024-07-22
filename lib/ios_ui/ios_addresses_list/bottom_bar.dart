@@ -6,8 +6,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
-import 'package:tempbox/cup_ui/blurred_container.dart';
-import 'package:tempbox/cup_ui/cup_add_address/cup_add_address.dart';
+import 'package:tempbox/ios_ui/blurred_container.dart';
+import 'package:tempbox/ios_ui/ios_add_address/ios_add_address.dart';
 import 'package:tempbox/services/alert_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -45,7 +45,7 @@ class BottomBar extends StatelessWidget {
                     onPressed: () {
                       showCupertinoModalSheet(
                         context: context,
-                        builder: (context) => BlocProvider.value(value: BlocProvider.of<DataBloc>(dataBlocContext), child: const CupAddAddress()),
+                        builder: (context) => BlocProvider.value(value: BlocProvider.of<DataBloc>(dataBlocContext), child: const IosAddAddress()),
                       );
                     },
                   ),
