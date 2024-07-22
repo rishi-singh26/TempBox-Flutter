@@ -33,9 +33,6 @@ class IosAddressesList extends StatelessWidget {
             CustomScrollView(
               slivers: [
                 CupertinoSliverRefreshControl(
-                  // builder: (context, refreshState, pulledExtent, refreshTriggerPullDistance, refreshIndicatorExtent) {
-                  //   return Text(pulledExtent.toString());
-                  // },
                   onRefresh: () async {
                     BlocProvider.of<DataBloc>(dataBlocContext).add(const LoginToAccountsEvent());
                   },
