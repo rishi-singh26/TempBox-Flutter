@@ -40,61 +40,76 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
     });
 
     on<DeleteAddressEvent>((DeleteAddressEvent event, Emitter<DataState> emit) async {
-      List<AddressData> addresses =
-          state.addressList.where((a) => a.authenticatedUser.account.id != event.addressData.authenticatedUser.account.id).toList();
-      await event.addressData.authenticatedUser.delete();
-      if (state.selectedAddress != null) {
-        AddressData? selectedAddress =
-            addresses.where((a) => a.authenticatedUser.account.id == state.selectedAddress!.authenticatedUser.account.id).firstOrNull;
-        if (selectedAddress == null) {
-          emit(state.copyWith(addressList: addresses, setSelectedAddressToNull: true));
-          return;
-        }
+      try {
+        List<AddressData> addresses =
+            state.addressList.where((a) => a.authenticatedUser.account.id != event.addressData.authenticatedUser.account.id).toList();
+        await event.addressData.authenticatedUser.delete();
+        emit(state.copyWith(
+          addressList: addresses,
+          setSelectedAddressToNull:
+              state.selectedAddress != null && state.selectedAddress!.authenticatedUser.account.id == event.addressData.authenticatedUser.account.id,
+        ));
+      } catch (e) {
+        debugPrint(e.toString());
       }
-      emit(state.copyWith(addressList: addresses));
     });
 
     on<GetMessagesEvent>((GetMessagesEvent event, Emitter<DataState> emit) async {
-      event.resetMessages == true ? emit(state.copyWith(messagesList: [], isMessagesLoading: true)) : null;
-      final messages = await event.addressData.authenticatedUser.messagesAt(1);
-      if (state.selectedMessage != null) {
-        Message? selectedMessage = messages.where((m) => m.id == state.selectedMessage!.id).firstOrNull;
-        if (selectedMessage != null) {
-          emit(state.copyWith(messagesList: messages, isMessagesLoading: false, selectedMessage: selectedMessage));
-          return;
+      try {
+        final messages = await event.addressData.authenticatedUser.messagesAt(1);
+        final updatesMessagesMap = {...state.accountIdToAddressesMap};
+        updatesMessagesMap[event.addressData.authenticatedUser.account.id] = messages;
+        if (state.selectedMessage != null) {
+          Message? selectedMessage = messages.where((m) => m.id == state.selectedMessage!.id).firstOrNull;
+          if (selectedMessage != null) {
+            emit(state.copyWith(selectedMessage: selectedMessage, accountIdToAddressesMap: updatesMessagesMap));
+            return;
+          }
         }
+        emit(state.copyWith(accountIdToAddressesMap: updatesMessagesMap));
+      } catch (e) {
+        debugPrint(e.toString());
       }
-      emit(state.copyWith(messagesList: messages, isMessagesLoading: false));
     });
 
     on<ToggleMessageReadUnread>((ToggleMessageReadUnread event, Emitter<DataState> emit) async {
-      if (event.message.seen) {
-        await event.addressData.authenticatedUser.unreadMessage(event.message.id);
-      } else {
-        await event.addressData.authenticatedUser.readMessage(event.message.id);
+      try {
+        if (event.message.seen) {
+          await event.addressData.authenticatedUser.unreadMessage(event.message.id);
+        } else {
+          await event.addressData.authenticatedUser.readMessage(event.message.id);
+        }
+        add(GetMessagesEvent(addressData: event.addressData));
+      } catch (e) {
+        debugPrint(e.toString());
       }
-      add(GetMessagesEvent(addressData: event.addressData, resetMessages: event.resetMessages));
     });
 
     on<SelectMessageEvent>((SelectMessageEvent event, Emitter<DataState> emit) async {
-      if (state.selectedMessage?.id == event.message.id) {
-        return;
+      try {
+        if (state.selectedMessage?.id == event.message.id) {
+          return;
+        }
+        await event.addressData.authenticatedUser.readMessage(event.message.id);
+        emit(state.copyWith(selectedMessage: event.message));
+      } catch (e) {
+        debugPrint(e.toString());
       }
-      await event.addressData.authenticatedUser.readMessage(event.message.id);
-      emit(state.copyWith(selectedMessage: event.message));
     });
 
     on<DeleteMessageEvent>((DeleteMessageEvent event, Emitter<DataState> emit) async {
-      List<Message> messages = state.messagesList.where((m) => m.id != event.message.id).toList();
-      await event.addressData.authenticatedUser.deleteMessage(event.message.id);
-      if (state.selectedMessage != null) {
-        Message? selectedMessage = messages.where((m) => m.id == state.selectedMessage!.id).firstOrNull;
-        if (selectedMessage == null) {
-          emit(state.copyWith(messagesList: messages, setSelectedMessageToNull: true));
-          return;
-        }
+      try {
+        List<Message> messages =
+            (state.accountIdToAddressesMap[event.addressData.authenticatedUser.account.id] ?? []).where((m) => m.id != event.message.id).toList();
+        await event.addressData.authenticatedUser.deleteMessage(event.message.id);
+        final updatesMessagesMap = {...state.accountIdToAddressesMap};
+        updatesMessagesMap[event.addressData.authenticatedUser.account.id] = messages;
+        bool isSelectedMessageDeleted = state.selectedMessage != null && state.selectedMessage!.id == event.message.id;
+        emit(state.copyWith(setSelectedAddressToNull: isSelectedMessageDeleted, accountIdToAddressesMap: updatesMessagesMap));
+        add(GetMessagesEvent(addressData: event.addressData));
+      } catch (e) {
+        debugPrint(e.toString());
       }
-      emit(state.copyWith(messagesList: messages));
     });
 
     on<ImportAddresses>((ImportAddresses event, Emitter<DataState> emit) async {

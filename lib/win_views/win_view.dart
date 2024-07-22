@@ -146,9 +146,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
                 onPressed: dataState.selectedAddress == null
                     ? null
                     : () {
-                        BlocProvider.of<DataBloc>(dataBlocContext).add(
-                          GetMessagesEvent(addressData: dataState.selectedAddress!, resetMessages: false),
-                        );
+                        BlocProvider.of<DataBloc>(dataBlocContext).add(GetMessagesEvent(addressData: dataState.selectedAddress!));
                       },
               ),
             ),
@@ -201,7 +199,6 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
                     : () => BlocProvider.of<DataBloc>(dataBlocContext).add(ToggleMessageReadUnread(
                           addressData: dataState.selectedAddress!,
                           message: dataState.selectedMessage!,
-                          resetMessages: false,
                         )),
               ),
             ),
@@ -230,7 +227,6 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
                           BlocProvider.of<DataBloc>(dataBlocContext).add(DeleteMessageEvent(
                             addressData: dataState.selectedAddress!,
                             message: dataState.selectedMessage!,
-                            resetMessages: false,
                           ));
                         }
                       },

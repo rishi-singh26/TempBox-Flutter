@@ -39,21 +39,22 @@ class DeleteAddressEvent extends DataEvent {
 
 class GetMessagesEvent extends DataEvent {
   final AddressData addressData;
-  final bool? resetMessages;
-  const GetMessagesEvent({required this.addressData, this.resetMessages = true});
+  const GetMessagesEvent({required this.addressData});
 
   @override
-  List<Object> get props => [addressData, resetMessages ?? false];
+  List<Object> get props => [addressData];
 }
 
 class ToggleMessageReadUnread extends DataEvent {
   final Message message;
   final AddressData addressData;
-  final bool resetMessages;
-  const ToggleMessageReadUnread({required this.addressData, required this.message, this.resetMessages = true});
+  const ToggleMessageReadUnread({required this.addressData, required this.message});
 
   @override
-  List<Object> get props => [addressData, message, resetMessages];
+  List<Object> get props => [
+        addressData,
+        message,
+      ];
 }
 
 class SelectMessageEvent extends DataEvent {
@@ -68,11 +69,10 @@ class SelectMessageEvent extends DataEvent {
 class DeleteMessageEvent extends DataEvent {
   final AddressData addressData;
   final Message message;
-  final bool resetMessages;
-  const DeleteMessageEvent({required this.message, required this.addressData, this.resetMessages = true});
+  const DeleteMessageEvent({required this.message, required this.addressData});
 
   @override
-  List<Object> get props => [message, addressData, resetMessages];
+  List<Object> get props => [message, addressData];
 }
 
 class ImportAddresses extends DataEvent {

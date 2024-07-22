@@ -80,9 +80,7 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
               icon: const MacosIcon(CupertinoIcons.refresh_circled),
               onPressed: dataState.selectedAddress == null
                   ? null
-                  : () => BlocProvider.of<DataBloc>(context).add(
-                        GetMessagesEvent(addressData: dataState.selectedAddress!, resetMessages: false),
-                      ),
+                  : () => BlocProvider.of<DataBloc>(context).add(GetMessagesEvent(addressData: dataState.selectedAddress!)),
               label: 'Refresh',
               showLabel: false,
               tooltipMessage: 'Refresh inbox',
@@ -130,7 +128,6 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
                   : () => BlocProvider.of<DataBloc>(dataBlocContext).add(ToggleMessageReadUnread(
                         addressData: dataState.selectedAddress!,
                         message: dataState.selectedMessage!,
-                        resetMessages: false,
                       )),
               label: dataState.selectedMessage?.seen ?? false ? 'Mark unread' : 'Mark read',
               showLabel: false,
@@ -157,7 +154,6 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
                         BlocProvider.of<DataBloc>(dataBlocContext).add(DeleteMessageEvent(
                           addressData: dataState.selectedAddress!,
                           message: dataState.selectedMessage!,
-                          resetMessages: false,
                         ));
                       }
                     },

@@ -39,7 +39,8 @@ class _WinuiMessagesListState extends State<WinuiMessagesList> {
       if (dataState.selectedAddress == null) {
         return const Center(child: Text('No address selected'));
       }
-      if (dataState.messagesList.isEmpty) {
+      List<Message>? messages = dataState.accountIdToAddressesMap[dataState.selectedAddress!.authenticatedUser.account.id];
+      if (messages == null || messages.isEmpty) {
         return const Center(child: Text('No Messages'));
       }
       return Focus(
@@ -48,18 +49,18 @@ class _WinuiMessagesListState extends State<WinuiMessagesList> {
         onKeyEvent: (FocusNode _, KeyEvent event) {
           if (event is KeyDownEvent || event is KeyRepeatEvent) {
             if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
-              setState(() => _addToSelectedIndex(1, dataState.messagesList.length));
+              setState(() => _addToSelectedIndex(1, messages.length));
               return KeyEventResult.handled;
             }
             if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
-              setState(() => _addToSelectedIndex(-1, dataState.messagesList.length));
+              setState(() => _addToSelectedIndex(-1, messages.length));
               return KeyEventResult.handled;
             }
           }
           if (event is KeyDownEvent) {
-            if (event.logicalKey == LogicalKeyboardKey.enter && _selectedIndex >= 0 && _selectedIndex < dataState.messagesList.length) {
+            if (event.logicalKey == LogicalKeyboardKey.enter && _selectedIndex >= 0 && _selectedIndex < messages.length) {
               BlocProvider.of<DataBloc>(dataBlocContext).add(
-                SelectMessageEvent(dataState.messagesList[_selectedIndex], dataState.selectedAddress!),
+                SelectMessageEvent(messages[_selectedIndex], dataState.selectedAddress!),
               );
               return KeyEventResult.handled;
             }
@@ -67,9 +68,9 @@ class _WinuiMessagesListState extends State<WinuiMessagesList> {
           return KeyEventResult.ignored;
         },
         child: ListView.builder(
-          itemCount: dataState.messagesList.length,
+          itemCount: messages.length,
           itemBuilder: (context, index) {
-            Message message = dataState.messagesList[index];
+            Message message = messages[index];
             return ListTile.selectable(
               selected: _selectedIndex == index,
               onSelectionChange: (v) {

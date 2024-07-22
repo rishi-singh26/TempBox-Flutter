@@ -22,7 +22,7 @@ class MessagesList extends StatelessWidget {
           child: RefreshIndicator.adaptive(
             edgeOffset: 60,
             onRefresh: () async {
-              BlocProvider.of<DataBloc>(dataBlocContext).add(GetMessagesEvent(addressData: dataState.selectedAddress!, resetMessages: false));
+              BlocProvider.of<DataBloc>(dataBlocContext).add(GetMessagesEvent(addressData: dataState.selectedAddress!));
             },
             child: CustomScrollView(
               slivers: [
@@ -43,16 +43,17 @@ class MessageList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DataBloc, DataState>(builder: (context, dataState) {
-      if (dataState.isMessagesLoading) {
-        return const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator.adaptive()));
-      }
       if (dataState.selectedAddress == null) {
         return const SliverToBoxAdapter(child: Center(child: Text('Address not selected')));
       }
+      List<Message>? messages = dataState.accountIdToAddressesMap[dataState.selectedAddress!.authenticatedUser.account.id];
+      if (messages == null) {
+        return const SliverToBoxAdapter(child: Center(child: Text('Inbox empty')));
+      }
       return SliverList.separated(
-        itemCount: dataState.messagesList.length,
+        itemCount: messages.length,
         itemBuilder: (context, index) {
-          Message message = dataState.messagesList[index];
+          Message message = messages[index];
           return MessageTile(message: message, selectedAddress: dataState.selectedAddress!);
         },
         separatorBuilder: (context, index) => const Divider(indent: 20, height: 1),

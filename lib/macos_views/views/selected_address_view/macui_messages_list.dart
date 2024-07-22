@@ -42,8 +42,9 @@ class _MacuiMessagesListState extends State<MacuiMessagesList> {
       if (dataState.selectedAddress == null) {
         return const Center(child: Text('No address selected'));
       }
-      if (dataState.messagesList.isEmpty) {
-        return const Center(child: Text('No Messages'));
+      List<Message>? messages = dataState.accountIdToAddressesMap[dataState.selectedAddress!.authenticatedUser.account.id];
+      if (messages == null || messages.isEmpty) {
+        return const Center(child: Text('Inbox empty'));
       }
       return Focus(
         focusNode: _focusNode,
@@ -51,18 +52,18 @@ class _MacuiMessagesListState extends State<MacuiMessagesList> {
         onKeyEvent: (FocusNode _, KeyEvent event) {
           if (event is KeyDownEvent || event is KeyRepeatEvent) {
             if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
-              setState(() => _addToSelectedIndex(1, dataState.messagesList.length));
+              setState(() => _addToSelectedIndex(1, messages.length));
               return KeyEventResult.handled;
             }
             if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
-              setState(() => _addToSelectedIndex(-1, dataState.messagesList.length));
+              setState(() => _addToSelectedIndex(-1, messages.length));
               return KeyEventResult.handled;
             }
           }
           if (event is KeyDownEvent) {
-            if (event.logicalKey == LogicalKeyboardKey.enter && _selectedIndex >= 0 && _selectedIndex < dataState.messagesList.length) {
+            if (event.logicalKey == LogicalKeyboardKey.enter && _selectedIndex >= 0 && _selectedIndex < messages.length) {
               BlocProvider.of<DataBloc>(dataBlocContext).add(
-                SelectMessageEvent(dataState.messagesList[_selectedIndex], dataState.selectedAddress!),
+                SelectMessageEvent(messages[_selectedIndex], dataState.selectedAddress!),
               );
               return KeyEventResult.handled;
             }
@@ -71,12 +72,12 @@ class _MacuiMessagesListState extends State<MacuiMessagesList> {
         },
         child: ListView.separated(
           padding: const EdgeInsets.symmetric(vertical: 8),
-          itemCount: dataState.messagesList.length,
+          itemCount: messages.length,
           separatorBuilder: (context, index) => index == _selectedIndex || index == _selectedIndex - 1
               ? const SizedBox.shrink()
               : const Divider(indent: 15, endIndent: 15, thickness: 0, height: 0),
           itemBuilder: (context, index) {
-            Message message = dataState.messagesList[index];
+            Message message = messages[index];
             return Container(
               margin: const EdgeInsets.symmetric(horizontal: 8),
               padding: const EdgeInsets.only(left: 8, right: 8, top: 6, bottom: 6),

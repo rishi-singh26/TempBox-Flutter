@@ -48,7 +48,6 @@ class MessageTile extends StatelessWidget {
                   BlocProvider.of<DataBloc>(dataBlocContext).add(ToggleMessageReadUnread(
                     addressData: dataState.selectedAddress!,
                     message: message,
-                    resetMessages: false,
                   ));
                 },
                 backgroundColor: const Color(0XFF0B84FF),
