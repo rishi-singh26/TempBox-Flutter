@@ -91,7 +91,9 @@ class _AddAddressState extends State<AddAddress> {
               title: const Text('Add Address'),
               actions: [
                 TextButton(
-                  onPressed: () => _createAddress(dataBlocContext),
+                  onPressed: addressController.text.isNotEmpty && passwordController.text.isNotEmpty && selectedDomain != null
+                      ? () => _createAddress(dataBlocContext)
+                      : null,
                   child: showSpinner
                       ? const SizedBox(
                           width: 20,
