@@ -37,6 +37,7 @@ class _IosAddAddressState extends State<IosAddAddress> {
 
   _updateRandomAddress() {
     addressController.text = UiService.generateRandomString(10);
+    setState(() {});
   }
 
   _getDomains() async {
