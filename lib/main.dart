@@ -36,7 +36,7 @@ Future<void> configureWindowSize({Size minSize = const Size(1000, 550)}) async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  HydratedBloc.storage = await HydratedStorage.build(storageDirectory: await getApplicationDocumentsDirectory());
+  HydratedBloc.storage = await HydratedStorage.build(storageDirectory: await getApplicationSupportDirectory());
   if (Platform.isMacOS) {
     await configureWindowSize(minSize: const Size(1000, 550));
     await _configureMacosWindowUtils();
