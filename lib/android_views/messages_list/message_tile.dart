@@ -7,6 +7,7 @@ import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/models/address_data.dart';
+import 'package:tempbox/services/alert_service.dart';
 import 'package:tempbox/services/ui_service.dart';
 import 'package:tempbox/shared/components/blank_badge.dart';
 import 'package:tempbox/android_views/message_detail/message_detail.dart';
@@ -26,9 +27,16 @@ class MessageTile extends StatelessWidget {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => BlocProvider.value(
         value: BlocProvider.of<DataBloc>(dataBlocContext),
-        child: const MessageDetail(),
+        child: MessageDetail(message: message),
       ),
     ));
+  }
+
+  _deleteMessage(BuildContext context, BuildContext dataBlocContext, AddressData address) async {
+    bool? choice = await AlertService.getConformation(context: context, title: 'Alert', content: 'Are you sure you want to delete this message?');
+    if (choice == true && dataBlocContext.mounted) {
+      BlocProvider.of<DataBloc>(dataBlocContext).add(DeleteMessageEvent(message: message, addressData: address));
+    }
   }
 
   @override
@@ -58,20 +66,9 @@ class MessageTile extends StatelessWidget {
           ),
           endActionPane: ActionPane(
             motion: const DrawerMotion(),
-            dismissible: DismissiblePane(
-              onDismissed: () {
-                BlocProvider.of<DataBloc>(dataBlocContext).add(
-                  DeleteMessageEvent(message: message, addressData: dataState.selectedAddress!),
-                );
-              },
-            ),
             children: [
               SlidableAction(
-                onPressed: (con) {
-                  BlocProvider.of<DataBloc>(dataBlocContext).add(
-                    DeleteMessageEvent(message: message, addressData: dataState.selectedAddress!),
-                  );
-                },
+                onPressed: (_) => _deleteMessage(context, dataBlocContext, dataState.selectedAddress!),
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
                 icon: CupertinoIcons.trash_fill,
@@ -88,7 +85,7 @@ class MessageTile extends StatelessWidget {
                     if (!message.seen) const BlankBadge(),
                     if (!message.seen) hGap(10),
                     Text(
-                      message.from['name'] ?? message.subject.substring(0, 30),
+                      UiService.getMessageFromName(message),
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ],
