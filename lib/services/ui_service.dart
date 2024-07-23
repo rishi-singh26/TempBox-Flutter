@@ -9,16 +9,25 @@ import 'package:tempbox/models/address_data.dart';
 class UiService {
   static List<String> monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-  static getAccountName(AddressData addressData) {
+  static String getAccountName(AddressData addressData) {
     return addressData.addressName.isNotEmpty ? addressData.addressName : addressData.authenticatedUser.account.address.split('@').first;
   }
 
-  static getMessageFromName(Message message) {
+  static String getMessageFromName(Message message) {
     if (message.from['name']!.isEmpty) {
       return message.from['address'] ?? '';
     } else {
       return message.from['name'] ?? '';
     }
+  }
+
+  static String getInboxSubtitleFromMessages(List<Message> messages) {
+    Iterable<Message> unreadMessages = messages.where((m) => !m.seen);
+    String messageSuffix = messages.length > 1 ? 's' : '';
+    if (unreadMessages.isEmpty) {
+      return '${messages.length} Message$messageSuffix';
+    }
+    return '${messages.length} Message$messageSuffix, ${unreadMessages.length} unread';
   }
 
   static copyToClipboard(String text) {

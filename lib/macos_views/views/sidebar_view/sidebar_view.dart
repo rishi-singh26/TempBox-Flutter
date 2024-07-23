@@ -31,11 +31,13 @@ class SidebarView extends StatelessWidget {
           scrollController: scrollController,
           items: dataState.addressList
               .map((a) => SidebarItem(
-                  leading: const MacosIcon(CupertinoIcons.tray, size: 15),
-                  label: Text(
-                    UiService.getAccountName(a),
-                    style: MacosTheme.of(context).typography.body,
-                  )))
+                    leading: const MacosIcon(CupertinoIcons.tray, size: 15),
+                    label: Text(
+                      UiService.getAccountName(a),
+                      style: MacosTheme.of(context).typography.body,
+                    ),
+                    trailing: Text((dataState.accountIdToAddressesMap[a.authenticatedUser.account.id]?.length ?? 0).toString()),
+                  ))
               .toList(),
         );
       });

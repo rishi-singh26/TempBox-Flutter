@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:macos_ui/macos_ui.dart';
 // ignore: implementation_imports
 import 'package:macos_ui/src/library.dart';
+import 'package:mailtm_client/mailtm_client.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
@@ -50,9 +51,24 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
       return MacosScaffold(
         toolBar: ToolBar(
-          title: Text(
-            dataState.selectedAddress == null ? "Inbox" : UiService.getAccountName(dataState.selectedAddress!),
-          ),
+          title: Builder(builder: (context) {
+            List<Message>? messages = dataState.accountIdToAddressesMap[dataState.selectedAddress!.authenticatedUser.account.id];
+            if (dataState.selectedAddress == null) {
+              return const Text("Inbox");
+            }
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(UiService.getAccountName(dataState.selectedAddress!)),
+                if (messages != null)
+                  Text(
+                    UiService.getInboxSubtitleFromMessages(messages),
+                    style: MacosTheme.of(context).typography.footnote,
+                  ),
+              ],
+            );
+          }),
           titleWidth: 150.0,
           leading: MacosTooltip(
             message: 'Toggle Sidebar',
