@@ -8,6 +8,7 @@ import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/ios_ui/colors.dart';
 import 'package:tempbox/ios_ui/ios_messages_list/ios_message_tile.dart';
 import 'package:tempbox/models/address_data.dart';
+import 'package:tempbox/services/ui_service.dart';
 
 class IosMessagesList extends StatelessWidget {
   const IosMessagesList({super.key});
@@ -33,7 +34,7 @@ class IosMessagesList extends StatelessWidget {
             CupertinoSliverRefreshControl(onRefresh: () => _onRefresh(dataBlocContext, dataState.selectedAddress!)),
             CupertinoSliverNavigationBar(
               backgroundColor: AppColors.navBarColor,
-              largeTitle: Text(dataState.selectedAddress!.addressName),
+              largeTitle: Text(UiService.getAccountName(dataState.selectedAddress!)),
             ),
             const SliverToBoxAdapter(child: Center(child: Text('No message available'))),
           ]);
@@ -43,7 +44,7 @@ class IosMessagesList extends StatelessWidget {
             CupertinoSliverRefreshControl(onRefresh: () => _onRefresh(dataBlocContext, dataState.selectedAddress!)),
             CupertinoSliverNavigationBar(
               backgroundColor: AppColors.navBarColor,
-              largeTitle: Text(dataState.selectedAddress!.addressName),
+              largeTitle: Text(UiService.getAccountName(dataState.selectedAddress!)),
               border: null,
               previousPageTitle: 'TempBox',
             ),
