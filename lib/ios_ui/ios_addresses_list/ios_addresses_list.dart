@@ -5,22 +5,10 @@ import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/ios_ui/colors.dart';
 import 'package:tempbox/ios_ui/ios_addresses_list/bottom_bar.dart';
-import 'package:tempbox/ios_ui/ios_messages_list/ios_messages_list.dart';
-import 'package:tempbox/models/address_data.dart';
-import 'package:tempbox/services/ui_service.dart';
+import 'package:tempbox/ios_ui/ios_addresses_list/ios_address_tile.dart';
 
 class IosAddressesList extends StatelessWidget {
   const IosAddressesList({super.key});
-
-  _navigateToMessagesList(BuildContext context, BuildContext dataBlocContext, AddressData addressData) {
-    BlocProvider.of<DataBloc>(dataBlocContext).add(SelectAddressEvent(addressData));
-    Navigator.of(context).push(CupertinoPageRoute(
-      builder: (context) => BlocProvider.value(
-        value: BlocProvider.of<DataBloc>(dataBlocContext),
-        child: const IosMessagesList(),
-      ),
-    ));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,14 +41,7 @@ class IosAddressesList extends StatelessWidget {
                     margin: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 101),
                     header: dataState.addressList.isEmpty ? const Text('No addreses available') : null,
                     children: List.generate(dataState.addressList.length, (index) {
-                      AddressData address = dataState.addressList[index];
-                      return CupertinoListTile.notched(
-                        title: Text(UiService.getAccountName(address)),
-                        leading: const Icon(CupertinoIcons.tray),
-                        trailing: const CupertinoListTileChevron(),
-                        additionalInfo: Text((dataState.accountIdToAddressesMap[address.authenticatedUser.account.id]?.length ?? '').toString()),
-                        onTap: () => _navigateToMessagesList(context, dataBlocContext, address),
-                      );
+                      return IosAddressTile(index: index);
                     }),
                   ),
                 ),
