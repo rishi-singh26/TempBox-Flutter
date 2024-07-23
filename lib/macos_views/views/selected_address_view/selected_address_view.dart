@@ -219,11 +219,7 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
               if (dataState.selectedMessage == null) {
                 return const Center(child: Text('No Message Selected'));
               }
-              return RenderMessage(
-                key: Key(dataState.selectedMessage!.id),
-                user: dataState.selectedAddress!.authenticatedUser,
-                message: dataState.selectedMessage!,
-              );
+              return RenderMessage(key: Key(dataState.selectedMessage!.id), message: dataState.selectedMessage!);
             },
           ),
         ],
