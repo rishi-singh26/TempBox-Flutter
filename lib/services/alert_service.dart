@@ -206,7 +206,9 @@ class AlertService {
         context: context,
         builder: (BuildContext context) => CupertinoAlertDialog(
           title: Text(title),
-          content: Text(content),
+          content: Text(
+            truncateContent && content.length > truncateContentLength ? '${content.substring(0, truncateContentLength - 1)}...' : content,
+          ),
           actions: <CupertinoDialogAction>[
             CupertinoDialogAction(
               isDefaultAction: true,
