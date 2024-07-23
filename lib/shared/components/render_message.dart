@@ -5,40 +5,16 @@ import 'package:tempbox/services/alert_service.dart';
 import 'package:tempbox/services/ui_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class RenderMessage extends StatefulWidget {
-  final AuthenticatedUser user;
+class RenderMessage extends StatelessWidget {
   final Message message;
-  const RenderMessage({super.key, required this.user, required this.message});
-
-  @override
-  State<RenderMessage> createState() => _RenderMessageState();
-}
-
-class _RenderMessageState extends State<RenderMessage> {
-  late Message messageData;
-  String htmlData = '<p>Loading...</p>';
-
-  @override
-  void initState() {
-    messageData = widget.message;
-    fetchData(widget.user, widget.message);
-    super.initState();
-  }
-
-  Future<void> fetchData(AuthenticatedUser user, Message message) async {
-    Message? updatedMessage = await UiService.fetchData(user, message);
-    if (updatedMessage != null) {
-      messageData = updatedMessage;
-      htmlData = updatedMessage.html.join('');
-      setState(() {});
-    }
-  }
+  const RenderMessage({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {
+    final html = message.html.isEmpty ? '<p>Loading...</p>' : message.html.join('');
     return HtmlWidget(
       renderMode: RenderMode.listView,
-      htmlData,
+      html,
       onTapUrl: (url) async {
         bool? choice = await AlertService.getConformation<bool>(
           context: context,
