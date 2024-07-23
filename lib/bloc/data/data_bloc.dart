@@ -21,7 +21,7 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
             updateAddressList.add(address.copyWith(isActive: false));
           } else {
             final messages = await loggedInUser.messagesAt(1);
-            accountIdToAddressesMap[loggedInUser.account.id] = messages;
+            messages.isNotEmpty ? accountIdToAddressesMap[loggedInUser.account.id] = messages : null;
             updateAddressList.add(address);
           }
         }
@@ -58,7 +58,7 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
       try {
         final messages = await event.addressData.authenticatedUser.messagesAt(1);
         final updatesMessagesMap = {...state.accountIdToAddressesMap};
-        updatesMessagesMap[event.addressData.authenticatedUser.account.id] = messages;
+        messages.isNotEmpty ? updatesMessagesMap[event.addressData.authenticatedUser.account.id] = messages : null;
         if (state.selectedMessage != null) {
           Message? selectedMessage = messages.where((m) => m.id == state.selectedMessage!.id).firstOrNull;
           if (selectedMessage != null) {
@@ -122,7 +122,7 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
             loggedInAddresses.add(address.copyWith(isActive: false));
           } else {
             final messages = await user.messagesAt(1);
-            accountIdToAddressesMap[user.account.id] = messages;
+            messages.isNotEmpty ? accountIdToAddressesMap[user.account.id] = messages : null;
             address.copyWith(authenticatedUser: user);
           }
           loggedInAddresses.add(user != null ? address.copyWith(authenticatedUser: user) : address.copyWith(isActive: false));

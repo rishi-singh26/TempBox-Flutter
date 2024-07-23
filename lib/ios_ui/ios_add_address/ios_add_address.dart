@@ -104,6 +104,11 @@ class _IosAddAddressState extends State<IosAddAddress> {
               largeTitle: const Text('Add Address'),
               stretch: true,
               border: null,
+              leading: CupertinoButton(
+                padding: EdgeInsets.zero,
+                onPressed: Navigator.of(context).pop,
+                child: const Text('Cancel'),
+              ),
               trailing: CupertinoButton(
                 onPressed: addressController.text.isNotEmpty && passwordController.text.isNotEmpty && selectedDomain != null
                     ? () => _createAddress(dataBlocContext)
@@ -163,7 +168,7 @@ class _IosAddAddressState extends State<IosAddAddress> {
                               Icon(
                                 CupertinoIcons.chevron_up_chevron_down,
                                 color: theme.textTheme.textStyle.color,
-                                size: 18,
+                                size: 16,
                               ),
                               const SizedBox(width: 15),
                             ],
