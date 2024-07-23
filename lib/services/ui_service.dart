@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/services.dart';
@@ -71,31 +69,5 @@ class UiService {
     }
     final random = Random();
     return List.generate(length, (index) => characters[random.nextInt(characters.length)]).join();
-  }
-
-  static Future<Message?> fetchData(AuthenticatedUser user, Message message) async {
-    final url = Uri.parse('https://api.mail.tm/messages/${message.id}');
-    final client = HttpClient();
-
-    try {
-      final request = await client.getUrl(url);
-      request.headers.set(HttpHeaders.contentTypeHeader, 'application/ld+json');
-      request.headers.set(HttpHeaders.authorizationHeader, 'Bearer ${user.token}');
-
-      final response = await request.close();
-
-      if (response.statusCode == HttpStatus.ok) {
-        final responseBody = await response.transform(utf8.decoder).join();
-        final jsonData = json.decode(responseBody);
-        return Message.fromJson(jsonData);
-      } else {
-        return null;
-      }
-    } catch (e) {
-      // print('Error: $e');
-      return null;
-    } finally {
-      client.close();
-    }
   }
 }
