@@ -42,11 +42,7 @@ class WinuiSelectedAddressView extends StatelessWidget {
               }
               return ScaffoldPage(
                 padding: const EdgeInsets.symmetric(vertical: 3),
-                content: RenderMessage(
-                  key: Key(dataState.selectedMessage!.id),
-                  user: dataState.selectedAddress!.authenticatedUser,
-                  message: dataState.selectedMessage!,
-                ),
+                content: RenderMessage(key: Key(dataState.selectedMessage!.id), message: dataState.selectedMessage!),
               );
             }),
           )
