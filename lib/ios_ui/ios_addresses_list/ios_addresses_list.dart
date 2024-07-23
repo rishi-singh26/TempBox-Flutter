@@ -87,15 +87,43 @@ class IosAddressesList extends StatelessWidget {
                     child: CupertinoSearchTextField(),
                   ),
                 ),
-                SliverToBoxAdapter(
-                  child: CupertinoListSection.insetGrouped(
-                    margin: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 101),
-                    header: dataState.addressList.isEmpty ? const Text('No addreses available') : null,
-                    children: List.generate(dataState.addressList.length, (index) {
-                      return IosAddressTile(index: index);
-                    }),
-                  ),
-                ),
+                Builder(builder: (context) {
+                  if (dataState.addressList.isEmpty) {
+                    return const SliverToBoxAdapter(child: Center(child: Text('')));
+                  }
+                  List<Widget> active = [];
+                  List<Widget> archived = [];
+                  for (var i = 0; i < dataState.addressList.length; i++) {
+                    if (dataState.addressList[i].isActive) {
+                      active.add(IosAddressTile(
+                        index: i,
+                        key: Key(dataState.addressList[i].authenticatedUser.account.id),
+                      ));
+                    } else {
+                      archived.add(IosAddressTile(
+                        index: i,
+                        key: Key(dataState.addressList[i].authenticatedUser.account.id),
+                      ));
+                    }
+                  }
+                  return SliverList.list(
+                    children: [
+                      if (active.isNotEmpty)
+                        CupertinoListSection.insetGrouped(
+                          key: const Key('ActiveAccounts'),
+                          header: const Text('Active'),
+                          children: active,
+                        ),
+                      if (archived.isNotEmpty)
+                        CupertinoListSection.insetGrouped(
+                          key: const Key('ArchivedAccounts'),
+                          margin: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 101),
+                          header: const Text('Archived'),
+                          children: archived,
+                        ),
+                    ],
+                  );
+                }),
               ],
             ),
             const BottomBar(),

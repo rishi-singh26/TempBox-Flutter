@@ -47,6 +47,17 @@ class IosAddressTile extends StatelessWidget {
     }
   }
 
+  _archiveAddress(BuildContext context, BuildContext dataBlocContext, AddressData addressData) async {
+    bool? choice = await AlertService.getConformation(
+      context: context,
+      title: 'Alert',
+      content: 'Are you sure you want to archive this address?',
+    );
+    if (choice == true && dataBlocContext.mounted) {
+      BlocProvider.of<DataBloc>(dataBlocContext).add(ArchiveAddressEvent(addressData));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
@@ -68,6 +79,12 @@ class IosAddressTile extends StatelessWidget {
         endActionPane: ActionPane(
           motion: const DrawerMotion(),
           children: [
+            SlidableAction(
+              onPressed: (_) => _archiveAddress(context, dataBlocContext, addressData),
+              backgroundColor: CupertinoColors.systemIndigo,
+              foregroundColor: CupertinoColors.white,
+              icon: CupertinoIcons.archivebox_fill,
+            ),
             SlidableAction(
               onPressed: (_) => _deleteAddress(context, dataBlocContext, addressData),
               backgroundColor: Colors.red,
