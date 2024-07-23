@@ -21,31 +21,42 @@ class IosAddressInfo extends StatefulWidget {
 
 class _IosAddressInfoState extends State<IosAddressInfo> {
   bool showPassword = false;
-  AuthenticatedUser? authenticatedUser;
+  AddressData? verifiedAddressData;
   @override
   void initState() {
-    try {
-      authenticatedUser = MailTm.getUser(widget.addressData.authenticatedUser.account.id);
-    } catch (e) {
-      debugPrint(e.toString());
+    verifiedAddressData = widget.addressData;
+    if (widget.addressData.isActive) {
+      try {
+        final user = MailTm.getUser(widget.addressData.authenticatedUser.account.id);
+        if (user != null) {
+          verifiedAddressData = widget.addressData.copyWith(authenticatedUser: user);
+        }
+        setState(() {});
+      } catch (e) {
+        debugPrint(e.toString());
+      }
     }
     super.initState();
   }
 
-  String _getStatusText(AuthenticatedUser authenticatedUser) {
-    return authenticatedUser.account.isDeleted
-        ? 'Deleted'
-        : authenticatedUser.account.isDisabled
-            ? 'Disabled'
-            : 'Active';
+  String _getStatusText(AddressData addressData) {
+    if (!addressData.isActive) {
+      return 'Deleted';
+    } else if (addressData.authenticatedUser.account.isDisabled) {
+      return 'Disabled';
+    } else {
+      return 'Active';
+    }
   }
 
-  Color _getStatusColor(AuthenticatedUser authenticatedUser) {
-    return authenticatedUser.account.isDeleted
-        ? CupertinoColors.systemRed
-        : authenticatedUser.account.isDisabled
-            ? CupertinoColors.systemYellow
-            : CupertinoColors.systemGreen;
+  Color _getStatusColor(AddressData addressData) {
+    if (!addressData.isActive) {
+      return CupertinoColors.systemRed;
+    } else if (addressData.authenticatedUser.account.isDisabled) {
+      return CupertinoColors.systemYellow;
+    } else {
+      return CupertinoColors.systemGreen;
+    }
   }
 
   String _getQuotaStering(int bytes, SizeUnit unit) {
@@ -71,7 +82,7 @@ class _IosAddressInfoState extends State<IosAddressInfo> {
               child: const Text('Done', style: TextStyle(fontWeight: FontWeight.bold)),
             ),
           ),
-          if (authenticatedUser != null)
+          if (verifiedAddressData != null)
             SliverList.list(children: [
               CupertinoListSection.insetGrouped(
                 margin: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 3),
@@ -85,9 +96,9 @@ class _IosAddressInfoState extends State<IosAddressInfo> {
                       children: [
                         const Text('Status:', style: TextStyle(fontWeight: FontWeight.bold)),
                         hGap(10),
-                        BlankBadge(color: _getStatusColor(authenticatedUser!)),
+                        BlankBadge(color: _getStatusColor(verifiedAddressData!)),
                         hGap(10),
-                        Text(_getStatusText(authenticatedUser!)),
+                        Text(_getStatusText(verifiedAddressData!)),
                       ],
                     ),
                   ),
@@ -100,13 +111,13 @@ class _IosAddressInfoState extends State<IosAddressInfo> {
                         hGap(10),
                         SizedBox(
                           width: screenSize.width - 205,
-                          child: Text(authenticatedUser!.account.address, maxLines: 2),
+                          child: Text(verifiedAddressData!.authenticatedUser.account.address, maxLines: 2),
                         ),
                       ],
                     ),
                     trailing: CupertinoButton(
                       padding: EdgeInsets.zero,
-                      onPressed: () => UiService.copyToClipboard(authenticatedUser!.account.address),
+                      onPressed: () => UiService.copyToClipboard(verifiedAddressData!.authenticatedUser.account.address),
                       child: const Icon(CupertinoIcons.doc_on_doc, size: 22),
                     ),
                   ),
@@ -169,14 +180,14 @@ class _IosAddressInfoState extends State<IosAddressInfo> {
                     padding: const EdgeInsetsDirectional.fromSTEB(14, 10, 14, 7),
                     title: const Text('Quota usage', style: TextStyle(fontWeight: FontWeight.bold)),
                     trailing: Text(
-                      '${_getQuotaStering(authenticatedUser!.account.used, SizeUnit.kb)} / ${_getQuotaStering(authenticatedUser!.account.quota, SizeUnit.mb)}',
+                      '${_getQuotaStering(verifiedAddressData!.authenticatedUser.account.used, SizeUnit.kb)} / ${_getQuotaStering(verifiedAddressData!.authenticatedUser.account.quota, SizeUnit.mb)}',
                       style: theme.textTheme.tabLabelTextStyle.copyWith(fontSize: 15),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(14, 10, 14, 15),
                     child: LinearProgressIndicator(
-                      value: authenticatedUser!.account.used / authenticatedUser!.account.quota,
+                      value: verifiedAddressData!.authenticatedUser.account.used / verifiedAddressData!.authenticatedUser.account.quota,
                       valueColor: AlwaysStoppedAnimation<Color>(theme.primaryColor),
                     ),
                   ),
