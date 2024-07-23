@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:mailtm_client/mailtm_client.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/ios_ui/colors.dart';
+import 'package:tempbox/ios_ui/ios_messages_list/ios_message_tile.dart';
 import 'package:tempbox/models/address_data.dart';
-import 'package:tempbox/services/ui_service.dart';
-import 'package:tempbox/shared/components/blank_badge.dart';
 
 class IosMessagesList extends StatelessWidget {
   const IosMessagesList({super.key});
@@ -38,28 +38,28 @@ class IosMessagesList extends StatelessWidget {
             const SliverToBoxAdapter(child: Center(child: Text('No message available'))),
           ]);
         }
-        return CustomScrollView(slivers: [
-          CupertinoSliverRefreshControl(onRefresh: () => _onRefresh(dataBlocContext, dataState.selectedAddress!)),
-          CupertinoSliverNavigationBar(
-            backgroundColor: AppColors.navBarColor,
-            largeTitle: Text(dataState.selectedAddress!.addressName),
-            border: null,
-            previousPageTitle: 'TempBox',
-          ),
-          SliverList.builder(
-            itemCount: messages.length,
-            itemBuilder: (context, index) {
-              final message = messages[index];
-              return CupertinoListTile.notched(
-                leadingSize: 10,
-                title: Text(UiService.getMessageFromName(message)),
-                subtitle: Text(UiService.getMessageFromName(message)),
-                leading: const BlankBadge(),
-                onTap: () {},
-              );
-            },
-          ),
-        ]);
+        return SlidableAutoCloseBehavior(
+          child: CustomScrollView(slivers: [
+            CupertinoSliverRefreshControl(onRefresh: () => _onRefresh(dataBlocContext, dataState.selectedAddress!)),
+            CupertinoSliverNavigationBar(
+              backgroundColor: AppColors.navBarColor,
+              largeTitle: Text(dataState.selectedAddress!.addressName),
+              border: null,
+              previousPageTitle: 'TempBox',
+            ),
+            SliverList.separated(
+              separatorBuilder: (context, index) => Container(
+                margin: const EdgeInsetsDirectional.only(start: 34),
+                color: CupertinoColors.separator.resolveFrom(context),
+                height: 1.0,
+              ),
+              itemCount: messages.length,
+              itemBuilder: (context, index) {
+                return IosMessageTile(message: messages[index], selectedAddress: dataState.selectedAddress!);
+              },
+            ),
+          ]),
+        );
       }),
     );
   }
