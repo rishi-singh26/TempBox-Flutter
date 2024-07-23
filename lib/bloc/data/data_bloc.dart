@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:mailtm_client/mailtm_client.dart';
@@ -14,14 +17,23 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
     on<LoginToAccountsEvent>((LoginToAccountsEvent event, Emitter<DataState> emit) async {
       try {
         List<AddressData> updateAddressList = [];
-        Map<String, List<Message>> accountIdToAddressesMap = {};
+        Map<String, List<Message>> accountIdToAddressesMap = {...state.accountIdToAddressesMap};
         for (var address in state.addressList) {
-          AuthenticatedUser? loggedInUser = await MailTm.login(address: address.authenticatedUser.account.address, password: address.password);
-          if (loggedInUser == null) {
-            updateAddressList.add(address.copyWith(isActive: false));
+          if (address.isActive) {
+            AuthenticatedUser? loggedInUser;
+            try {
+              loggedInUser = await MailTm.login(address: address.authenticatedUser.account.address, password: address.password);
+            } catch (e) {
+              debugPrint(e.toString());
+            }
+            if (loggedInUser == null) {
+              updateAddressList.add(address.copyWith(isActive: false));
+            } else {
+              final messages = await loggedInUser.messagesAt(1);
+              messages.isNotEmpty ? accountIdToAddressesMap[loggedInUser.account.id] = messages : null;
+              updateAddressList.add(address);
+            }
           } else {
-            final messages = await loggedInUser.messagesAt(1);
-            messages.isNotEmpty ? accountIdToAddressesMap[loggedInUser.account.id] = messages : null;
             updateAddressList.add(address);
           }
         }
@@ -36,19 +48,34 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
         return;
       }
       emit(state.copyWith(selectedAddress: event.addressData, setSelectedMessageToNull: true));
-      add(GetMessagesEvent(addressData: event.addressData));
+      event.addressData.isActive ? add(GetMessagesEvent(addressData: event.addressData)) : null;
     });
 
     on<DeleteAddressEvent>((DeleteAddressEvent event, Emitter<DataState> emit) async {
       try {
         List<AddressData> addresses =
             state.addressList.where((a) => a.authenticatedUser.account.id != event.addressData.authenticatedUser.account.id).toList();
-        await event.addressData.authenticatedUser.delete();
+        event.addressData.isActive ? await event.addressData.authenticatedUser.delete() : null;
         emit(state.copyWith(
           addressList: addresses,
           setSelectedAddressToNull:
               state.selectedAddress != null && state.selectedAddress!.authenticatedUser.account.id == event.addressData.authenticatedUser.account.id,
         ));
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+    });
+
+    on<ArchiveAddressEvent>((ArchiveAddressEvent event, Emitter<DataState> emit) async {
+      try {
+        await event.addressData.authenticatedUser.delete();
+        List<AddressData> addresses = state.addressList.map((a) {
+          if (a.authenticatedUser.account.id == event.addressData.authenticatedUser.account.id) {
+            return a.copyWith(isActive: false);
+          }
+          return a;
+        }).toList();
+        emit(state.copyWith(addressList: addresses));
       } catch (e) {
         debugPrint(e.toString());
       }
@@ -87,14 +114,45 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
 
     on<SelectMessageEvent>((SelectMessageEvent event, Emitter<DataState> emit) async {
       try {
+        // if currently selected address is same as new address, simply return
         if (state.selectedMessage?.id == event.message.id) {
+          return;
+        }
+        // if selected address is null, simply return (edge case scenario, most likly will never happen)
+        if (state.selectedAddress == null) {
+          return;
+        }
+        // If address has been archived, do not get messages
+        if (!state.selectedAddress!.isActive) {
+          emit(state.copyWith(selectedMessage: event.message));
           return;
         }
         await event.addressData.authenticatedUser.readMessage(event.message.id);
         emit(state.copyWith(selectedMessage: event.message));
+        Message? message = await _fetchData(state.selectedAddress!.authenticatedUser, event.message);
+        if (message != null) {
+          // all messages in selected address
+          List<Message>? messages = state.accountIdToAddressesMap[state.selectedAddress!.authenticatedUser.account.id];
+          final updatedAccountIdToAddressesMap = {...state.accountIdToAddressesMap};
+          if (messages != null) {
+            // in all messages list, update the newly fetched message
+            List<Message> updatedMessages = messages.map((m) {
+              if (m.id == message.id) return message;
+              return m;
+            }).toList();
+            updatedAccountIdToAddressesMap[state.selectedAddress!.authenticatedUser.account.id] = updatedMessages;
+          } else {
+            updatedAccountIdToAddressesMap[state.selectedAddress!.authenticatedUser.account.id] = [message];
+          }
+          emit(state.copyWith(accountIdToAddressesMap: updatedAccountIdToAddressesMap, selectedMessage: message));
+        }
       } catch (e) {
         debugPrint(e.toString());
       }
+    });
+
+    on<ResetSelectedMessageEvent>((ResetSelectedMessageEvent event, Emitter<DataState> emit) {
+      emit(state.copyWith(setSelectedMessageToNull: true));
     });
 
     on<DeleteMessageEvent>((DeleteMessageEvent event, Emitter<DataState> emit) async {
@@ -149,6 +207,32 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
       }
     });
     return result;
+  }
+
+  Future<Message?> _fetchData(AuthenticatedUser user, Message message) async {
+    final url = Uri.parse('https://api.mail.tm/messages/${message.id}');
+    final client = HttpClient();
+
+    try {
+      final request = await client.getUrl(url);
+      request.headers.set(HttpHeaders.contentTypeHeader, 'application/ld+json');
+      request.headers.set(HttpHeaders.authorizationHeader, 'Bearer ${user.token}');
+
+      final response = await request.close();
+
+      if (response.statusCode == HttpStatus.ok) {
+        final responseBody = await response.transform(utf8.decoder).join();
+        final jsonData = json.decode(responseBody);
+        return Message.fromJson(jsonData);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      // print('Error: $e');
+      return null;
+    } finally {
+      client.close();
+    }
   }
 
   @override
