@@ -66,7 +66,7 @@ class AddressTile extends StatelessWidget {
             motion: const DrawerMotion(),
             children: [
               SlidableAction(
-                onPressed: (context) => _openAddressInfoSheet(context, dataBlocContext, addressData),
+                onPressed: (_) => _openAddressInfoSheet(context, dataBlocContext, addressData),
                 backgroundColor: Colors.amber,
                 // backgroundColor: const Color(0XFFFED709),
                 foregroundColor: Colors.white,
@@ -76,10 +76,9 @@ class AddressTile extends StatelessWidget {
           ),
           endActionPane: ActionPane(
             motion: const DrawerMotion(),
-            dismissible: DismissiblePane(onDismissed: () => _deleteAddress(context, dataBlocContext, addressData)),
             children: [
               SlidableAction(
-                onPressed: (con) => _deleteAddress(con, dataBlocContext, addressData),
+                onPressed: (_) => _deleteAddress(context, dataBlocContext, addressData),
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
                 icon: CupertinoIcons.trash_fill,

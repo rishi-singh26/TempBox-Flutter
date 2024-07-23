@@ -156,7 +156,8 @@ class _AddressInfoState extends State<AddressInfo> {
                   ListTile(
                     title: const Text('Quota usage', style: TextStyle(fontWeight: FontWeight.bold)),
                     trailing: Text(
-                        '${_getQuotaStering(authenticatedUser!.account.used, SizeUnit.kb)} / ${_getQuotaStering(authenticatedUser!.account.quota, SizeUnit.mb)}'),
+                      '${_getQuotaStering(authenticatedUser!.account.used, SizeUnit.kb)} / ${_getQuotaStering(authenticatedUser!.account.quota, SizeUnit.mb)}',
+                    ),
                     // dense: true,
                     visualDensity: VisualDensity.compact,
                   ),
