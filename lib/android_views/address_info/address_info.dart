@@ -20,31 +20,42 @@ class AddressInfo extends StatefulWidget {
 
 class _AddressInfoState extends State<AddressInfo> {
   bool showPassword = false;
-  AuthenticatedUser? authenticatedUser;
+  AddressData? verifiedAddressData;
   @override
   void initState() {
-    try {
-      authenticatedUser = MailTm.getUser(widget.addressData.authenticatedUser.account.id);
-    } catch (e) {
-      debugPrint(e.toString());
+    verifiedAddressData = widget.addressData;
+    if (widget.addressData.isActive) {
+      try {
+        final user = MailTm.getUser(widget.addressData.authenticatedUser.account.id);
+        if (user != null) {
+          verifiedAddressData = widget.addressData.copyWith(authenticatedUser: user);
+        }
+        setState(() {});
+      } catch (e) {
+        debugPrint(e.toString());
+      }
     }
     super.initState();
   }
 
-  String _getStatusText(AuthenticatedUser authenticatedUser) {
-    return authenticatedUser.account.isDeleted
-        ? 'Deleted'
-        : authenticatedUser.account.isDisabled
-            ? 'Disabled'
-            : 'Active';
+  String _getStatusText(AddressData addressData) {
+    if (!addressData.isActive) {
+      return 'Deleted';
+    } else if (addressData.authenticatedUser.account.isDisabled) {
+      return 'Disabled';
+    } else {
+      return 'Active';
+    }
   }
 
-  Color _getStatusColor(AuthenticatedUser authenticatedUser) {
-    return authenticatedUser.account.isDeleted
-        ? Colors.red
-        : authenticatedUser.account.isDisabled
-            ? Colors.amber
-            : Colors.green;
+  Color _getStatusColor(AddressData addressData) {
+    if (!addressData.isActive) {
+      return Colors.red;
+    } else if (addressData.authenticatedUser.account.isDisabled) {
+      return Colors.yellow;
+    } else {
+      return Colors.green;
+    }
   }
 
   String _getQuotaStering(int bytes, SizeUnit unit) {
@@ -61,7 +72,7 @@ class _AddressInfoState extends State<AddressInfo> {
       body: CustomScrollView(
         slivers: [
           SliverAppBar.large(title: Text(UiService.getAccountName(widget.addressData))),
-          if (authenticatedUser != null)
+          if (verifiedAddressData != null)
             SliverList.list(children: [
               PaddedCard(
                 child: Column(children: [
@@ -72,9 +83,9 @@ class _AddressInfoState extends State<AddressInfo> {
                       children: [
                         const Text('Status:', style: TextStyle(fontWeight: FontWeight.bold)),
                         hGap(10),
-                        BlankBadge(color: _getStatusColor(authenticatedUser!)),
+                        BlankBadge(color: _getStatusColor(verifiedAddressData!)),
                         hGap(10),
-                        Text(_getStatusText(authenticatedUser!)),
+                        Text(_getStatusText(verifiedAddressData!)),
                       ],
                     ),
                     visualDensity: VisualDensity.compact,
@@ -86,12 +97,12 @@ class _AddressInfoState extends State<AddressInfo> {
                       children: [
                         const Text('Address:', style: TextStyle(fontWeight: FontWeight.bold)),
                         hGap(10),
-                        SizedBox(width: screenSize.width - 205, child: Text(authenticatedUser!.account.address)),
+                        SizedBox(width: screenSize.width - 205, child: Text(verifiedAddressData!.authenticatedUser.account.address)),
                       ],
                     ),
                     // dense: true,
                     trailing: IconButton(
-                      onPressed: () => UiService.copyToClipboard(authenticatedUser!.account.address),
+                      onPressed: () => UiService.copyToClipboard(verifiedAddressData!.authenticatedUser.account.address),
                       icon: Icon(Icons.copy_rounded, color: theme.buttonTheme.colorScheme?.primary ?? Colors.red),
                     ),
                     visualDensity: VisualDensity.compact,
@@ -155,14 +166,15 @@ class _AddressInfoState extends State<AddressInfo> {
                   ListTile(
                     title: const Text('Quota usage', style: TextStyle(fontWeight: FontWeight.bold)),
                     trailing: Text(
-                      '${_getQuotaStering(authenticatedUser!.account.used, SizeUnit.kb)} / ${_getQuotaStering(authenticatedUser!.account.quota, SizeUnit.mb)}',
+                      '${_getQuotaStering(verifiedAddressData!.authenticatedUser.account.used, SizeUnit.kb)} / ${_getQuotaStering(verifiedAddressData!.authenticatedUser.account.quota, SizeUnit.mb)}',
                     ),
                     // dense: true,
                     visualDensity: VisualDensity.compact,
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: LinearProgressIndicator(value: authenticatedUser!.account.used / authenticatedUser!.account.quota),
+                    child: LinearProgressIndicator(
+                        value: verifiedAddressData!.authenticatedUser.account.used / verifiedAddressData!.authenticatedUser.account.quota),
                   ),
                   vGap(10),
                 ]),
