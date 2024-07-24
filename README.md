@@ -63,7 +63,7 @@ This project is heavely inspired by [TempBox](https://github.com/devwaseem/TempB
 
 ## Contribute 🤝
 
-If you want to contribute to this library, you're always welcome!
+If you want to contribute to this project, you're always welcome!
 You can contribute by filing issues, bugs and PRs.
 
 ### Contributing guidelines:
