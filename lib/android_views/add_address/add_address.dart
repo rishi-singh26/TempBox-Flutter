@@ -56,7 +56,7 @@ class _AddAddressState extends State<AddAddress> {
   _createAddress(BuildContext dataBlocContext) async {
     setState(() => showSpinner = true);
     try {
-      final String password = passwordController.text.isNotEmpty && useRandomPassword != 0
+      final String password = passwordController.text.isNotEmpty && useRandomPassword
           ? passwordController.text
           : UiService.generateRandomString(12, useNumbers: true, useSpecialCharacters: true, useUpperCase: true);
       AuthenticatedUser authenticatedUser = await MailTm.register(
