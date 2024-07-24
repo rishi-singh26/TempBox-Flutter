@@ -8,113 +8,34 @@ Instant disposable emails for Mac powered by [Mail.tm](https://mail.tm)
 
 This project is heavely inspired by [TempBox](https://github.com/devwaseem/TempBox/tree/main) by [https://github.com/devwaseem](https://github.com/devwaseem)
 
-## MacOS
-
-<picture>
-  <source srcset="screenshots/macos/light/MacOsApp.png" media="(prefers-color-scheme: light)">
-  <source srcset="screenshots/macos/dark/MacOsApp.png" media="(prefers-color-scheme: dark)">
-  <img src="screenshots/macos/light/MacOsApp.png" alt="MacOS App Screenshot">
-</picture>
-
-<picture>
-  <source srcset="screenshots/macos/light/MacOsAddressInfo.png" media="(prefers-color-scheme: light)">
-  <source srcset="screenshots/macos/dark/MacOsAddressInfo.png" media="(prefers-color-scheme: dark)">
-  <img src="screenshots/macos/light/MacOsAddressInfo.png" alt="MacOS app screenshot showing the address information screen">
-</picture>
-
-<picture>
-  <source srcset="screenshots/macos/light/MacOsNewAddress.png" media="(prefers-color-scheme: light)">
-  <source srcset="screenshots/macos/dark/MacOsNewAddress.png" media="(prefers-color-scheme: dark)">
-  <img src="screenshots/macos/light/MacOsNewAddress.png" alt="MacOs app screenshot showing screen for creating a new address">
-</picture>
-
 ## Windows
 
-<picture>
-  <source srcset="screenshots/windows/light/WindowsApp.png" media="(prefers-color-scheme: light)">
-  <source srcset="screenshots/windows/dark/WindowsApp.png" media="(prefers-color-scheme: dark)">
-  <img src="screenshots/windows/light/WindowsApp.png" alt="MacOS App Screenshot">
-</picture>
+<img src="screenshots/windows/light/WindowsApp.png" alt="Windows App Screenshot"/>
+<img src="screenshots/windows/dark/WindowsNewAddress.png" alt="Windows app screenshot showing screen for creating a new address"/>
+<img src="screenshots/windows/light/WindowsAddressInfo.png" alt="Windows app screenshot showing the address information screen"/>
 
-<picture>
-  <source srcset="screenshots/windows/light/WindowsAddressInfo.png" media="(prefers-color-scheme: light)">
-  <source srcset="screenshots/windows/dark/WindowsAddressInfo.png" media="(prefers-color-scheme: dark)">
-  <img src="screenshots/windows/light/WindowsAddressInfo.png" alt="MacOS app screenshot showing the address information screen">
-</picture>
+## MacOS
 
-<picture>
-  <source srcset="screenshots/windows/light/WindowsNewAddress.png" media="(prefers-color-scheme: light)">
-  <source srcset="screenshots/windows/dark/WindowsNewAddress.png" media="(prefers-color-scheme: dark)">
-  <img src="screenshots/windows/light/WindowsNewAddress.png" alt="MacOs app screenshot showing screen for creating a new address">
-</picture>
+<img src="screenshots/macos/light/MacOsApp.png" alt="MacOS App Screenshot"/>
+<img src="screenshots/macos/dark/MacOsNewAddress.png" alt="MacOs app screenshot showing screen for creating a new address"/>
+<img src="screenshots/macos/light/MacOsAddressInfo.png" alt="MacOS app screenshot showing the address information screen"/>
 
 ## iOS
 
-<div style="display: flex; gap: 10px;">
-
-  <picture>
-    <source srcset="screenshots/ios/light/iOSApp.png" media="(prefers-color-scheme: light)">
-    <source srcset="screenshots/ios/dark/iOSApp.png" media="(prefers-color-scheme: dark)">
-    <img src="screenshots/ios/light/iOSApp.png" alt="iOS App Screenshot" style="width: 300px; height: auto;">
-  </picture>
-
-  <picture>
-    <source srcset="screenshots/ios/light/iOSImportExport.png" media="(prefers-color-scheme: light)">
-    <source srcset="screenshots/ios/dark/iOSImportExport.png" media="(prefers-color-scheme: dark)">
-    <img src="screenshots/ios/light/iOSImportExport.png" alt="iOS App screenshot highlighting import and export feature" style="width: 300px; height: auto;">
-  </picture>
-
-</div>
-
-<div style="display: flex; gap: 10px;">
-
-  <picture>
-    <source srcset="screenshots/ios/light/iOSAddAddress.png" media="(prefers-color-scheme: light)">
-    <source srcset="screenshots/ios/dark/iOSAddAddress.png" media="(prefers-color-scheme: dark)">
-    <img src="screenshots/ios/light/iOSAddAddress.png" alt="iOS app screenshot showing screen for creating a new address" style="width: 300px; height: auto;">
-  </picture>
-
-  <picture>
-    <source srcset="screenshots/ios/light/iOSAddressInfo.png" media="(prefers-color-scheme: light)">
-    <source srcset="screenshots/ios/dark/iOSAddressInfo.png" media="(prefers-color-scheme: dark)">
-    <img src="screenshots/ios/light/iOSAddressInfo.png" alt="iOS app screenshot showing address information screen" style="width: 300px; height: auto;">
-  </picture>
-
-</div>
+<img src="screenshots/ios/light/iOSApp.png" alt="MacOS App Screenshot" width="49%" alt="iOS App Screenshot" />
+<img src="screenshots/ios/light/iOSImportExport.png" alt="iOS App screenshot highlighting import and export feature" width="49%" />
+<img src="screenshots/ios/light/iOSAddAddress.png" alt="iOS app screenshot showing screen for creating a new address" width="49%" />
+<img src="screenshots/ios/light/iOSAddressInfo.png" alt="iOS app screenshot showing address information screen" width="49%" />
 
 
 ## Android
 
-<div style="display: flex; gap: 10px;">
+<img src="screenshots/android/light/AndroidApp.png" alt="MacOS App Screenshot" width="49%" alt="iOS App Screenshot" />
+<img src="screenshots/android/light/AndroidImportExport.png" alt="iOS App screenshot highlighting import and export feature" width="49%" />
+<img src="screenshots/android/light/AndroidAddAddress.png" alt="iOS app screenshot showing screen for creating a new address" width="49%" />
+<img src="screenshots/android/light/AndroidAddressInfo.png" alt="iOS app screenshot showing address information screen" width="49%" />
 
-  <picture>
-    <source srcset="screenshots/android/light/AndroidApp.png" media="(prefers-color-scheme: light)">
-    <source srcset="screenshots/android/dark/AndroidApp.png" media="(prefers-color-scheme: dark)">
-    <img src="screenshots/android/light/AndroidApp.png" alt="Android App Screenshot" style="width: 300px; height: auto;">
-  </picture>
 
-  <picture>
-    <source srcset="screenshots/android/light/AndroidImportExport.png" media="(prefers-color-scheme: light)">
-    <source srcset="screenshots/android/dark/AndroidImportExport.png" media="(prefers-color-scheme: dark)">
-    <img src="screenshots/android/light/AndroidImportExport.png" alt="Android App screenshot highlighting import and export feature" style="width: 300px; height: auto;">
-  </picture>
-</div>
-
-<div style="display: flex; gap: 10px;">
-
-  <picture>
-    <source srcset="screenshots/android/light/AndroidAddAddress.png" media="(prefers-color-scheme: light)">
-    <source srcset="screenshots/android/dark/AndroidAddAddress.png" media="(prefers-color-scheme: dark)">
-    <img src="screenshots/android/light/AndroidAddAddress.png" alt="Android app screenshot showing screen for creating a new address" style="width: 300px; height: auto;">
-  </picture>
-
-  <picture>
-    <source srcset="screenshots/android/light/AndroidAddressInfo.png" media="(prefers-color-scheme: light)">
-    <source srcset="screenshots/android/dark/AndroidAddressInfo.png" media="(prefers-color-scheme: dark)">
-    <img src="screenshots/android/light/AndroidAddressInfo.png" alt="Android app screenshot showing address information screen" style="width: 300px; height: auto;">
-  </picture>
-
-</div>
 
 ## Features
 - [x] Multi-Platform Support
