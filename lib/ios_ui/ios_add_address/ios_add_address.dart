@@ -204,9 +204,9 @@ class _IosAddAddressState extends State<IosAddAddress> {
                 ),
                 CupertinoListSection.insetGrouped(
                   children: const [
-                    CupertinoListTile.notched(
+                    CupertinoListTile(
                       backgroundColor: Color.fromARGB(60, 255, 204, 0),
-                      padding: EdgeInsets.all(14),
+                      padding: EdgeInsetsDirectional.fromSTEB(14, 8, 14, 8),
                       title: Text('The password ones set can not be reset or changed', maxLines: 2),
                       leading: Icon(CupertinoIcons.info_circle_fill, color: CupertinoColors.systemYellow),
                     ),

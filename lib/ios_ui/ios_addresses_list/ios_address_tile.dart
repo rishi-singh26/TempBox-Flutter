@@ -93,7 +93,7 @@ class IosAddressTile extends StatelessWidget {
             ),
           ],
         ),
-        child: CupertinoListTile.notched(
+        child: CupertinoListTile(
           title: Text(UiService.getAccountName(addressData)),
           leading: const Icon(CupertinoIcons.tray),
           trailing: const CupertinoListTileChevron(),
