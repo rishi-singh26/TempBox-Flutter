@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mailtm_client/mailtm_client.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
-import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/ios_ui/colors.dart';
 import 'package:tempbox/services/ui_service.dart';
@@ -25,20 +24,15 @@ class IosMessageDetail extends StatelessWidget {
           child: const SizedBox.shrink(),
         );
       }
-      return PopScope(
-        onPopInvoked: (didPop) {
-          BlocProvider.of<DataBloc>(dataBlocContext).add(const ResetSelectedMessageEvent());
-        },
-        child: CupertinoPageScaffold(
-          backgroundColor: CupertinoColors.systemGroupedBackground,
-          navigationBar: CupertinoNavigationBar(
-            middle: Text(UiService.getMessageFromName(dataState.selectedMessage!)),
-            backgroundColor: AppColors.navBarColor,
-            border: null,
-            previousPageTitle: dataState.selectedAddress!.addressName,
-          ),
-          child: RenderMessage(message: dataState.selectedMessage!),
+      return CupertinoPageScaffold(
+        backgroundColor: CupertinoColors.systemGroupedBackground,
+        navigationBar: CupertinoNavigationBar(
+          middle: Text(UiService.getMessageFromName(dataState.selectedMessage!)),
+          backgroundColor: AppColors.navBarColor,
+          border: null,
+          previousPageTitle: dataState.selectedAddress!.addressName,
         ),
+        child: RenderMessage(message: dataState.selectedMessage!),
       );
     });
   }

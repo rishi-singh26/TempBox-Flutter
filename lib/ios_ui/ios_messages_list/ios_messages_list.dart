@@ -54,34 +54,29 @@ class IosMessagesList extends StatelessWidget {
           ]),
         );
       }
-      return PopScope(
-        onPopInvoked: (didPop) {
-          BlocProvider.of<DataBloc>(dataBlocContext).add(const ResetSelectedAddressEvent());
-        },
-        child: CupertinoPageScaffold(
-          backgroundColor: CupertinoColors.systemGroupedBackground,
-          child: SlidableAutoCloseBehavior(
-            child: CustomScrollView(slivers: [
-              CupertinoSliverRefreshControl(onRefresh: () => _onRefresh(dataBlocContext, dataState.selectedAddress!)),
-              CupertinoSliverNavigationBar(
-                backgroundColor: AppColors.navBarColor,
-                largeTitle: Text(UiService.getAccountName(dataState.selectedAddress!)),
-                border: null,
-                previousPageTitle: 'TempBox',
+      return CupertinoPageScaffold(
+        backgroundColor: CupertinoColors.systemGroupedBackground,
+        child: SlidableAutoCloseBehavior(
+          child: CustomScrollView(slivers: [
+            CupertinoSliverRefreshControl(onRefresh: () => _onRefresh(dataBlocContext, dataState.selectedAddress!)),
+            CupertinoSliverNavigationBar(
+              backgroundColor: AppColors.navBarColor,
+              largeTitle: Text(UiService.getAccountName(dataState.selectedAddress!)),
+              border: null,
+              previousPageTitle: 'TempBox',
+            ),
+            SliverList.separated(
+              separatorBuilder: (context, index) => Container(
+                margin: const EdgeInsetsDirectional.only(start: 34),
+                color: CupertinoColors.separator.resolveFrom(context),
+                height: 1.0,
               ),
-              SliverList.separated(
-                separatorBuilder: (context, index) => Container(
-                  margin: const EdgeInsetsDirectional.only(start: 34),
-                  color: CupertinoColors.separator.resolveFrom(context),
-                  height: 1.0,
-                ),
-                itemCount: messages.length,
-                itemBuilder: (context, index) {
-                  return IosMessageTile(message: messages[index], selectedAddress: dataState.selectedAddress!);
-                },
-              ),
-            ]),
-          ),
+              itemCount: messages.length,
+              itemBuilder: (context, index) {
+                return IosMessageTile(message: messages[index], selectedAddress: dataState.selectedAddress!);
+              },
+            ),
+          ]),
         ),
       );
     });

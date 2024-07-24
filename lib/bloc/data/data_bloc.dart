@@ -51,10 +51,6 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
       event.addressData.isActive ? add(GetMessagesEvent(addressData: event.addressData)) : null;
     });
 
-    on<ResetSelectedAddressEvent>((ResetSelectedAddressEvent event, Emitter<DataState> emit) {
-      emit(state.copyWith(setSelectedAddressToNull: true));
-    });
-
     on<DeleteAddressEvent>((DeleteAddressEvent event, Emitter<DataState> emit) async {
       try {
         List<AddressData> addresses =
@@ -157,10 +153,6 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
       } catch (e) {
         debugPrint(e.toString());
       }
-    });
-
-    on<ResetSelectedMessageEvent>((ResetSelectedMessageEvent event, Emitter<DataState> emit) {
-      emit(state.copyWith(setSelectedMessageToNull: true));
     });
 
     on<DeleteMessageEvent>((DeleteMessageEvent event, Emitter<DataState> emit) async {
