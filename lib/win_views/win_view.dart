@@ -12,6 +12,7 @@ import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/alert_service.dart';
 import 'package:tempbox/services/export_import_address.dart';
 import 'package:tempbox/services/ui_service.dart';
+import 'package:tempbox/shared/components/app_logo.dart';
 import 'package:tempbox/win_views/views/add_address/winui_add_address.dart';
 import 'package:tempbox/win_views/views/selected_address_view/winui_selected_address_view.dart';
 import 'package:tempbox/win_views/views/winui_address_info/winui_address_info.dart';
@@ -146,7 +147,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
           dataState.selectedAddress == null || dataState.addressList.isEmpty ? null : _getSelectedIndex(dataState.selectedAddress!, active, archived);
       return NavigationView(
         appBar: NavigationAppBar(
-          leading: const FlutterLogo(),
+          leading: const AppLogo(size: 20, borderRadius: BorderRadius.all(Radius.circular(15))),
           title: const DragToMoveArea(child: Align(alignment: AlignmentDirectional.centerStart, child: Text('TempBox'))),
           actions: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
             if (dataState.selectedAddress?.isActive == true)
@@ -188,14 +189,14 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
                   onPressed: dataState.selectedAddress == null
                       ? null
                       : () async {
-                          // final choice = await AlertService.getConformation<bool>(
-                          //   context: context,
-                          //   title: 'Alert',
-                          //   content: 'Are you sure you want to archive this address?',
-                          // );
-                          // if (choice == true && dataBlocContext.mounted) {
-                          BlocProvider.of<DataBloc>(dataBlocContext).add(ArchiveAddressEvent(dataState.selectedAddress!));
-                          // }
+                          final choice = await AlertService.getConformation<bool>(
+                            context: context,
+                            title: 'Alert',
+                            content: 'Are you sure you want to archive this address?',
+                          );
+                          if (choice == true && dataBlocContext.mounted) {
+                            BlocProvider.of<DataBloc>(dataBlocContext).add(ArchiveAddressEvent(dataState.selectedAddress!));
+                          }
                         },
                 ),
               ),
@@ -207,14 +208,14 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
                 onPressed: dataState.selectedAddress == null
                     ? null
                     : () async {
-                        // final choice = await AlertService.getConformation<bool>(
-                        //   context: context,
-                        //   title: 'Alert',
-                        //   content: 'Are you sure you want to delete this address?',
-                        // );
-                        // if (choice == true && dataBlocContext.mounted) {
-                        BlocProvider.of<DataBloc>(dataBlocContext).add(DeleteAddressEvent(dataState.selectedAddress!));
-                        // }
+                        final choice = await AlertService.getConformation<bool>(
+                          context: context,
+                          title: 'Alert',
+                          content: 'Are you sure you want to delete this address?',
+                        );
+                        if (choice == true && dataBlocContext.mounted) {
+                          BlocProvider.of<DataBloc>(dataBlocContext).add(DeleteAddressEvent(dataState.selectedAddress!));
+                        }
                       },
               ),
             ),

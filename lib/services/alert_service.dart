@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:macos_ui/macos_ui.dart';
 import 'package:tempbox/services/overlay_service.dart';
+import 'package:tempbox/shared/components/app_logo.dart';
 import 'package:tempbox/shared/styles/textfield.dart';
 
 class AlertService {
@@ -18,7 +19,7 @@ class AlertService {
       return await showMacosAlertDialog<T>(
         context: context,
         builder: (context) => MacosAlertDialog(
-          appIcon: const FlutterLogo(size: 64),
+          appIcon: const AppLogo(size: 50),
           title: Text(title),
           message: Text(content),
           //horizontalActions: false,
@@ -138,7 +139,7 @@ class AlertService {
       return await showMacosAlertDialog<T>(
         context: context,
         builder: (context) => MacosAlertDialog(
-          appIcon: const FlutterLogo(size: 64),
+          appIcon: const AppLogo(size: 50),
           title: Text(title),
           message: Text(
             truncateContent && content.length > truncateContentLength ? '${content.substring(0, truncateContentLength - 1)}...' : content,

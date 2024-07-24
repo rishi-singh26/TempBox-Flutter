@@ -13,6 +13,7 @@ import 'package:tempbox/services/export_import_address.dart';
 import 'package:tempbox/services/overlay_service.dart';
 import 'package:tempbox/android_views/add_address/add_address.dart';
 import 'package:tempbox/android_views/address_list/address_tile.dart';
+import 'package:tempbox/shared/components/app_logo.dart';
 import 'package:tempbox/shared/components/card_list_tile.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -64,13 +65,7 @@ class _AddressListState extends State<AddressList> {
     } else {
       showAboutDialog(
         context: context,
-        applicationIcon: Container(
-          width: 60,
-          height: 60,
-          decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(8))),
-          clipBehavior: Clip.hardEdge,
-          child: Image.asset('assets/icon.png'),
-        ),
+        applicationIcon: const AppLogo(),
         children: [
           CardListTile(
             isFirst: true,
