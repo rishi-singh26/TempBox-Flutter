@@ -102,9 +102,14 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
     super.dispose();
   }
 
-  int? _getSelectedIndex(AddressData selected, List<AddressData> addresses) {
-    final index = addresses.indexWhere((a) => a.authenticatedUser.account.id == selected.authenticatedUser.account.id);
-    return index >= 0 ? index : null;
+  int? _getSelectedIndex(AddressData selected, List<AddressData> active, List<AddressData> archived) {
+    final indexInActive = active.indexWhere((a) => a.authenticatedUser.account.id == selected.authenticatedUser.account.id);
+    if (indexInActive >= 0) {
+      return indexInActive;
+    } else {
+      final indexInInactive = archived.indexWhere((a) => a.authenticatedUser.account.id == selected.authenticatedUser.account.id);
+      return indexInInactive >= 0 ? (indexInInactive + active.length) : null;
+    }
   }
 
   _importAddresses(BuildContext context, BuildContext dataBlocContext) async {
@@ -133,23 +138,29 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
-      int? selectedIndex = dataState.selectedAddress == null ? null : _getSelectedIndex(dataState.selectedAddress!, dataState.addressList);
+      List<AddressData> active = [];
+      List<AddressData> archived = [];
+      addToList(AddressData a) => a.isActive ? active.add(a) : archived.add(a);
+      dataState.addressList.forEach(addToList);
+      int? selectedIndex =
+          dataState.selectedAddress == null || dataState.addressList.isEmpty ? null : _getSelectedIndex(dataState.selectedAddress!, active, archived);
       return NavigationView(
         appBar: NavigationAppBar(
           leading: const FlutterLogo(),
           title: const DragToMoveArea(child: Align(alignment: AlignmentDirectional.centerStart, child: Text('TempBox'))),
           actions: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-            Tooltip(
-              message: 'Refresh inbox',
-              child: IconButton(
-                icon: const Icon(CupertinoIcons.refresh_thick, size: 20),
-                onPressed: dataState.selectedAddress == null
-                    ? null
-                    : () {
-                        BlocProvider.of<DataBloc>(dataBlocContext).add(GetMessagesEvent(addressData: dataState.selectedAddress!));
-                      },
+            if (dataState.selectedAddress?.isActive == true)
+              Tooltip(
+                message: 'Refresh inbox',
+                child: IconButton(
+                  icon: const Icon(CupertinoIcons.refresh_thick, size: 20),
+                  onPressed: dataState.selectedAddress == null
+                      ? null
+                      : () {
+                          BlocProvider.of<DataBloc>(dataBlocContext).add(GetMessagesEvent(addressData: dataState.selectedAddress!));
+                        },
+                ),
               ),
-            ),
             const SizedBox(width: 10),
             Tooltip(
               message: 'Address information',
@@ -168,6 +179,26 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
                       },
               ),
             ),
+            if (dataState.selectedAddress?.isActive == true) const SizedBox(width: 10),
+            if (dataState.selectedAddress?.isActive == true)
+              Tooltip(
+                message: 'Archive address',
+                child: IconButton(
+                  icon: const Icon(CupertinoIcons.archivebox, size: 20),
+                  onPressed: dataState.selectedAddress == null
+                      ? null
+                      : () async {
+                          // final choice = await AlertService.getConformation<bool>(
+                          //   context: context,
+                          //   title: 'Alert',
+                          //   content: 'Are you sure you want to archive this address?',
+                          // );
+                          // if (choice == true && dataBlocContext.mounted) {
+                          BlocProvider.of<DataBloc>(dataBlocContext).add(ArchiveAddressEvent(dataState.selectedAddress!));
+                          // }
+                        },
+                ),
+              ),
             const SizedBox(width: 10),
             Tooltip(
               message: 'Delete address',
@@ -176,14 +207,14 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
                 onPressed: dataState.selectedAddress == null
                     ? null
                     : () async {
-                        final choice = await AlertService.getConformation<bool>(
-                          context: context,
-                          title: 'Alert',
-                          content: 'Are you sure you want to delete this address?',
-                        );
-                        if (choice == true && dataBlocContext.mounted) {
-                          BlocProvider.of<DataBloc>(dataBlocContext).add(DeleteAddressEvent(dataState.selectedAddress!));
-                        }
+                        // final choice = await AlertService.getConformation<bool>(
+                        //   context: context,
+                        //   title: 'Alert',
+                        //   content: 'Are you sure you want to delete this address?',
+                        // );
+                        // if (choice == true && dataBlocContext.mounted) {
+                        BlocProvider.of<DataBloc>(dataBlocContext).add(DeleteAddressEvent(dataState.selectedAddress!));
+                        // }
                       },
               ),
             ),
@@ -276,18 +307,37 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
             ),
           ),
           onItemPressed: (index) {
-            BlocProvider.of<DataBloc>(dataBlocContext).add(SelectAddressEvent(dataState.addressList[index]));
+            if (dataState.addressList.isEmpty) {
+              return;
+            }
+            if (index < active.length) {
+              BlocProvider.of<DataBloc>(dataBlocContext).add(SelectAddressEvent(active[index]));
+              return;
+            }
+            if (index >= active.length) {
+              BlocProvider.of<DataBloc>(dataBlocContext).add(SelectAddressEvent(archived[index - active.length]));
+              return;
+            }
           },
           size: NavigationPaneSize(openWidth: MediaQuery.of(context).size.width / 5, openMinWidth: 250, openMaxWidth: 250),
-          items: dataState.addressList
-              .map((a) => PaneItem(
-                    key: Key(a.authenticatedUser.account.id),
-                    icon: const Icon(CupertinoIcons.tray),
-                    title: Text(UiService.getAccountName(a)),
-                    body: const SizedBox.shrink(),
-                  ))
-              .toList()
-              .cast<NavigationPaneItem>(),
+          items: dataState.addressList.isEmpty
+              ? []
+              : [
+                  PaneItemHeader(header: const Text('Active')),
+                  ...active.map((a) => PaneItem(
+                        key: Key(a.authenticatedUser.account.id),
+                        icon: const Icon(CupertinoIcons.tray),
+                        title: Text(UiService.getAccountName(a)),
+                        body: const SizedBox.shrink(),
+                      )),
+                  PaneItemHeader(header: const Text('Archived')),
+                  ...archived.map((a) => PaneItem(
+                        key: Key(a.authenticatedUser.account.id),
+                        icon: const Icon(CupertinoIcons.tray),
+                        title: Text(UiService.getAccountName(a)),
+                        body: const SizedBox.shrink(),
+                      )),
+                ],
           displayMode: PaneDisplayMode.open,
           toggleable: true,
           selected: selectedIndex,
