@@ -90,12 +90,11 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
         final messages = await event.addressData.authenticatedUser.messagesAt(1);
         final updatesMessagesMap = {...state.accountIdToAddressesMap};
         messages.isNotEmpty ? updatesMessagesMap[event.addressData.authenticatedUser.account.id] = messages : null;
-        if (state.selectedMessage != null) {
-          Message? selectedMessage = messages.where((m) => m.id == state.selectedMessage!.id).firstOrNull;
-          if (selectedMessage != null) {
-            emit(state.copyWith(selectedMessage: selectedMessage, accountIdToAddressesMap: updatesMessagesMap));
-            return;
-          }
+        // updated the selected message with updated data
+        Message? selectedMessage = messages.where((m) => m.id == state.selectedMessage?.id).firstOrNull;
+        if (selectedMessage != null) {
+          add(SelectMessageEvent(message: selectedMessage, addressData: event.addressData, markAsRead: false));
+          return;
         }
         emit(state.copyWith(accountIdToAddressesMap: updatesMessagesMap));
       } catch (e) {
@@ -110,7 +109,7 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
         } else {
           await event.addressData.authenticatedUser.readMessage(event.message.id);
         }
-        add(GetMessagesEvent(addressData: event.addressData));
+        add(SelectMessageEvent(message: event.message, addressData: event.addressData, markAsRead: false));
       } catch (e) {
         debugPrint(e.toString());
       }
@@ -119,9 +118,9 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
     on<SelectMessageEvent>((SelectMessageEvent event, Emitter<DataState> emit) async {
       try {
         // if currently selected address is same as new address, simply return
-        if (state.selectedMessage?.id == event.message.id) {
-          return;
-        }
+        // if (state.selectedMessage?.id == event.message.id) {
+        //   return;
+        // }
         // if selected address is null, simply return (edge case scenario, most likly will never happen)
         if (state.selectedAddress == null) {
           return;
@@ -131,8 +130,7 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
           emit(state.copyWith(selectedMessage: event.message));
           return;
         }
-        await event.addressData.authenticatedUser.readMessage(event.message.id);
-        emit(state.copyWith(selectedMessage: event.message));
+        event.markAsRead != false ? await event.addressData.authenticatedUser.readMessage(event.message.id) : null;
         Message? message = await _fetchData(state.selectedAddress!.authenticatedUser, event.message);
         if (message != null) {
           // all messages in selected address
@@ -149,6 +147,8 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
             updatedAccountIdToAddressesMap[state.selectedAddress!.authenticatedUser.account.id] = [message];
           }
           emit(state.copyWith(accountIdToAddressesMap: updatedAccountIdToAddressesMap, selectedMessage: message));
+        } else {
+          emit(state.copyWith(selectedMessage: event.message));
         }
       } catch (e) {
         debugPrint(e.toString());
@@ -163,12 +163,12 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
       try {
         List<Message> messages =
             (state.accountIdToAddressesMap[event.addressData.authenticatedUser.account.id] ?? []).where((m) => m.id != event.message.id).toList();
-        await event.addressData.authenticatedUser.deleteMessage(event.message.id);
+        event.addressData.isActive ? await event.addressData.authenticatedUser.deleteMessage(event.message.id) : null;
         final updatesMessagesMap = {...state.accountIdToAddressesMap};
         updatesMessagesMap[event.addressData.authenticatedUser.account.id] = messages;
         bool isSelectedMessageDeleted = state.selectedMessage != null && state.selectedMessage!.id == event.message.id;
         emit(state.copyWith(setSelectedMessageToNull: isSelectedMessageDeleted, accountIdToAddressesMap: updatesMessagesMap));
-        add(GetMessagesEvent(addressData: event.addressData));
+        event.addressData.isActive ? add(GetMessagesEvent(addressData: event.addressData)) : null;
       } catch (e) {
         debugPrint(e.toString());
       }
