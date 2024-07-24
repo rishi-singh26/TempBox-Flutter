@@ -72,8 +72,8 @@ class ToggleMessageReadUnread extends DataEvent {
 class SelectMessageEvent extends DataEvent {
   final AddressData addressData;
   final Message message;
-  final bool? markAsRead;
-  const SelectMessageEvent({required this.message, required this.addressData, this.markAsRead});
+  final bool? shouldUpdateMessage;
+  const SelectMessageEvent({required this.message, required this.addressData, this.shouldUpdateMessage});
 
   @override
   List<Object> get props => [message, addressData];

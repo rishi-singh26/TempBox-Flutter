@@ -93,7 +93,7 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
         // updated the selected message with updated data
         Message? selectedMessage = messages.where((m) => m.id == state.selectedMessage?.id).firstOrNull;
         if (selectedMessage != null) {
-          add(SelectMessageEvent(message: selectedMessage, addressData: event.addressData, markAsRead: false));
+          add(SelectMessageEvent(message: selectedMessage, addressData: event.addressData, shouldUpdateMessage: false));
           return;
         }
         emit(state.copyWith(accountIdToAddressesMap: updatesMessagesMap));
@@ -109,7 +109,7 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
         } else {
           await event.addressData.authenticatedUser.readMessage(event.message.id);
         }
-        add(SelectMessageEvent(message: event.message, addressData: event.addressData, markAsRead: false));
+        add(SelectMessageEvent(message: event.message, addressData: event.addressData, shouldUpdateMessage: false));
       } catch (e) {
         debugPrint(e.toString());
       }
@@ -130,7 +130,10 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
           emit(state.copyWith(selectedMessage: event.message));
           return;
         }
-        event.markAsRead != false ? await event.addressData.authenticatedUser.readMessage(event.message.id) : null;
+        if (event.shouldUpdateMessage != false) {
+          await event.addressData.authenticatedUser.readMessage(event.message.id);
+          emit(state.copyWith(selectedMessage: event.message));
+        }
         Message? message = await _fetchData(state.selectedAddress!.authenticatedUser, event.message);
         if (message != null) {
           // all messages in selected address
@@ -147,8 +150,6 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
             updatedAccountIdToAddressesMap[state.selectedAddress!.authenticatedUser.account.id] = [message];
           }
           emit(state.copyWith(accountIdToAddressesMap: updatedAccountIdToAddressesMap, selectedMessage: message));
-        } else {
-          emit(state.copyWith(selectedMessage: event.message));
         }
       } catch (e) {
         debugPrint(e.toString());
