@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -60,7 +59,7 @@ class MessageTile extends StatelessWidget {
                 },
                 backgroundColor: const Color(0XFF0B84FF),
                 foregroundColor: Colors.white,
-                icon: message.seen ? CupertinoIcons.envelope_badge_fill : CupertinoIcons.envelope_open_fill,
+                icon: message.seen ? Icons.mark_email_unread_rounded : Icons.mark_email_read_rounded,
               ),
             ],
           ),
@@ -71,7 +70,7 @@ class MessageTile extends StatelessWidget {
                 onPressed: (_) => _deleteMessage(context, dataBlocContext, dataState.selectedAddress!),
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
-                icon: CupertinoIcons.trash_fill,
+                icon: Icons.delete_outline,
               ),
             ],
           ),
@@ -98,7 +97,7 @@ class MessageTile extends StatelessWidget {
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
                     hGap(5),
-                    const Icon(CupertinoIcons.chevron_right, size: 15),
+                    const Icon(Icons.chevron_right, size: 18),
                   ],
                 )
               ],

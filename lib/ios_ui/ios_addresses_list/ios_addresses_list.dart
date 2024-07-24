@@ -81,12 +81,13 @@ class IosAddressesList extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(20, 8, 20, 14),
-                    child: CupertinoSearchTextField(),
+                if (dataState.addressList.isNotEmpty)
+                  const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(20, 8, 20, 14),
+                      child: CupertinoSearchTextField(),
+                    ),
                   ),
-                ),
                 Builder(builder: (context) {
                   if (dataState.addressList.isEmpty) {
                     return const SliverToBoxAdapter(child: Center(child: Text('')));

@@ -34,4 +34,4 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/sf_symbols/
+    - assets/

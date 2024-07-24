@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -83,29 +82,30 @@ class AddressTile extends StatelessWidget {
                 backgroundColor: Colors.amber,
                 // backgroundColor: const Color(0XFFFED709),
                 foregroundColor: Colors.white,
-                icon: CupertinoIcons.info_circle_fill,
+                icon: Icons.info_rounded,
               ),
             ],
           ),
           endActionPane: ActionPane(
             motion: const DrawerMotion(),
             children: [
-              SlidableAction(
-                onPressed: (_) => _archiveAddress(context, dataBlocContext, addressData),
-                backgroundColor: CupertinoColors.systemIndigo,
-                foregroundColor: CupertinoColors.white,
-                icon: CupertinoIcons.archivebox_fill,
-              ),
+              if (addressData.isActive)
+                SlidableAction(
+                  onPressed: (_) => _archiveAddress(context, dataBlocContext, addressData),
+                  backgroundColor: Colors.indigo,
+                  foregroundColor: Colors.white,
+                  icon: Icons.archive_rounded,
+                ),
               SlidableAction(
                 onPressed: (_) => _deleteAddress(context, dataBlocContext, addressData),
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
-                icon: CupertinoIcons.trash_fill,
+                icon: Icons.delete_outline_outlined,
               ),
             ],
           ),
           child: ListTile(
-            leading: Icon(CupertinoIcons.tray, color: Theme.of(context).buttonTheme.colorScheme?.primary ?? Colors.red),
+            leading: Icon(Icons.inbox_rounded, color: Theme.of(context).buttonTheme.colorScheme?.primary ?? Colors.red),
             title: Text(UiService.getAccountName(addressData)),
             trailing: SizedBox(
               width: messageCount.length == 1
@@ -117,7 +117,7 @@ class AddressTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(messageCount),
-                  const Icon(CupertinoIcons.chevron_right, size: 17),
+                  const Icon(Icons.chevron_right, size: 17),
                 ],
               ),
             ),

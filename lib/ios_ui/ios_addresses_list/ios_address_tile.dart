@@ -79,12 +79,13 @@ class IosAddressTile extends StatelessWidget {
         endActionPane: ActionPane(
           motion: const DrawerMotion(),
           children: [
-            SlidableAction(
-              onPressed: (_) => _archiveAddress(context, dataBlocContext, addressData),
-              backgroundColor: CupertinoColors.systemIndigo,
-              foregroundColor: CupertinoColors.white,
-              icon: CupertinoIcons.archivebox_fill,
-            ),
+            if (addressData.isActive)
+              SlidableAction(
+                onPressed: (_) => _archiveAddress(context, dataBlocContext, addressData),
+                backgroundColor: CupertinoColors.systemIndigo,
+                foregroundColor: CupertinoColors.white,
+                icon: CupertinoIcons.archivebox_fill,
+              ),
             SlidableAction(
               onPressed: (_) => _deleteAddress(context, dataBlocContext, addressData),
               backgroundColor: Colors.red,

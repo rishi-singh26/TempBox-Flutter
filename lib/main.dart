@@ -46,8 +46,8 @@ void main() async {
     SystemTheme.accentColor.load();
     SystemTheme.fallbackColor = const Color(0xFFFCB43F);
     runApp(const WinApp());
-  } else if (Platform.isIOS) {
-    runApp(const IosView());
+    // } else if (Platform.isIOS) {
+    //   runApp(const IosView());
   } else {
     SystemTheme.accentColor.load();
     SystemTheme.fallbackColor = const Color(0xFFFCB43F);

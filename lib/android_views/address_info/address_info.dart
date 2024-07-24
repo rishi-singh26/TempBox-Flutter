@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:mailtm_client/mailtm_client.dart';
@@ -93,7 +92,7 @@ class _AddressInfoState extends State<AddressInfo> {
                     // dense: true,
                     trailing: IconButton(
                       onPressed: () => UiService.copyToClipboard(authenticatedUser!.account.address),
-                      icon: Icon(CupertinoIcons.doc_on_doc, color: theme.buttonTheme.colorScheme?.primary ?? Colors.red),
+                      icon: Icon(Icons.copy_rounded, color: theme.buttonTheme.colorScheme?.primary ?? Colors.red),
                     ),
                     visualDensity: VisualDensity.compact,
                   ),
@@ -120,7 +119,7 @@ class _AddressInfoState extends State<AddressInfo> {
                     visualDensity: VisualDensity.compact,
                     trailing: IconButton(
                       onPressed: () => UiService.copyToClipboard(widget.addressData.password),
-                      icon: Icon(CupertinoIcons.doc_on_doc, color: theme.buttonTheme.colorScheme?.primary ?? Colors.red),
+                      icon: Icon(Icons.copy_rounded, color: theme.buttonTheme.colorScheme?.primary ?? Colors.red),
                     ),
                   ),
                 ]),

@@ -20,7 +20,7 @@ class _IosAddAddressState extends State<IosAddAddress> {
   bool showSpinner = false;
   Domain? selectedDomain;
   List<Domain> domainsList = [];
-  bool useRandomPassword = false;
+  bool useRandomPassword = true;
 
   late TextEditingController addressNameController;
   late TextEditingController addressController;
