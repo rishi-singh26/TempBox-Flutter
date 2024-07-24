@@ -24,31 +24,43 @@ class MacuiAddressInfo extends StatefulWidget {
 
 class _MacuiAddressInfoState extends State<MacuiAddressInfo> {
   bool showPassword = false;
-  AuthenticatedUser? authenticatedUser;
+  AddressData? verifiedAddressData;
+
   @override
   void initState() {
-    try {
-      authenticatedUser = MailTm.getUser(widget.addressData.authenticatedUser.account.id);
-    } catch (e) {
-      debugPrint(e.toString());
+    verifiedAddressData = widget.addressData;
+    if (widget.addressData.isActive) {
+      try {
+        final user = MailTm.getUser(widget.addressData.authenticatedUser.account.id);
+        if (user != null) {
+          verifiedAddressData = widget.addressData.copyWith(authenticatedUser: user);
+        }
+        setState(() {});
+      } catch (e) {
+        debugPrint(e.toString());
+      }
     }
     super.initState();
   }
 
-  Color _getStatusColor(AuthenticatedUser authenticatedUser) {
-    return authenticatedUser.account.isDeleted
-        ? MacosColors.appleRed
-        : authenticatedUser.account.isDisabled
-            ? MacosColors.appleYellow
-            : MacosColors.appleGreen;
+  String _getStatusText(AddressData addressData) {
+    if (!addressData.isActive) {
+      return 'Deleted';
+    } else if (addressData.authenticatedUser.account.isDisabled) {
+      return 'Disabled';
+    } else {
+      return 'Active';
+    }
   }
 
-  String _getStatusText(AuthenticatedUser authenticatedUser) {
-    return authenticatedUser.account.isDeleted
-        ? 'Deleted'
-        : authenticatedUser.account.isDisabled
-            ? 'Disabled'
-            : 'Active';
+  Color _getStatusColor(AddressData addressData) {
+    if (!addressData.isActive) {
+      return CupertinoColors.systemRed;
+    } else if (addressData.authenticatedUser.account.isDisabled) {
+      return CupertinoColors.systemYellow;
+    } else {
+      return CupertinoColors.systemGreen;
+    }
   }
 
   String _getQuotaString(int bytes, SizeUnit unit) {
@@ -68,7 +80,7 @@ class _MacuiAddressInfoState extends State<MacuiAddressInfo> {
             vertical: (constraints.maxHeight - 400) / 2,
           ),
           child: Builder(builder: (context) {
-            if (dataState.selectedAddress == null || authenticatedUser == null) {
+            if (dataState.selectedAddress == null || verifiedAddressData == null) {
               return Padding(
                 padding: const EdgeInsets.all(18.0),
                 child: Column(children: [
@@ -105,9 +117,9 @@ class _MacuiAddressInfoState extends State<MacuiAddressInfo> {
                     child: Row(children: [
                       const Text('Status:', style: TextStyle(fontWeight: FontWeight.bold)),
                       hGap(10),
-                      BlankBadge(color: _getStatusColor(authenticatedUser!)),
+                      BlankBadge(color: _getStatusColor(verifiedAddressData!)),
                       hGap(10),
-                      Text(_getStatusText(authenticatedUser!)),
+                      Text(_getStatusText(verifiedAddressData!)),
                     ]),
                   ),
                   MacosCard(
@@ -117,7 +129,7 @@ class _MacuiAddressInfoState extends State<MacuiAddressInfo> {
                         Row(children: [
                           const Text('Address:', style: TextStyle(fontWeight: FontWeight.bold)),
                           hGap(10),
-                          Text(authenticatedUser!.account.address),
+                          Text(verifiedAddressData!.authenticatedUser.account.address),
                         ]),
                         MacosIconButton(
                           onPressed: () => UiService.copyToClipboard(widget.addressData.authenticatedUser.account.address),
@@ -178,7 +190,7 @@ class _MacuiAddressInfoState extends State<MacuiAddressInfo> {
                       children: [
                         const Text('Quota Usage', style: TextStyle(fontWeight: FontWeight.bold)),
                         Text(
-                          '${_getQuotaString(authenticatedUser!.account.used, SizeUnit.mb)} / ${_getQuotaString(authenticatedUser!.account.quota, SizeUnit.mb)}',
+                          '${_getQuotaString(verifiedAddressData!.authenticatedUser.account.used, SizeUnit.mb)} / ${_getQuotaString(verifiedAddressData!.authenticatedUser.account.quota, SizeUnit.mb)}',
                         )
                       ],
                     ),
@@ -186,7 +198,8 @@ class _MacuiAddressInfoState extends State<MacuiAddressInfo> {
                   MacosCard(
                     padding: const EdgeInsets.only(left: 15, right: 15, bottom: 12),
                     isLast: true,
-                    child: CapacityIndicator(value: (authenticatedUser!.account.used / authenticatedUser!.account.quota) * 100),
+                    child: CapacityIndicator(
+                        value: (verifiedAddressData!.authenticatedUser.account.used / verifiedAddressData!.authenticatedUser.account.quota) * 100),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
