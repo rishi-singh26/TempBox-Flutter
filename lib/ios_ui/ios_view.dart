@@ -21,7 +21,7 @@ class IosView extends StatelessWidget {
         DefaultWidgetsLocalizations.delegate,
         DefaultCupertinoLocalizations.delegate,
       ],
-      theme: const CupertinoThemeData(primaryColor: Color(0xFFFCB43F)),
+      theme: const CupertinoThemeData(primaryColor: Color(0xFFBA1F33)),
       home: MultiBlocProvider(
         providers: [BlocProvider<DataBloc>(create: (BuildContext context) => DataBloc())],
         child: const IosStarter(),
