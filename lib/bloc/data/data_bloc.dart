@@ -51,6 +51,10 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
       event.addressData.isActive ? add(GetMessagesEvent(addressData: event.addressData)) : null;
     });
 
+    on<ResetSelectedAddressEvent>((ResetSelectedAddressEvent event, Emitter<DataState> emit) {
+      emit(state.copyWith(setSelectedAddressToNull: true));
+    });
+
     on<DeleteAddressEvent>((DeleteAddressEvent event, Emitter<DataState> emit) async {
       try {
         List<AddressData> addresses =
@@ -163,7 +167,7 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
         final updatesMessagesMap = {...state.accountIdToAddressesMap};
         updatesMessagesMap[event.addressData.authenticatedUser.account.id] = messages;
         bool isSelectedMessageDeleted = state.selectedMessage != null && state.selectedMessage!.id == event.message.id;
-        emit(state.copyWith(setSelectedAddressToNull: isSelectedMessageDeleted, accountIdToAddressesMap: updatesMessagesMap));
+        emit(state.copyWith(setSelectedMessageToNull: isSelectedMessageDeleted, accountIdToAddressesMap: updatesMessagesMap));
         add(GetMessagesEvent(addressData: event.addressData));
       } catch (e) {
         debugPrint(e.toString());
