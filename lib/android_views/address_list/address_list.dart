@@ -13,6 +13,7 @@ import 'package:tempbox/services/export_import_address.dart';
 import 'package:tempbox/services/overlay_service.dart';
 import 'package:tempbox/android_views/add_address/add_address.dart';
 import 'package:tempbox/android_views/address_list/address_tile.dart';
+import 'package:tempbox/shared/components/card_list_tile.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AddressList extends StatefulWidget {
@@ -70,9 +71,45 @@ class _AddressListState extends State<AddressList> {
           clipBehavior: Clip.hardEdge,
           child: Image.asset('assets/icon.png'),
         ),
+        children: [
+          CardListTile(
+            isFirst: true,
+            margin: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+            child: ListTile(
+              title: const Text('View open source code'),
+              onTap: () async {
+                bool? choice = await AlertService.getConformation(
+                  context: context,
+                  title: 'Do you want to continue?',
+                  content: 'This will open https://github.com/rishi-singh26/TempBox-Flutter',
+                );
+                if (choice == true) {
+                  await launchUrl(Uri.parse('https://github.com/rishi-singh26/TempBox-Flutter'));
+                }
+              },
+            ),
+          ),
+          CardListTile(
+            isLast: true,
+            margin: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+            child: ListTile(
+              title: const Text('View License'),
+              onTap: () async {
+                bool? choice = await AlertService.getConformation(
+                  context: context,
+                  title: 'Do you want to continue?',
+                  content: 'This will open https://raw.githubusercontent.com/rishi-singh26/TempBox-Flutter/main/LICENSE',
+                );
+                if (choice == true) {
+                  await launchUrl(Uri.parse('https://raw.githubusercontent.com/rishi-singh26/TempBox-Flutter/main/LICENSE'));
+                }
+              },
+            ),
+          )
+        ],
         applicationName: 'TempBox',
         applicationVersion: '1.0.0',
-        applicationLegalese: 'Powered by mail.tm',
+        applicationLegalese: 'Powered by mail.tm and Flutter',
       );
     }
   }

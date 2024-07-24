@@ -4,7 +4,7 @@ class CardListTile extends StatelessWidget {
   final bool isFirst;
   final bool isLast;
   final Widget child;
-  final EdgeInsets? margin;
+  final EdgeInsetsGeometry? margin;
   const CardListTile({
     super.key,
     this.isFirst = false,
