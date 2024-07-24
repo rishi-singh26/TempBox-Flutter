@@ -79,7 +79,10 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
           }
           return a;
         }).toList();
-        emit(state.copyWith(addressList: addresses));
+        emit(state.copyWith(
+          addressList: addresses,
+          selectedAddress: event.addressData.copyWith(isActive: false),
+        ));
       } catch (e) {
         debugPrint(e.toString());
       }
