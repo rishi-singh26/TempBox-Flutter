@@ -60,7 +60,7 @@ class _WinuiMessagesListState extends State<WinuiMessagesList> {
           if (event is KeyDownEvent) {
             if (event.logicalKey == LogicalKeyboardKey.enter && _selectedIndex >= 0 && _selectedIndex < messages.length) {
               BlocProvider.of<DataBloc>(dataBlocContext).add(
-                SelectMessageEvent(messages[_selectedIndex], dataState.selectedAddress!),
+                SelectMessageEvent(message: messages[_selectedIndex], addressData: dataState.selectedAddress!),
               );
               return KeyEventResult.handled;
             }
@@ -75,7 +75,7 @@ class _WinuiMessagesListState extends State<WinuiMessagesList> {
               selected: _selectedIndex == index,
               onSelectionChange: (v) {
                 _setSelectedIndex(index);
-                BlocProvider.of<DataBloc>(dataBlocContext).add(SelectMessageEvent(message, dataState.selectedAddress!));
+                BlocProvider.of<DataBloc>(dataBlocContext).add(SelectMessageEvent(message: message, addressData: dataState.selectedAddress!));
               },
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

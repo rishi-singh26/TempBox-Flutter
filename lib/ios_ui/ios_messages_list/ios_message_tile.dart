@@ -22,7 +22,7 @@ class IosMessageTile extends StatelessWidget {
   final AddressData selectedAddress;
 
   _navigateToMessagesDetail(BuildContext context, BuildContext dataBlocContext, AddressData addressData) {
-    BlocProvider.of<DataBloc>(dataBlocContext).add(SelectMessageEvent(message, addressData));
+    BlocProvider.of<DataBloc>(dataBlocContext).add(SelectMessageEvent(message: message, addressData: addressData));
     Navigator.of(context).push(CupertinoPageRoute(
       builder: (context) => BlocProvider.value(
         value: BlocProvider.of<DataBloc>(dataBlocContext),
