@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:macos_ui/macos_ui.dart';
 import 'package:tempbox/services/overlay_service.dart';
-import 'package:tempbox/shared/components/custom_alert_dialog.dart';
-import 'package:tempbox/shared/styles/button.dart';
 import 'package:tempbox/shared/styles/textfield.dart';
 
 class AlertService {
@@ -61,7 +59,7 @@ class AlertService {
           borderRadius: BorderRadius.vertical(top: Radius.circular(15.0)),
         ),
         builder: (context) {
-          return CustomAlertDialog(
+          return AlertDialog(
             title: Text(
               title,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
@@ -69,7 +67,6 @@ class AlertService {
             content: Text(content),
             actions: [
               FilledButton.tonal(
-                style: ButtonStyles.customBorderRadius(),
                 onPressed: () => Navigator.pop(context),
                 child: const Text('Ok'),
               ),
@@ -78,25 +75,6 @@ class AlertService {
         },
       );
     }
-  }
-
-  static Future<T?> showAlertCustomContentAndroid<T>({
-    required BuildContext context,
-    required Widget title,
-    Widget? content,
-    List<Widget> actions = const [],
-    EdgeInsets? contentPadding,
-    bool useSafeArea = false,
-  }) async {
-    return await OverlayService.showOverLay<T>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: useSafeArea,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(15.0))),
-      builder: (context) {
-        return CustomAlertDialog(title: title, content: content, actions: actions, contentPadding: contentPadding);
-      },
-    );
   }
 
   static Future<T?> showPromptAndroid<T>({
@@ -117,7 +95,7 @@ class AlertService {
       ),
       showAlwaysAsDialog: true,
       builder: (context) {
-        return CustomAlertDialog(
+        return AlertDialog(
           title: Text(
             title,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
@@ -131,14 +109,12 @@ class AlertService {
           ),
           actions: [
             FilledButton(
-              style: ButtonStyles.customBorderRadius(),
               onPressed: () {
                 Navigator.of(context).canPop() ? Navigator.of(context).pop(controller.text) : null;
               },
               child: Text(primaryButtonLabel ?? 'Done'),
             ),
             FilledButton.tonal(
-              style: ButtonStyles.customBorderRadius(),
               onPressed: () => Navigator.of(context).canPop() ? Navigator.of(context).pop() : null,
               child: const Text('Cancel'),
             ),
@@ -224,27 +200,21 @@ class AlertService {
         ),
       );
     } else {
-      return await OverlayService.showOverLay<T>(
+      return showDialog<T>(
         context: context,
-        isScrollControlled: true,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(15.0)),
-        ),
-        builder: (context) {
-          return CustomAlertDialog(
-            title: Text(title, style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)),
+        barrierDismissible: false, // user must tap button!
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(title),
             content: Text(
               truncateContent ? '${content.substring(0, truncateContentLength - 1)}...' : content,
-              style: Theme.of(context).textTheme.labelSmall,
             ),
             actions: [
-              FilledButton(
-                style: useDestructiveBtn ? ButtonStyles.destructive() : ButtonStyles.customBorderRadius(),
+              TextButton(
                 onPressed: () => Navigator.of(context).canPop() ? Navigator.of(context).pop(true) : null,
                 child: Text(confirmBtnTxt),
               ),
-              FilledButton.tonal(
-                style: ButtonStyles.customBorderRadius(),
+              TextButton(
                 onPressed: () => Navigator.of(context).canPop() ? Navigator.of(context).pop(false) : null,
                 child: Text(secondaryBtnTxt),
               ),
