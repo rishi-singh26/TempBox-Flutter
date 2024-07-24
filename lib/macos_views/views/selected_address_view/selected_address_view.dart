@@ -52,10 +52,10 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
       return MacosScaffold(
         toolBar: ToolBar(
           title: Builder(builder: (context) {
-            List<Message>? messages = dataState.accountIdToAddressesMap[dataState.selectedAddress!.authenticatedUser.account.id];
             if (dataState.selectedAddress == null) {
               return const Text("Inbox");
             }
+            List<Message>? messages = dataState.accountIdToAddressesMap[dataState.selectedAddress!.authenticatedUser.account.id];
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,

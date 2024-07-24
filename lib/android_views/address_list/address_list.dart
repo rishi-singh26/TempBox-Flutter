@@ -64,15 +64,47 @@ class _AddressListState extends State<AddressList> {
           builder: (dataBlocContext, dataState) {
             return SlidableAutoCloseBehavior(
               child: Scaffold(
-                body: CustomScrollView(
-                  slivers: [
-                    SliverAppBar.large(title: Text(widget.title)),
-                    SliverList.builder(
-                      itemCount: dataState.addressList.length,
-                      itemBuilder: (context, index) => AddressTile(index: index),
+                body: Builder(builder: (context) {
+                  if (dataState.addressList.isEmpty) {
+                    return const CustomScrollView(slivers: [SliverAppBar.large(title: Text('TempBox'))]);
+                  }
+                  List<AddressData> active = [];
+                  List<AddressData> archived = [];
+                  addToList(a) => a.isActive ? active.add(a) : archived.add(a);
+                  dataState.addressList.forEach(addToList);
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      BlocProvider.of<DataBloc>(dataBlocContext).add(const LoginToAccountsEvent());
+                    },
+                    child: CustomScrollView(
+                      slivers: [
+                        SliverAppBar.large(title: Text(widget.title)),
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 22),
+                            child: Text('Active', style: Theme.of(context).textTheme.bodyLarge),
+                          ),
+                        ),
+                        SliverList.builder(
+                          itemCount: active.length,
+                          itemBuilder: (context, index) =>
+                              AddressTile(addressData: active[index], isFirst: index == 0, isLast: index == active.length - 1),
+                        ),
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(22, 20, 22, 5),
+                            child: Text('Archived', style: Theme.of(context).textTheme.bodyLarge),
+                          ),
+                        ),
+                        SliverList.builder(
+                          itemCount: archived.length,
+                          itemBuilder: (context, index) =>
+                              AddressTile(addressData: archived[index], isFirst: index == 0, isLast: index == archived.length - 1),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  );
+                }),
                 floatingActionButton: FloatingActionButton(
                   onPressed: () => _openNewAddressSheet(dataBlocContext),
                   tooltip: 'New Address',

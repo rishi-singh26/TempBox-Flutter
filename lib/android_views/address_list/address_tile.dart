@@ -14,8 +14,10 @@ import 'package:tempbox/android_views/address_info/address_info.dart';
 import 'package:tempbox/android_views/messages_list/messages_list.dart';
 
 class AddressTile extends StatelessWidget {
-  final int index;
-  const AddressTile({super.key, required this.index});
+  final AddressData addressData;
+  final bool isFirst;
+  final bool isLast;
+  const AddressTile({super.key, required this.addressData, required this.isFirst, required this.isLast});
 
   _openAddressInfoSheet(BuildContext context, BuildContext dataBlocContext, AddressData addressData) {
     OverlayService.showOverLay(
@@ -52,13 +54,24 @@ class AddressTile extends StatelessWidget {
     }
   }
 
+  _archiveAddress(BuildContext context, BuildContext dataBlocContext, AddressData addressData) async {
+    bool? choice = await AlertService.getConformation(
+      context: context,
+      title: 'Alert',
+      content: 'Are you sure you want to archive this address?',
+    );
+    if (choice == true && dataBlocContext.mounted) {
+      BlocProvider.of<DataBloc>(dataBlocContext).add(ArchiveAddressEvent(addressData));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
-      AddressData addressData = dataState.addressList[index];
+      String messageCount = (dataState.accountIdToAddressesMap[addressData.authenticatedUser.account.id]?.length ?? 0).toString();
       return CardListTile(
-        isFirst: index == 0,
-        isLast: index == dataState.addressList.length - 1,
+        isFirst: isFirst,
+        isLast: isLast,
         child: Slidable(
           groupTag: 'AddressItem',
           key: ValueKey(addressData.authenticatedUser.account.id),
@@ -78,6 +91,12 @@ class AddressTile extends StatelessWidget {
             motion: const DrawerMotion(),
             children: [
               SlidableAction(
+                onPressed: (_) => _archiveAddress(context, dataBlocContext, addressData),
+                backgroundColor: CupertinoColors.systemIndigo,
+                foregroundColor: CupertinoColors.white,
+                icon: CupertinoIcons.archivebox_fill,
+              ),
+              SlidableAction(
                 onPressed: (_) => _deleteAddress(context, dataBlocContext, addressData),
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
@@ -88,7 +107,20 @@ class AddressTile extends StatelessWidget {
           child: ListTile(
             leading: Icon(CupertinoIcons.tray, color: Theme.of(context).buttonTheme.colorScheme?.primary ?? Colors.red),
             title: Text(UiService.getAccountName(addressData)),
-            trailing: const Icon(CupertinoIcons.chevron_right, size: 17),
+            trailing: SizedBox(
+              width: messageCount.length == 1
+                  ? 25
+                  : messageCount.length == 2
+                      ? 32
+                      : 40,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(messageCount),
+                  const Icon(CupertinoIcons.chevron_right, size: 17),
+                ],
+              ),
+            ),
             onTap: () => _navigateToMessagesList(context, dataBlocContext, addressData),
           ),
         ),

@@ -17,18 +17,23 @@ class MessagesList extends StatelessWidget {
       if (dataState.selectedAddress == null) {
         return Scaffold(appBar: AppBar(), body: const Center(child: Text('No Address Selected!')));
       }
-      return Scaffold(
-        body: SlidableAutoCloseBehavior(
-          child: RefreshIndicator.adaptive(
-            edgeOffset: 60,
-            onRefresh: () async {
-              BlocProvider.of<DataBloc>(dataBlocContext).add(GetMessagesEvent(addressData: dataState.selectedAddress!));
-            },
-            child: CustomScrollView(
-              slivers: [
-                SliverAppBar.large(title: Text(UiService.getAccountName(dataState.selectedAddress!))),
-                const MessageList(),
-              ],
+      return PopScope(
+        onPopInvoked: (didPop) {
+          BlocProvider.of<DataBloc>(dataBlocContext).add(const ResetSelectedAddressEvent());
+        },
+        child: Scaffold(
+          body: SlidableAutoCloseBehavior(
+            child: RefreshIndicator(
+              edgeOffset: 60,
+              onRefresh: () async {
+                BlocProvider.of<DataBloc>(dataBlocContext).add(GetMessagesEvent(addressData: dataState.selectedAddress!));
+              },
+              child: CustomScrollView(
+                slivers: [
+                  SliverAppBar.large(title: Text(UiService.getAccountName(dataState.selectedAddress!))),
+                  const MessageList(),
+                ],
+              ),
             ),
           ),
         ),
