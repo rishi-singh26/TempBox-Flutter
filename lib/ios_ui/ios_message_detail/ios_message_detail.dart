@@ -17,7 +17,11 @@ class IosMessageDetail extends StatelessWidget {
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
       if (dataState.selectedMessage == null) {
         return CupertinoPageScaffold(
-          navigationBar: CupertinoNavigationBar(middle: Text(UiService.getMessageFromName(message))),
+          backgroundColor: CupertinoColors.systemGroupedBackground,
+          navigationBar: CupertinoNavigationBar(
+            middle: Text(UiService.getMessageFromName(message)),
+            backgroundColor: AppColors.navBarColor,
+          ),
           child: const SizedBox.shrink(),
         );
       }
@@ -31,6 +35,7 @@ class IosMessageDetail extends StatelessWidget {
             middle: Text(UiService.getMessageFromName(dataState.selectedMessage!)),
             backgroundColor: AppColors.navBarColor,
             border: null,
+            previousPageTitle: dataState.selectedAddress!.addressName,
           ),
           child: RenderMessage(message: dataState.selectedMessage!),
         ),
