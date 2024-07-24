@@ -24,31 +24,43 @@ class WinuiAddressInfo extends StatefulWidget {
 
 class _WinuiAddressInfoState extends State<WinuiAddressInfo> {
   bool showPassword = false;
-  AuthenticatedUser? authenticatedUser;
+  AddressData? verifiedAddressData;
+
   @override
   void initState() {
-    try {
-      authenticatedUser = MailTm.getUser(widget.addressData.authenticatedUser.account.id);
-    } catch (e) {
-      debugPrint(e.toString());
+    verifiedAddressData = widget.addressData;
+    if (widget.addressData.isActive) {
+      try {
+        final user = MailTm.getUser(widget.addressData.authenticatedUser.account.id);
+        if (user != null) {
+          verifiedAddressData = widget.addressData.copyWith(authenticatedUser: user);
+        }
+        setState(() {});
+      } catch (e) {
+        debugPrint(e.toString());
+      }
     }
     super.initState();
   }
 
-  Color _getStatusColor(AuthenticatedUser authenticatedUser) {
-    return authenticatedUser.account.isDeleted
-        ? Colors.red
-        : authenticatedUser.account.isDisabled
-            ? Colors.yellow
-            : Colors.green;
+  String _getStatusText(AddressData addressData) {
+    if (!addressData.isActive) {
+      return 'Deleted';
+    } else if (addressData.authenticatedUser.account.isDisabled) {
+      return 'Disabled';
+    } else {
+      return 'Active';
+    }
   }
 
-  String _getStatusText(AuthenticatedUser authenticatedUser) {
-    return authenticatedUser.account.isDeleted
-        ? 'Deleted'
-        : authenticatedUser.account.isDisabled
-            ? 'Disabled'
-            : 'Active';
+  Color _getStatusColor(AddressData addressData) {
+    if (!addressData.isActive) {
+      return CupertinoColors.systemRed;
+    } else if (addressData.authenticatedUser.account.isDisabled) {
+      return CupertinoColors.systemYellow;
+    } else {
+      return CupertinoColors.systemGreen;
+    }
   }
 
   String _getQuotaString(int bytes, SizeUnit unit) {
@@ -61,7 +73,7 @@ class _WinuiAddressInfoState extends State<WinuiAddressInfo> {
     SizedBox hGap(double size) => SizedBox(width: size);
     SizedBox vGap(double size) => SizedBox(height: size);
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
-      if (dataState.selectedAddress == null || authenticatedUser == null) {
+      if (dataState.selectedAddress == null || verifiedAddressData == null) {
         return ContentDialog(
           constraints: const BoxConstraints(maxWidth: 600),
           title: const Text('Address Details'),
@@ -81,9 +93,9 @@ class _WinuiAddressInfoState extends State<WinuiAddressInfo> {
                     Row(children: [
                       const Text('Status:', style: TextStyle(fontWeight: FontWeight.bold)),
                       hGap(10),
-                      BlankBadge(color: _getStatusColor(authenticatedUser!)),
+                      BlankBadge(color: _getStatusColor(verifiedAddressData!)),
                       hGap(10),
-                      Text(_getStatusText(authenticatedUser!)),
+                      Text(_getStatusText(verifiedAddressData!)),
                     ]),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -93,7 +105,7 @@ class _WinuiAddressInfoState extends State<WinuiAddressInfo> {
                           Row(children: [
                             const Text('Address:', style: TextStyle(fontWeight: FontWeight.bold)),
                             hGap(10),
-                            Text(authenticatedUser!.account.address),
+                            Text(verifiedAddressData!.authenticatedUser.account.address),
                           ]),
                           IconButton(
                             icon: const Icon(CupertinoIcons.doc_on_doc),
@@ -154,7 +166,7 @@ class _WinuiAddressInfoState extends State<WinuiAddressInfo> {
                       children: [
                         const Text('Quota Usage', style: TextStyle(fontWeight: FontWeight.bold)),
                         Text(
-                          '${_getQuotaString(authenticatedUser!.account.used, SizeUnit.mb)} / ${_getQuotaString(authenticatedUser!.account.quota, SizeUnit.mb)}',
+                          '${_getQuotaString(verifiedAddressData!.authenticatedUser.account.used, SizeUnit.mb)} / ${_getQuotaString(verifiedAddressData!.authenticatedUser.account.quota, SizeUnit.mb)}',
                         )
                       ],
                     ),
@@ -162,7 +174,9 @@ class _WinuiAddressInfoState extends State<WinuiAddressInfo> {
                       padding: const EdgeInsets.only(top: 10),
                       child: SizedBox(
                         width: double.infinity,
-                        child: ProgressBar(value: (authenticatedUser!.account.used / authenticatedUser!.account.quota) * 100),
+                        child: ProgressBar(
+                            value:
+                                (verifiedAddressData!.authenticatedUser.account.used / verifiedAddressData!.authenticatedUser.account.quota) * 100),
                       ),
                     )
                   ],
