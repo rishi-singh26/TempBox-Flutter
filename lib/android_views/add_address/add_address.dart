@@ -23,7 +23,7 @@ class _AddAddressState extends State<AddAddress> {
   bool showSpinner = false;
   Domain? selectedDomain;
   List<Domain> domainsList = [];
-  double passwordBoxHeight = 60.0;
+  bool useRandomPassword = false;
 
   late TextEditingController addressNameController;
   late TextEditingController addressController;
@@ -40,6 +40,7 @@ class _AddAddressState extends State<AddAddress> {
 
   _updateRandomAddress() {
     addressController.text = UiService.generateRandomString(10);
+    setState(() {});
   }
 
   _getDomains() async {
@@ -55,7 +56,7 @@ class _AddAddressState extends State<AddAddress> {
   _createAddress(BuildContext dataBlocContext) async {
     setState(() => showSpinner = true);
     try {
-      final String password = passwordController.text.isNotEmpty && passwordBoxHeight != 0
+      final String password = passwordController.text.isNotEmpty && useRandomPassword != 0
           ? passwordController.text
           : UiService.generateRandomString(12, useNumbers: true, useSpecialCharacters: true, useUpperCase: true);
       AuthenticatedUser authenticatedUser = await MailTm.register(
@@ -98,7 +99,7 @@ class _AddAddressState extends State<AddAddress> {
                       ? const SizedBox(
                           width: 20,
                           height: 20,
-                          child: CircularProgressIndicator.adaptive(strokeWidth: 3),
+                          child: CircularProgressIndicator(strokeWidth: 3),
                         )
                       : const Text('Done'),
                 ),
@@ -145,10 +146,7 @@ class _AddAddressState extends State<AddAddress> {
                           value != null ? setState(() => selectedDomain = value) : null;
                         },
                         items: domainsList.map<DropdownMenuItem<Domain>>((Domain value) {
-                          return DropdownMenuItem<Domain>(
-                            value: value,
-                            child: Text(value.domain),
-                          );
+                          return DropdownMenuItem<Domain>(value: value, child: Text(value.domain));
                         }).toList(),
                       )
                     ],
@@ -172,7 +170,19 @@ class _AddAddressState extends State<AddAddress> {
                 vGap(30),
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  height: passwordBoxHeight,
+                  height: useRandomPassword ? 0 : 60,
+                  onEnd: () {
+                    if (useRandomPassword == true) {
+                      setState(() {
+                        passwordController.text = UiService.generateRandomString(
+                          12,
+                          useNumbers: false,
+                          useSpecialCharacters: true,
+                          useUpperCase: true,
+                        );
+                      });
+                    }
+                  },
                   child: CardListTile(
                     isFirst: true,
                     child: Padding(
@@ -185,14 +195,16 @@ class _AddAddressState extends State<AddAddress> {
                   ),
                 ),
                 CardListTile(
-                  isFirst: passwordBoxHeight == 0,
+                  isFirst: useRandomPassword,
                   isLast: true,
-                  child: SwitchListTile.adaptive(
-                    value: passwordBoxHeight == 0,
-                    onChanged: (v) {
-                      v ? passwordBoxHeight = 0 : passwordBoxHeight = 60;
-                      setState(() {});
-                    },
+                  child: SwitchListTile(
+                    value: useRandomPassword,
+                    onChanged: (v) => setState(() {
+                      useRandomPassword = v;
+                      if (v == false) {
+                        passwordController.text = '';
+                      }
+                    }),
                     title: const Text('Use random password'),
                   ),
                 ),
