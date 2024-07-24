@@ -101,15 +101,16 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
               ),
             ),
             actions: [
-              ToolBarIconButton(
-                icon: const MacosIcon(CupertinoIcons.refresh_circled),
-                onPressed: dataState.selectedAddress == null || dataState.selectedAddress?.isActive != true
-                    ? null
-                    : () => BlocProvider.of<DataBloc>(context).add(GetMessagesEvent(addressData: dataState.selectedAddress!)),
-                label: 'Refresh',
-                showLabel: false,
-                tooltipMessage: 'Refresh inbox',
-              ),
+              if (dataState.selectedAddress?.isActive == true)
+                ToolBarIconButton(
+                  icon: const MacosIcon(CupertinoIcons.refresh_circled),
+                  onPressed: dataState.selectedAddress == null || dataState.selectedAddress?.isActive != true
+                      ? null
+                      : () => BlocProvider.of<DataBloc>(context).add(GetMessagesEvent(addressData: dataState.selectedAddress!)),
+                  label: 'Refresh',
+                  showLabel: false,
+                  tooltipMessage: 'Refresh inbox',
+                ),
               ToolBarIconButton(
                 icon: const MacosIcon(CupertinoIcons.info_circle),
                 onPressed: dataState.selectedAddress == null
@@ -125,24 +126,25 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
                 showLabel: false,
                 tooltipMessage: 'Address information',
               ),
-              ToolBarIconButton(
-                icon: const MacosIcon(CupertinoIcons.archivebox),
-                onPressed: dataState.selectedAddress == null
-                    ? null
-                    : () async {
-                        final choice = await AlertService.getConformation<bool>(
-                          context: context,
-                          title: 'Alert',
-                          content: 'Are you sure you want to archive this address?',
-                        );
-                        if (choice == true && context.mounted) {
-                          BlocProvider.of<DataBloc>(context).add(ArchiveAddressEvent(dataState.selectedAddress!));
-                        }
-                      },
-                label: 'Archive',
-                showLabel: false,
-                tooltipMessage: 'Archive address',
-              ),
+              if (dataState.selectedAddress?.isActive == true)
+                ToolBarIconButton(
+                  icon: const MacosIcon(CupertinoIcons.archivebox),
+                  onPressed: dataState.selectedAddress == null
+                      ? null
+                      : () async {
+                          final choice = await AlertService.getConformation<bool>(
+                            context: context,
+                            title: 'Alert',
+                            content: 'Are you sure you want to archive this address?',
+                          );
+                          if (choice == true && context.mounted) {
+                            BlocProvider.of<DataBloc>(context).add(ArchiveAddressEvent(dataState.selectedAddress!));
+                          }
+                        },
+                  label: 'Archive',
+                  showLabel: false,
+                  tooltipMessage: 'Archive address',
+                ),
               ToolBarIconButton(
                 icon: const MacosIcon(CupertinoIcons.trash),
                 onPressed: dataState.selectedAddress == null
