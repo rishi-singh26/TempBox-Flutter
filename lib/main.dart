@@ -44,13 +44,13 @@ void main() async {
   } else if (Platform.isWindows) {
     await configureWindowSize(minSize: const Size(1200, 550));
     SystemTheme.accentColor.load();
-    SystemTheme.fallbackColor = const Color(0xFFBA1F33);
+    SystemTheme.fallbackColor = const Color(0xFFFCB43F);
     runApp(const WinApp());
   } else if (Platform.isIOS) {
     runApp(const IosView());
   } else {
     SystemTheme.accentColor.load();
-    SystemTheme.fallbackColor = const Color(0xFFBA1F33);
+    SystemTheme.fallbackColor = const Color(0xFFFCB43F);
     runApp(const AndroidAppView());
   }
 }
