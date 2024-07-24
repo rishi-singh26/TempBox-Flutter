@@ -22,18 +22,18 @@ This project is heavely inspired by [TempBox](https://github.com/devwaseem/TempB
 
 ## iOS
 
-<img src="screenshots/ios/light/iOSApp.png" alt="MacOS App Screenshot" width="49%" alt="iOS App Screenshot" />
+<!-- <img src="screenshots/ios/light/iOSApp.png" alt="MacOS App Screenshot" width="49%" alt="iOS App Screenshot" /> -->
 <img src="screenshots/ios/light/iOSImportExport.png" alt="iOS App screenshot highlighting import and export feature" width="49%" />
-<img src="screenshots/ios/light/iOSAddAddress.png" alt="iOS app screenshot showing screen for creating a new address" width="49%" />
-<img src="screenshots/ios/light/iOSAddressInfo.png" alt="iOS app screenshot showing address information screen" width="49%" />
+<!-- <img src="screenshots/ios/light/iOSAddAddress.png" alt="iOS app screenshot showing screen for creating a new address" width="49%" /> -->
+<!-- <img src="screenshots/ios/light/iOSAddressInfo.png" alt="iOS app screenshot showing address information screen" width="49%" /> -->
 
 
 ## Android
 
-<img src="screenshots/android/light/AndroidApp.png" alt="MacOS App Screenshot" width="49%" alt="iOS App Screenshot" />
+<!-- <img src="screenshots/android/light/AndroidApp.png" alt="MacOS App Screenshot" width="49%" alt="iOS App Screenshot" /> -->
 <img src="screenshots/android/light/AndroidImportExport.png" alt="iOS App screenshot highlighting import and export feature" width="49%" />
-<img src="screenshots/android/light/AndroidAddAddress.png" alt="iOS app screenshot showing screen for creating a new address" width="49%" />
-<img src="screenshots/android/light/AndroidAddressInfo.png" alt="iOS app screenshot showing address information screen" width="49%" />
+<!-- <img src="screenshots/android/light/AndroidAddAddress.png" alt="iOS app screenshot showing screen for creating a new address" width="49%" /> -->
+<!-- <img src="screenshots/android/light/AndroidAddressInfo.png" alt="iOS app screenshot showing address information screen" width="49%" /> -->
 
 
 
