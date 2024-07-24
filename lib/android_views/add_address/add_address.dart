@@ -23,7 +23,7 @@ class _AddAddressState extends State<AddAddress> {
   bool showSpinner = false;
   Domain? selectedDomain;
   List<Domain> domainsList = [];
-  bool useRandomPassword = false;
+  bool useRandomPassword = true;
 
   late TextEditingController addressNameController;
   late TextEditingController addressController;
@@ -33,7 +33,9 @@ class _AddAddressState extends State<AddAddress> {
   void initState() {
     addressNameController = TextEditingController();
     addressController = TextEditingController();
-    passwordController = TextEditingController();
+    passwordController = TextEditingController.fromValue(TextEditingValue(
+      text: UiService.generateRandomString(12, useNumbers: true, useSpecialCharacters: true, useUpperCase: true),
+    ));
     _getDomains();
     super.initState();
   }

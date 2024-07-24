@@ -30,7 +30,9 @@ class _IosAddAddressState extends State<IosAddAddress> {
   void initState() {
     addressNameController = TextEditingController();
     addressController = TextEditingController();
-    passwordController = TextEditingController();
+    passwordController = TextEditingController.fromValue(TextEditingValue(
+      text: UiService.generateRandomString(12, useNumbers: true, useSpecialCharacters: true, useUpperCase: true),
+    ));
     _getDomains();
     super.initState();
   }

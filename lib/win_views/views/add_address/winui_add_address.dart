@@ -18,7 +18,7 @@ class _WinuiAddAddressState extends State<WinuiAddAddress> {
   bool showSpinner = false;
   Domain? selectedDomain;
   List<Domain> domainsList = [];
-  bool useRandomPassword = false;
+  bool useRandomPassword = true;
 
   late TextEditingController addressNameController;
   late TextEditingController addressController;
@@ -28,7 +28,9 @@ class _WinuiAddAddressState extends State<WinuiAddAddress> {
   void initState() {
     addressNameController = TextEditingController();
     addressController = TextEditingController();
-    passwordController = TextEditingController();
+    passwordController = TextEditingController.fromValue(TextEditingValue(
+      text: UiService.generateRandomString(12, useNumbers: true, useSpecialCharacters: true, useUpperCase: true),
+    ));
 
     addressController.addListener(() => setState(() {}));
     passwordController.addListener(() => setState(() {}));

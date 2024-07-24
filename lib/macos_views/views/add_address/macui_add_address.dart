@@ -19,7 +19,7 @@ class _MacUIAddAddressState extends State<MacUIAddAddress> {
   bool showSpinner = false;
   Domain? selectedDomain;
   List<Domain> domainsList = [];
-  bool useRandomPassword = false;
+  bool useRandomPassword = true;
 
   late TextEditingController addressNameController;
   late TextEditingController addressController;
@@ -29,10 +29,9 @@ class _MacUIAddAddressState extends State<MacUIAddAddress> {
   void initState() {
     addressNameController = TextEditingController();
     addressController = TextEditingController();
-    passwordController = TextEditingController();
-
-    addressController.addListener(() => setState(() {}));
-    passwordController.addListener(() => setState(() {}));
+    passwordController = TextEditingController.fromValue(TextEditingValue(
+      text: UiService.generateRandomString(12, useNumbers: true, useSpecialCharacters: true, useUpperCase: true),
+    ));
 
     _getDomains();
     super.initState();
