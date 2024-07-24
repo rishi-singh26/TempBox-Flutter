@@ -66,6 +66,7 @@ class _IosExportPageState extends State<IosExportPage> {
                 onPressed: selectedAddressIndices.isEmpty ? null : () => _exportAddresses(dataState.addressList, context),
                 child: const Text('Export', style: TextStyle(fontWeight: FontWeight.bold)),
               ),
+              border: null,
             ),
             SliverList.list(children: [
               CupertinoListSection.insetGrouped(
