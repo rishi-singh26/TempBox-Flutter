@@ -66,16 +66,14 @@ class ToggleMessageReadUnread extends DataEvent {
   const ToggleMessageReadUnread({required this.addressData, required this.message});
 
   @override
-  List<Object> get props => [
-        addressData,
-        message,
-      ];
+  List<Object> get props => [addressData, message];
 }
 
 class SelectMessageEvent extends DataEvent {
   final AddressData addressData;
   final Message message;
-  const SelectMessageEvent(this.message, this.addressData);
+  final bool? markAsRead;
+  const SelectMessageEvent({required this.message, required this.addressData, this.markAsRead});
 
   @override
   List<Object> get props => [message, addressData];
