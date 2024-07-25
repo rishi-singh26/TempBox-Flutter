@@ -19,17 +19,21 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
         List<AddressData> updateAddressList = [];
         Map<String, List<Message>> accountIdToAddressesMap = {...state.accountIdToAddressesMap};
         for (var address in state.addressList) {
-          AuthenticatedUser? loggedInUser;
-          try {
-            loggedInUser = await MailTm.login(address: address.authenticatedUser.account.address, password: address.password);
-          } catch (e) {
-            debugPrint(e.toString());
-          }
-          if (loggedInUser == null) {
-            updateAddressList.add(address.copyWith(isActive: false));
+          if (address.isActive) {
+            AuthenticatedUser? loggedInUser;
+            try {
+              loggedInUser = await MailTm.login(address: address.authenticatedUser.account.address, password: address.password);
+            } catch (e) {
+              debugPrint(e.toString());
+            }
+            if (loggedInUser == null) {
+              updateAddressList.add(address.copyWith(isActive: false));
+            } else {
+              final messages = await loggedInUser.messagesAt(1);
+              messages.isNotEmpty ? accountIdToAddressesMap[loggedInUser.account.id] = messages : null;
+              updateAddressList.add(address);
+            }
           } else {
-            final messages = await loggedInUser.messagesAt(1);
-            messages.isNotEmpty ? accountIdToAddressesMap[loggedInUser.account.id] = messages : null;
             updateAddressList.add(address);
           }
         }
@@ -64,7 +68,6 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
 
     on<ArchiveAddressEvent>((ArchiveAddressEvent event, Emitter<DataState> emit) async {
       try {
-        await event.addressData.authenticatedUser.delete();
         List<AddressData> addresses = state.addressList.map((a) {
           if (a.authenticatedUser.account.id == event.addressData.authenticatedUser.account.id) {
             return a.copyWith(isActive: false);
