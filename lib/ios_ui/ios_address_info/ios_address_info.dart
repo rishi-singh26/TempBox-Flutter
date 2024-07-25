@@ -39,30 +39,6 @@ class _IosAddressInfoState extends State<IosAddressInfo> {
     super.initState();
   }
 
-  String _getStatusText(AddressData addressData) {
-    if (!addressData.isActive) {
-      return 'Deleted';
-    } else if (addressData.authenticatedUser.account.isDisabled) {
-      return 'Disabled';
-    } else {
-      return 'Active';
-    }
-  }
-
-  Color _getStatusColor(AddressData addressData) {
-    if (!addressData.isActive) {
-      return CupertinoColors.systemRed;
-    } else if (addressData.authenticatedUser.account.isDisabled) {
-      return CupertinoColors.systemYellow;
-    } else {
-      return CupertinoColors.systemGreen;
-    }
-  }
-
-  String _getQuotaStering(int bytes, SizeUnit unit) {
-    return ByteConverterService.fromBytes(bytes.toDouble()).toHumanReadable(unit);
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = CupertinoTheme.of(context);
@@ -97,9 +73,9 @@ class _IosAddressInfoState extends State<IosAddressInfo> {
                       children: [
                         const Text('Status:', style: TextStyle(fontWeight: FontWeight.bold)),
                         hGap(10),
-                        BlankBadge(color: _getStatusColor(verifiedAddressData!)),
+                        BlankBadge(color: UiService.getStatusColor(verifiedAddressData!)),
                         hGap(10),
-                        Text(_getStatusText(verifiedAddressData!)),
+                        Text(UiService.getStatusText(verifiedAddressData!)),
                       ],
                     ),
                   ),
@@ -181,7 +157,7 @@ class _IosAddressInfoState extends State<IosAddressInfo> {
                     padding: const EdgeInsetsDirectional.fromSTEB(14, 10, 14, 7),
                     title: const Text('Quota usage', style: TextStyle(fontWeight: FontWeight.bold)),
                     trailing: Text(
-                      '${_getQuotaStering(verifiedAddressData!.authenticatedUser.account.used, SizeUnit.kb)} / ${_getQuotaStering(verifiedAddressData!.authenticatedUser.account.quota, SizeUnit.mb)}',
+                      '${UiService.getQuotaString(verifiedAddressData!.authenticatedUser.account.used, SizeUnit.kb)} / ${UiService.getQuotaString(verifiedAddressData!.authenticatedUser.account.quota, SizeUnit.mb)}',
                       style: theme.textTheme.tabLabelTextStyle.copyWith(fontSize: 15),
                     ),
                   ),

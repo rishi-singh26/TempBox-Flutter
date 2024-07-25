@@ -43,30 +43,6 @@ class _MacuiAddressInfoState extends State<MacuiAddressInfo> {
     super.initState();
   }
 
-  String _getStatusText(AddressData addressData) {
-    if (!addressData.isActive) {
-      return 'Deleted';
-    } else if (addressData.authenticatedUser.account.isDisabled) {
-      return 'Disabled';
-    } else {
-      return 'Active';
-    }
-  }
-
-  Color _getStatusColor(AddressData addressData) {
-    if (!addressData.isActive) {
-      return CupertinoColors.systemRed;
-    } else if (addressData.authenticatedUser.account.isDisabled) {
-      return CupertinoColors.systemYellow;
-    } else {
-      return CupertinoColors.systemGreen;
-    }
-  }
-
-  String _getQuotaString(int bytes, SizeUnit unit) {
-    return ByteConverterService.fromBytes(bytes.toDouble()).toHumanReadable(unit);
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = MacosTheme.of(context);
@@ -117,9 +93,9 @@ class _MacuiAddressInfoState extends State<MacuiAddressInfo> {
                     child: Row(children: [
                       const Text('Status:', style: TextStyle(fontWeight: FontWeight.bold)),
                       hGap(10),
-                      BlankBadge(color: _getStatusColor(verifiedAddressData!)),
+                      BlankBadge(color: UiService.getStatusColor(verifiedAddressData!)),
                       hGap(10),
-                      Text(_getStatusText(verifiedAddressData!)),
+                      Text(UiService.getStatusText(verifiedAddressData!)),
                     ]),
                   ),
                   MacosCard(
@@ -190,7 +166,7 @@ class _MacuiAddressInfoState extends State<MacuiAddressInfo> {
                       children: [
                         const Text('Quota Usage', style: TextStyle(fontWeight: FontWeight.bold)),
                         Text(
-                          '${_getQuotaString(verifiedAddressData!.authenticatedUser.account.used, SizeUnit.mb)} / ${_getQuotaString(verifiedAddressData!.authenticatedUser.account.quota, SizeUnit.mb)}',
+                          '${UiService.getQuotaString(verifiedAddressData!.authenticatedUser.account.used, SizeUnit.mb)} / ${UiService.getQuotaString(verifiedAddressData!.authenticatedUser.account.quota, SizeUnit.mb)}',
                         )
                       ],
                     ),

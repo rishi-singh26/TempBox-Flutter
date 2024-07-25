@@ -55,7 +55,7 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
       try {
         List<AddressData> addresses =
             state.addressList.where((a) => a.authenticatedUser.account.id != event.addressData.authenticatedUser.account.id).toList();
-        event.addressData.isActive ? await event.addressData.authenticatedUser.delete() : null;
+        await event.addressData.authenticatedUser.delete();
         emit(state.copyWith(
           addressList: addresses,
           setSelectedAddressToNull:

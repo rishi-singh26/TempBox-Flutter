@@ -1,8 +1,11 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mailtm_client/mailtm_client.dart';
 import 'package:tempbox/models/address_data.dart';
+import 'package:tempbox/services/byte_converter_service.dart';
 
 class UiService {
   static List<String> monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -69,5 +72,45 @@ class UiService {
     }
     final random = Random();
     return List.generate(length, (index) => characters[random.nextInt(characters.length)]).join();
+  }
+
+  static String getStatusText(AddressData addressData) {
+    if (!addressData.isActive) {
+      return 'Archived';
+    } else if (addressData.authenticatedUser.account.isDeleted) {
+      return 'Deleted';
+    } else if (addressData.authenticatedUser.account.isDisabled) {
+      return 'Disabled';
+    } else {
+      return 'Active';
+    }
+  }
+
+  static Color getStatusColor(AddressData addressData, [bool useCupertinoColor = true]) {
+    if (useCupertinoColor) {
+      if (!addressData.isActive) {
+        return CupertinoColors.systemYellow;
+      } else if (addressData.authenticatedUser.account.isDeleted) {
+        return CupertinoColors.systemRed;
+      } else if (addressData.authenticatedUser.account.isDisabled) {
+        return CupertinoColors.systemYellow;
+      } else {
+        return CupertinoColors.systemGreen;
+      }
+    } else {
+      if (!addressData.isActive) {
+        return Colors.yellow;
+      } else if (addressData.authenticatedUser.account.isDeleted) {
+        return Colors.red;
+      } else if (addressData.authenticatedUser.account.isDisabled) {
+        return Colors.yellow;
+      } else {
+        return Colors.green;
+      }
+    }
+  }
+
+  static String getQuotaString(int bytes, SizeUnit unit) {
+    return ByteConverterService.fromBytes(bytes.toDouble()).toHumanReadable(unit);
   }
 }
