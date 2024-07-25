@@ -41,94 +41,96 @@ class IosAddressesList extends StatelessWidget {
     return CupertinoPageScaffold(
       backgroundColor: CupertinoColors.systemGroupedBackground,
       child: BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
-        return Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            CustomScrollView(
-              slivers: [
-                CupertinoSliverRefreshControl(
-                  onRefresh: () async {
-                    BlocProvider.of<DataBloc>(dataBlocContext).add(const LoginToAccountsEvent());
-                  },
-                ),
-                CupertinoSliverNavigationBar(
-                  backgroundColor: AppColors.navBarColor,
-                  largeTitle: const Text('TempBox'),
-                  border: null,
-                  trailing: PullDownButton(
-                    itemBuilder: (context) => [
-                      PullDownMenuItem(
-                        title: 'Export Addresses',
-                        icon: CupertinoIcons.arrow_up_circle,
-                        onTap: dataState.addressList.isNotEmpty ? () => _openImportExportPage(context, dataBlocContext, 0) : null,
+        return SafeArea(
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              CustomScrollView(
+                slivers: [
+                  CupertinoSliverRefreshControl(
+                    onRefresh: () async {
+                      BlocProvider.of<DataBloc>(dataBlocContext).add(const LoginToAccountsEvent());
+                    },
+                  ),
+                  CupertinoSliverNavigationBar(
+                    backgroundColor: AppColors.navBarColor,
+                    largeTitle: const Text('TempBox'),
+                    border: null,
+                    trailing: PullDownButton(
+                      itemBuilder: (context) => [
+                        PullDownMenuItem(
+                          title: 'Export Addresses',
+                          icon: CupertinoIcons.arrow_up_circle,
+                          onTap: dataState.addressList.isNotEmpty ? () => _openImportExportPage(context, dataBlocContext, 0) : null,
+                        ),
+                        PullDownMenuItem(
+                          title: 'Import Addresses',
+                          icon: CupertinoIcons.arrow_down_circle,
+                          onTap: () => _openImportExportPage(context, dataBlocContext, 1),
+                        ),
+                        const PullDownMenuDivider.large(),
+                        PullDownMenuItem(
+                          title: 'About TempBox',
+                          icon: CupertinoIcons.info_circle,
+                          onTap: () {},
+                        ),
+                      ],
+                      buttonBuilder: (context, showMenu) => CupertinoButton(
+                        onPressed: showMenu,
+                        padding: EdgeInsets.zero,
+                        child: const Icon(CupertinoIcons.ellipsis_circle),
                       ),
-                      PullDownMenuItem(
-                        title: 'Import Addresses',
-                        icon: CupertinoIcons.arrow_down_circle,
-                        onTap: () => _openImportExportPage(context, dataBlocContext, 1),
-                      ),
-                      const PullDownMenuDivider.large(),
-                      PullDownMenuItem(
-                        title: 'About TempBox',
-                        icon: CupertinoIcons.info_circle,
-                        onTap: () {},
-                      ),
-                    ],
-                    buttonBuilder: (context, showMenu) => CupertinoButton(
-                      onPressed: showMenu,
-                      padding: EdgeInsets.zero,
-                      child: const Icon(CupertinoIcons.ellipsis_circle),
                     ),
                   ),
-                ),
-                if (dataState.addressList.isNotEmpty)
-                  const SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 8, 20, 14),
-                      child: CupertinoSearchTextField(),
+                  if (dataState.addressList.isNotEmpty)
+                    const SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(20, 8, 20, 14),
+                        child: CupertinoSearchTextField(),
+                      ),
                     ),
-                  ),
-                Builder(builder: (context) {
-                  if (dataState.addressList.isEmpty) {
-                    return const SliverToBoxAdapter(child: Center(child: Text('')));
-                  }
-                  List<Widget> active = [];
-                  List<Widget> archived = [];
-                  for (var i = 0; i < dataState.addressList.length; i++) {
-                    if (dataState.addressList[i].isActive) {
-                      active.add(IosAddressTile(
-                        index: i,
-                        key: Key(dataState.addressList[i].authenticatedUser.account.id),
-                      ));
-                    } else {
-                      archived.add(IosAddressTile(
-                        index: i,
-                        key: Key(dataState.addressList[i].authenticatedUser.account.id),
-                      ));
+                  Builder(builder: (context) {
+                    if (dataState.addressList.isEmpty) {
+                      return const SliverToBoxAdapter(child: Center(child: Text('')));
                     }
-                  }
-                  return SliverList.list(
-                    children: [
-                      if (active.isNotEmpty)
-                        CupertinoListSection.insetGrouped(
-                          key: const Key('ActiveAccounts'),
-                          header: const Text('Active'),
-                          children: active,
-                        ),
-                      if (archived.isNotEmpty)
-                        CupertinoListSection.insetGrouped(
-                          key: const Key('ArchivedAccounts'),
-                          margin: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 101),
-                          header: const Text('Archived'),
-                          children: archived,
-                        ),
-                    ],
-                  );
-                }),
-              ],
-            ),
-            const BottomBar(),
-          ],
+                    List<Widget> active = [];
+                    List<Widget> archived = [];
+                    for (var i = 0; i < dataState.addressList.length; i++) {
+                      if (dataState.addressList[i].isActive) {
+                        active.add(IosAddressTile(
+                          index: i,
+                          key: Key(dataState.addressList[i].authenticatedUser.account.id),
+                        ));
+                      } else {
+                        archived.add(IosAddressTile(
+                          index: i,
+                          key: Key(dataState.addressList[i].authenticatedUser.account.id),
+                        ));
+                      }
+                    }
+                    return SliverList.list(
+                      children: [
+                        if (active.isNotEmpty)
+                          CupertinoListSection.insetGrouped(
+                            key: const Key('ActiveAccounts'),
+                            header: const Text('Active'),
+                            children: active,
+                          ),
+                        if (archived.isNotEmpty)
+                          CupertinoListSection.insetGrouped(
+                            key: const Key('ArchivedAccounts'),
+                            margin: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 101),
+                            header: const Text('Archived'),
+                            children: archived,
+                          ),
+                      ],
+                    );
+                  }),
+                ],
+              ),
+              const BottomBar(),
+            ],
+          ),
         );
       }),
     );

@@ -40,43 +40,47 @@ class IosMessagesList extends StatelessWidget {
       if (messages == null || messages.isEmpty) {
         return CupertinoPageScaffold(
           backgroundColor: CupertinoColors.systemGroupedBackground,
-          child: CustomScrollView(slivers: [
-            CupertinoSliverRefreshControl(onRefresh: () => _onRefresh(dataBlocContext, dataState.selectedAddress!)),
-            CupertinoSliverNavigationBar(
-              border: null,
-              backgroundColor: AppColors.navBarColor,
-              largeTitle: Text(UiService.getAccountName(dataState.selectedAddress!)),
-              previousPageTitle: 'TempBox',
-            ),
-            const SliverToBoxAdapter(
-              child: SizedBox(height: 400, child: Center(child: Text('No message available'))),
-            ),
-          ]),
+          child: SafeArea(
+            child: CustomScrollView(slivers: [
+              CupertinoSliverRefreshControl(onRefresh: () => _onRefresh(dataBlocContext, dataState.selectedAddress!)),
+              CupertinoSliverNavigationBar(
+                border: null,
+                backgroundColor: AppColors.navBarColor,
+                largeTitle: Text(UiService.getAccountName(dataState.selectedAddress!)),
+                previousPageTitle: 'TempBox',
+              ),
+              const SliverToBoxAdapter(
+                child: SizedBox(height: 400, child: Center(child: Text('No message available'))),
+              ),
+            ]),
+          ),
         );
       }
       return CupertinoPageScaffold(
         backgroundColor: CupertinoColors.systemGroupedBackground,
         child: SlidableAutoCloseBehavior(
-          child: CustomScrollView(slivers: [
-            CupertinoSliverRefreshControl(onRefresh: () => _onRefresh(dataBlocContext, dataState.selectedAddress!)),
-            CupertinoSliverNavigationBar(
-              backgroundColor: AppColors.navBarColor,
-              largeTitle: Text(UiService.getAccountName(dataState.selectedAddress!)),
-              border: null,
-              previousPageTitle: 'TempBox',
-            ),
-            SliverList.separated(
-              separatorBuilder: (context, index) => Container(
-                margin: const EdgeInsetsDirectional.only(start: 34),
-                color: CupertinoColors.separator.resolveFrom(context),
-                height: 1.0,
+          child: SafeArea(
+            child: CustomScrollView(slivers: [
+              CupertinoSliverRefreshControl(onRefresh: () => _onRefresh(dataBlocContext, dataState.selectedAddress!)),
+              CupertinoSliverNavigationBar(
+                backgroundColor: AppColors.navBarColor,
+                largeTitle: Text(UiService.getAccountName(dataState.selectedAddress!)),
+                border: null,
+                previousPageTitle: 'TempBox',
               ),
-              itemCount: messages.length,
-              itemBuilder: (context, index) {
-                return IosMessageTile(message: messages[index], selectedAddress: dataState.selectedAddress!);
-              },
-            ),
-          ]),
+              SliverList.separated(
+                separatorBuilder: (context, index) => Container(
+                  margin: const EdgeInsetsDirectional.only(start: 34),
+                  color: CupertinoColors.separator.resolveFrom(context),
+                  height: 1.0,
+                ),
+                itemCount: messages.length,
+                itemBuilder: (context, index) {
+                  return IosMessageTile(message: messages[index], selectedAddress: dataState.selectedAddress!);
+                },
+              ),
+            ]),
+          ),
         ),
       );
     });

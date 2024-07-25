@@ -76,6 +76,7 @@ class _IosAddressInfoState extends State<IosAddressInfo> {
             largeTitle: Text(UiService.getAccountName(widget.addressData)),
             backgroundColor: MediaQuery.of(context).platformBrightness != Brightness.dark ? AppColors.navBarColor : null,
             leading: const SizedBox.shrink(),
+            border: null,
             trailing: CupertinoButton(
               padding: EdgeInsets.zero,
               onPressed: Navigator.of(context).pop,
