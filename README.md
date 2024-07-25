@@ -70,7 +70,7 @@ You can contribute by filing issues, bugs and PRs.
 - Open issue regarding proposed change.
 - Repo owner will contact you there.
 - If your proposed change is approved, Fork this repo and do changes.
-- Open PR against latest `development` branch. Add nice description in PR.
+- Open PR against latest `develop` branch. Add nice description in PR.
 - You're done!
 
 ## 📱 Contact
