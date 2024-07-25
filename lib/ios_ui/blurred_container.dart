@@ -24,10 +24,10 @@ class BlurredContainer extends StatelessWidget {
         child: Container(
           width: size.width,
           height: size.height,
-          decoration: BoxDecoration(
-              color: MediaQuery.of(context).platformBrightness == Brightness.dark
-                  ? CupertinoColors.black.withOpacity(0.2)
-                  : CupertinoColors.white.withOpacity(0.2)),
+          // decoration: BoxDecoration(
+          //     color: MediaQuery.of(context).platformBrightness == Brightness.dark
+          //         ? CupertinoColors.black.withOpacity(0.2)
+          //         : CupertinoColors.white.withOpacity(0.2)),
           alignment: Alignment.center,
           child: child,
         ),

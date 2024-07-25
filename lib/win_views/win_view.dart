@@ -136,6 +136,85 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
     );
   }
 
+  _toggleArchiveAddress(BuildContext dataBlocContext, AddressData? address) async {
+    if (address == null) {
+      return;
+    }
+    final choice = await AlertService.getConformation<bool>(
+      context: context,
+      title: 'Alert',
+      content: 'Are you sure you want to ${address.isActive == true ? 'archive' : 'activate'} this address?',
+    );
+    if (choice == true && dataBlocContext.mounted) {
+      if (address.isActive == true) {
+        BlocProvider.of<DataBloc>(dataBlocContext).add(ArchiveAddressEvent(address));
+      } else {
+        BlocProvider.of<DataBloc>(dataBlocContext).add(UnarchiveAddressEvent(address));
+      }
+    }
+  }
+
+  _deleteAddress(BuildContext dataBlocContext, AddressData? address) async {
+    if (address == null) {
+      return;
+    }
+    final choice = await AlertService.getConformation<bool>(
+      context: context,
+      title: 'Alert',
+      content: 'Are you sure you want to delete this address?',
+    );
+    if (choice == true && dataBlocContext.mounted) {
+      BlocProvider.of<DataBloc>(dataBlocContext).add(DeleteAddressEvent(address));
+    }
+  }
+
+  _showAddressInfo(BuildContext dataBlocContext, AddressData? address) {
+    if (address == null) {
+      return;
+    }
+    showDialog(
+      context: context,
+      builder: (_) => BlocProvider.value(
+        value: BlocProvider.of<DataBloc>(dataBlocContext),
+        child: WinuiAddressInfo(addressData: address),
+      ),
+    );
+  }
+
+  _refreshInbox(BuildContext dataBlocContext, AddressData? address) {
+    if (address == null) {
+      return;
+    }
+    BlocProvider.of<DataBloc>(dataBlocContext).add(GetMessagesEvent(addressData: address));
+  }
+
+  _toggleMessageSeenStatus(BuildContext dataBlocContext, DataState dataState) {
+    if (dataState.selectedAddress == null || dataState.selectedMessage == null) {
+      return;
+    }
+    BlocProvider.of<DataBloc>(dataBlocContext).add(ToggleMessageReadUnread(
+      addressData: dataState.selectedAddress!,
+      message: dataState.selectedMessage!,
+    ));
+  }
+
+  _deleteMessage(BuildContext dataBlocContext, DataState dataState) async {
+    if (dataState.selectedAddress == null || dataState.selectedMessage == null) {
+      return;
+    }
+    final choice = await AlertService.getConformation<bool>(
+      context: context,
+      title: 'Alert',
+      content: 'Are you sure you want to delete this message?',
+    );
+    if (choice == true && context.mounted) {
+      BlocProvider.of<DataBloc>(dataBlocContext).add(DeleteMessageEvent(
+        addressData: dataState.selectedAddress!,
+        message: dataState.selectedMessage!,
+      ));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
@@ -155,11 +234,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
                 message: 'Refresh inbox',
                 child: IconButton(
                   icon: const Icon(CupertinoIcons.refresh_thick, size: 20),
-                  onPressed: dataState.selectedAddress == null
-                      ? null
-                      : () {
-                          BlocProvider.of<DataBloc>(dataBlocContext).add(GetMessagesEvent(addressData: dataState.selectedAddress!));
-                        },
+                  onPressed: dataState.selectedAddress == null ? null : _refreshInbox(dataBlocContext, dataState.selectedAddress),
                 ),
               ),
             const SizedBox(width: 10),
@@ -167,56 +242,26 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
               message: 'Address information',
               child: IconButton(
                 icon: const Icon(CupertinoIcons.info_circle, size: 20),
-                onPressed: dataState.selectedAddress == null
-                    ? null
-                    : () async {
-                        await showDialog(
-                          context: context,
-                          builder: (_) => BlocProvider.value(
-                            value: BlocProvider.of<DataBloc>(dataBlocContext),
-                            child: WinuiAddressInfo(addressData: dataState.selectedAddress!),
-                          ),
-                        );
-                      },
+                onPressed: dataState.selectedAddress == null ? null : _showAddressInfo(dataBlocContext, dataState.selectedAddress),
               ),
             ),
             if (dataState.selectedAddress?.isActive == true) const SizedBox(width: 10),
-            if (dataState.selectedAddress?.isActive == true)
-              Tooltip(
-                message: 'Archive address',
-                child: IconButton(
-                  icon: const Icon(CupertinoIcons.archivebox, size: 20),
-                  onPressed: dataState.selectedAddress == null
-                      ? null
-                      : () async {
-                          final choice = await AlertService.getConformation<bool>(
-                            context: context,
-                            title: 'Alert',
-                            content: 'Are you sure you want to archive this address?',
-                          );
-                          if (choice == true && dataBlocContext.mounted) {
-                            BlocProvider.of<DataBloc>(dataBlocContext).add(ArchiveAddressEvent(dataState.selectedAddress!));
-                          }
-                        },
+            Tooltip(
+              message: dataState.selectedAddress?.isActive == true ? 'Archive Address' : 'Activate Address',
+              child: IconButton(
+                icon: Icon(
+                  dataState.selectedAddress?.isActive == true ? CupertinoIcons.archivebox_fill : CupertinoIcons.archivebox,
+                  size: 20,
                 ),
+                onPressed: dataState.selectedAddress == null ? null : _toggleArchiveAddress(dataBlocContext, dataState.selectedAddress),
               ),
+            ),
             const SizedBox(width: 10),
             Tooltip(
               message: 'Delete address',
               child: IconButton(
                 icon: const Icon(CupertinoIcons.trash, size: 20),
-                onPressed: dataState.selectedAddress == null
-                    ? null
-                    : () async {
-                        final choice = await AlertService.getConformation<bool>(
-                          context: context,
-                          title: 'Alert',
-                          content: 'Are you sure you want to delete this address?',
-                        );
-                        if (choice == true && dataBlocContext.mounted) {
-                          BlocProvider.of<DataBloc>(dataBlocContext).add(DeleteAddressEvent(dataState.selectedAddress!));
-                        }
-                      },
+                onPressed: dataState.selectedAddress == null ? null : _deleteAddress(dataBlocContext, dataState.selectedAddress),
               ),
             ),
             const SizedBox(width: 10),
@@ -226,12 +271,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
               message: dataState.selectedMessage?.seen ?? false ? 'Mark message as unread' : 'Mark message as read',
               child: IconButton(
                 icon: Icon(dataState.selectedMessage?.seen ?? false ? CupertinoIcons.envelope_badge : CupertinoIcons.envelope_open, size: 20),
-                onPressed: dataState.selectedMessage == null
-                    ? null
-                    : () => BlocProvider.of<DataBloc>(dataBlocContext).add(ToggleMessageReadUnread(
-                          addressData: dataState.selectedAddress!,
-                          message: dataState.selectedMessage!,
-                        )),
+                onPressed: dataState.selectedMessage == null ? null : _toggleMessageSeenStatus(dataBlocContext, dataState),
               ),
             ),
             const SizedBox(width: 10),
@@ -247,21 +287,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
               message: 'Delete message',
               child: IconButton(
                 icon: const Icon(CupertinoIcons.trash, size: 20),
-                onPressed: dataState.selectedMessage == null
-                    ? null
-                    : () async {
-                        final choice = await AlertService.getConformation<bool>(
-                          context: context,
-                          title: 'Alert',
-                          content: 'Are you sure you want to delete this message?',
-                        );
-                        if (choice == true && context.mounted) {
-                          BlocProvider.of<DataBloc>(dataBlocContext).add(DeleteMessageEvent(
-                            addressData: dataState.selectedAddress!,
-                            message: dataState.selectedMessage!,
-                          ));
-                        }
-                      },
+                onPressed: dataState.selectedMessage == null ? null : _deleteMessage(dataBlocContext, dataState),
               ),
             ),
             const SizedBox(width: 10),

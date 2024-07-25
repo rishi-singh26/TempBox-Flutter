@@ -53,13 +53,17 @@ class AddressTile extends StatelessWidget {
     }
   }
 
-  _archiveAddress(BuildContext context, BuildContext dataBlocContext, AddressData addressData) async {
-    bool? choice = await AlertService.getConformation(
-      context: context,
-      title: 'Alert',
-      content: 'Are you sure you want to archive this address?',
-    );
+  _toggleArchiveAddress(BuildContext context, BuildContext dataBlocContext, AddressData addressData) async {
+    String alertMessage = 'Are you sure you want to archive this address?';
+    if (!addressData.isActive) {
+      alertMessage = 'Are you sure you want to activate this address?';
+    }
+    bool? choice = await AlertService.getConformation(context: context, title: 'Alert', content: alertMessage);
     if (choice == true && dataBlocContext.mounted) {
+      if (!addressData.isActive) {
+        BlocProvider.of<DataBloc>(dataBlocContext).add(UnarchiveAddressEvent(addressData));
+        return;
+      }
       BlocProvider.of<DataBloc>(dataBlocContext).add(ArchiveAddressEvent(addressData));
     }
   }
@@ -89,13 +93,12 @@ class AddressTile extends StatelessWidget {
           endActionPane: ActionPane(
             motion: const DrawerMotion(),
             children: [
-              if (addressData.isActive)
-                SlidableAction(
-                  onPressed: (_) => _archiveAddress(context, dataBlocContext, addressData),
-                  backgroundColor: Colors.indigo,
-                  foregroundColor: Colors.white,
-                  icon: Icons.archive_rounded,
-                ),
+              SlidableAction(
+                onPressed: (_) => _toggleArchiveAddress(context, dataBlocContext, addressData),
+                backgroundColor: Colors.indigo,
+                foregroundColor: Colors.white,
+                icon: addressData.isActive ? Icons.archive_rounded : Icons.unarchive_rounded,
+              ),
               SlidableAction(
                 onPressed: (_) => _deleteAddress(context, dataBlocContext, addressData),
                 backgroundColor: Colors.red,

@@ -55,7 +55,7 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
       try {
         List<AddressData> addresses =
             state.addressList.where((a) => a.authenticatedUser.account.id != event.addressData.authenticatedUser.account.id).toList();
-        event.addressData.isActive ? await event.addressData.authenticatedUser.delete() : null;
+        await event.addressData.authenticatedUser.delete();
         emit(state.copyWith(
           addressList: addresses,
           setSelectedAddressToNull:
@@ -68,7 +68,6 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
 
     on<ArchiveAddressEvent>((ArchiveAddressEvent event, Emitter<DataState> emit) async {
       try {
-        await event.addressData.authenticatedUser.delete();
         List<AddressData> addresses = state.addressList.map((a) {
           if (a.authenticatedUser.account.id == event.addressData.authenticatedUser.account.id) {
             return a.copyWith(isActive: false);
@@ -78,6 +77,23 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
         emit(state.copyWith(
           addressList: addresses,
           selectedAddress: event.addressData.copyWith(isActive: false),
+        ));
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+    });
+
+    on<UnarchiveAddressEvent>((UnarchiveAddressEvent event, Emitter<DataState> emit) async {
+      try {
+        List<AddressData> addresses = state.addressList.map((a) {
+          if (a.authenticatedUser.account.id == event.addressData.authenticatedUser.account.id) {
+            return a.copyWith(isActive: true);
+          }
+          return a;
+        }).toList();
+        emit(state.copyWith(
+          addressList: addresses,
+          selectedAddress: event.addressData.copyWith(isActive: true),
         ));
       } catch (e) {
         debugPrint(e.toString());

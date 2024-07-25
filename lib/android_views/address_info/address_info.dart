@@ -38,30 +38,6 @@ class _AddressInfoState extends State<AddressInfo> {
     super.initState();
   }
 
-  String _getStatusText(AddressData addressData) {
-    if (!addressData.isActive) {
-      return 'Deleted';
-    } else if (addressData.authenticatedUser.account.isDisabled) {
-      return 'Disabled';
-    } else {
-      return 'Active';
-    }
-  }
-
-  Color _getStatusColor(AddressData addressData) {
-    if (!addressData.isActive) {
-      return Colors.red;
-    } else if (addressData.authenticatedUser.account.isDisabled) {
-      return Colors.yellow;
-    } else {
-      return Colors.green;
-    }
-  }
-
-  String _getQuotaStering(int bytes, SizeUnit unit) {
-    return ByteConverterService.fromBytes(bytes.toDouble()).toHumanReadable(unit);
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -83,9 +59,9 @@ class _AddressInfoState extends State<AddressInfo> {
                       children: [
                         const Text('Status:', style: TextStyle(fontWeight: FontWeight.bold)),
                         hGap(10),
-                        BlankBadge(color: _getStatusColor(verifiedAddressData!)),
+                        BlankBadge(color: UiService.getStatusColor(verifiedAddressData!, false)),
                         hGap(10),
-                        Text(_getStatusText(verifiedAddressData!)),
+                        Text(UiService.getStatusText(verifiedAddressData!)),
                       ],
                     ),
                     visualDensity: VisualDensity.compact,
@@ -166,7 +142,7 @@ class _AddressInfoState extends State<AddressInfo> {
                   ListTile(
                     title: const Text('Quota usage', style: TextStyle(fontWeight: FontWeight.bold)),
                     trailing: Text(
-                      '${_getQuotaStering(verifiedAddressData!.authenticatedUser.account.used, SizeUnit.kb)} / ${_getQuotaStering(verifiedAddressData!.authenticatedUser.account.quota, SizeUnit.mb)}',
+                      '${UiService.getQuotaString(verifiedAddressData!.authenticatedUser.account.used, SizeUnit.kb)} / ${UiService.getQuotaString(verifiedAddressData!.authenticatedUser.account.quota, SizeUnit.mb)}',
                     ),
                     // dense: true,
                     visualDensity: VisualDensity.compact,
