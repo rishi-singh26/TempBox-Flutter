@@ -83,6 +83,23 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
       }
     });
 
+    on<UnarchiveAddressEvent>((UnarchiveAddressEvent event, Emitter<DataState> emit) async {
+      try {
+        List<AddressData> addresses = state.addressList.map((a) {
+          if (a.authenticatedUser.account.id == event.addressData.authenticatedUser.account.id) {
+            return a.copyWith(isActive: true);
+          }
+          return a;
+        }).toList();
+        emit(state.copyWith(
+          addressList: addresses,
+          selectedAddress: event.addressData.copyWith(isActive: true),
+        ));
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+    });
+
     on<GetMessagesEvent>((GetMessagesEvent event, Emitter<DataState> emit) async {
       try {
         final messages = await event.addressData.authenticatedUser.messagesAt(1);

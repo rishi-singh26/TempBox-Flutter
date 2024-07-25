@@ -1,6 +1,7 @@
 import 'package:cupertino_modal_sheet/cupertino_modal_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:pull_down_button/pull_down_button.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
@@ -45,88 +46,90 @@ class IosAddressesList extends StatelessWidget {
           child: Stack(
             alignment: Alignment.bottomCenter,
             children: [
-              CustomScrollView(
-                slivers: [
-                  CupertinoSliverRefreshControl(
-                    onRefresh: () async {
-                      BlocProvider.of<DataBloc>(dataBlocContext).add(const LoginToAccountsEvent());
-                    },
-                  ),
-                  CupertinoSliverNavigationBar(
-                    backgroundColor: AppColors.navBarColor,
-                    largeTitle: const Text('TempBox'),
-                    border: null,
-                    trailing: PullDownButton(
-                      itemBuilder: (context) => [
-                        PullDownMenuItem(
-                          title: 'Export Addresses',
-                          icon: CupertinoIcons.arrow_up_circle,
-                          onTap: dataState.addressList.isNotEmpty ? () => _openImportExportPage(context, dataBlocContext, 0) : null,
+              SlidableAutoCloseBehavior(
+                child: CustomScrollView(
+                  slivers: [
+                    CupertinoSliverRefreshControl(
+                      onRefresh: () async {
+                        BlocProvider.of<DataBloc>(dataBlocContext).add(const LoginToAccountsEvent());
+                      },
+                    ),
+                    CupertinoSliverNavigationBar(
+                      backgroundColor: AppColors.navBarColor,
+                      largeTitle: const Text('TempBox'),
+                      border: null,
+                      trailing: PullDownButton(
+                        itemBuilder: (context) => [
+                          PullDownMenuItem(
+                            title: 'Export Addresses',
+                            icon: CupertinoIcons.arrow_up_circle,
+                            onTap: dataState.addressList.isNotEmpty ? () => _openImportExportPage(context, dataBlocContext, 0) : null,
+                          ),
+                          PullDownMenuItem(
+                            title: 'Import Addresses',
+                            icon: CupertinoIcons.arrow_down_circle,
+                            onTap: () => _openImportExportPage(context, dataBlocContext, 1),
+                          ),
+                          const PullDownMenuDivider.large(),
+                          PullDownMenuItem(
+                            title: 'About TempBox',
+                            icon: CupertinoIcons.info_circle,
+                            onTap: () {},
+                          ),
+                        ],
+                        buttonBuilder: (context, showMenu) => CupertinoButton(
+                          onPressed: showMenu,
+                          padding: EdgeInsets.zero,
+                          child: const Icon(CupertinoIcons.ellipsis_circle),
                         ),
-                        PullDownMenuItem(
-                          title: 'Import Addresses',
-                          icon: CupertinoIcons.arrow_down_circle,
-                          onTap: () => _openImportExportPage(context, dataBlocContext, 1),
-                        ),
-                        const PullDownMenuDivider.large(),
-                        PullDownMenuItem(
-                          title: 'About TempBox',
-                          icon: CupertinoIcons.info_circle,
-                          onTap: () {},
-                        ),
-                      ],
-                      buttonBuilder: (context, showMenu) => CupertinoButton(
-                        onPressed: showMenu,
-                        padding: EdgeInsets.zero,
-                        child: const Icon(CupertinoIcons.ellipsis_circle),
                       ),
                     ),
-                  ),
-                  if (dataState.addressList.isNotEmpty)
-                    const SliverToBoxAdapter(
-                      child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(20, 8, 20, 14),
-                        child: CupertinoSearchTextField(),
+                    if (dataState.addressList.isNotEmpty)
+                      const SliverToBoxAdapter(
+                        child: Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(20, 8, 20, 14),
+                          child: CupertinoSearchTextField(),
+                        ),
                       ),
-                    ),
-                  Builder(builder: (context) {
-                    if (dataState.addressList.isEmpty) {
-                      return const SliverToBoxAdapter(child: Center(child: Text('')));
-                    }
-                    List<Widget> active = [];
-                    List<Widget> archived = [];
-                    for (var i = 0; i < dataState.addressList.length; i++) {
-                      if (dataState.addressList[i].isActive) {
-                        active.add(IosAddressTile(
-                          index: i,
-                          key: Key(dataState.addressList[i].authenticatedUser.account.id),
-                        ));
-                      } else {
-                        archived.add(IosAddressTile(
-                          index: i,
-                          key: Key(dataState.addressList[i].authenticatedUser.account.id),
-                        ));
+                    Builder(builder: (context) {
+                      if (dataState.addressList.isEmpty) {
+                        return const SliverToBoxAdapter(child: Center(child: Text('')));
                       }
-                    }
-                    return SliverList.list(
-                      children: [
-                        if (active.isNotEmpty)
-                          CupertinoListSection.insetGrouped(
-                            key: const Key('ActiveAccounts'),
-                            header: const Text('Active'),
-                            children: active,
-                          ),
-                        if (archived.isNotEmpty)
-                          CupertinoListSection.insetGrouped(
-                            key: const Key('ArchivedAccounts'),
-                            margin: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 101),
-                            header: const Text('Archived'),
-                            children: archived,
-                          ),
-                      ],
-                    );
-                  }),
-                ],
+                      List<Widget> active = [];
+                      List<Widget> archived = [];
+                      for (var i = 0; i < dataState.addressList.length; i++) {
+                        if (dataState.addressList[i].isActive) {
+                          active.add(IosAddressTile(
+                            index: i,
+                            key: Key(dataState.addressList[i].authenticatedUser.account.id),
+                          ));
+                        } else {
+                          archived.add(IosAddressTile(
+                            index: i,
+                            key: Key(dataState.addressList[i].authenticatedUser.account.id),
+                          ));
+                        }
+                      }
+                      return SliverList.list(
+                        children: [
+                          if (active.isNotEmpty)
+                            CupertinoListSection.insetGrouped(
+                              key: const Key('ActiveAccounts'),
+                              header: const Text('Active'),
+                              children: active,
+                            ),
+                          if (archived.isNotEmpty)
+                            CupertinoListSection.insetGrouped(
+                              key: const Key('ArchivedAccounts'),
+                              margin: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 101),
+                              header: const Text('Archived'),
+                              children: archived,
+                            ),
+                        ],
+                      );
+                    }),
+                  ],
+                ),
               ),
               const BottomBar(),
             ],
