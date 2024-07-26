@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:tempbox/android_views/android_app_info.dart';
 import 'package:tempbox/android_views/import_export/export.dart';
 import 'package:tempbox/android_views/import_export/import.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
@@ -13,8 +14,6 @@ import 'package:tempbox/services/export_import_address.dart';
 import 'package:tempbox/services/overlay_service.dart';
 import 'package:tempbox/android_views/add_address/add_address.dart';
 import 'package:tempbox/android_views/address_list/address_tile.dart';
-import 'package:tempbox/shared/components/app_logo.dart';
-import 'package:tempbox/shared/components/card_list_tile.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AddressList extends StatefulWidget {
@@ -63,47 +62,16 @@ class _AddressListState extends State<AddressList> {
         );
       }
     } else {
-      showAboutDialog(
+      OverlayService.showOverLay(
         context: context,
-        applicationIcon: const AppLogo(),
-        children: [
-          CardListTile(
-            isFirst: true,
-            margin: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
-            child: ListTile(
-              title: const Text('View open source code'),
-              onTap: () async {
-                bool? choice = await AlertService.getConformation(
-                  context: context,
-                  title: 'Do you want to continue?',
-                  content: 'This will open https://github.com/rishi-singh26/TempBox-Flutter',
-                );
-                if (choice == true) {
-                  await launchUrl(Uri.parse('https://github.com/rishi-singh26/TempBox-Flutter'));
-                }
-              },
-            ),
-          ),
-          CardListTile(
-            isLast: true,
-            margin: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-            child: ListTile(
-              title: const Text('View License'),
-              onTap: () async {
-                bool? choice = await AlertService.getConformation(
-                  context: context,
-                  title: 'Do you want to continue?',
-                  content: 'This will open https://raw.githubusercontent.com/rishi-singh26/TempBox-Flutter/main/LICENSE',
-                );
-                if (choice == true) {
-                  await launchUrl(Uri.parse('https://raw.githubusercontent.com/rishi-singh26/TempBox-Flutter/main/LICENSE'));
-                }
-              },
-            ),
-          )
-        ],
-        applicationName: 'TempBox',
-        applicationVersion: '1.0.0',
+        useSafeArea: true,
+        isScrollControlled: true,
+        clipBehavior: Clip.hardEdge,
+        enableDrag: true,
+        builder: (context) => BlocProvider.value(
+          value: BlocProvider.of<DataBloc>(dataBlocContext),
+          child: const AndroidAppInfo(),
+        ),
       );
     }
   }

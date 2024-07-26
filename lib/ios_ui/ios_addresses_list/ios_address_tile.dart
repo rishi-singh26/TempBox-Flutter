@@ -13,8 +13,8 @@ import 'package:tempbox/services/alert_service.dart';
 import 'package:tempbox/services/ui_service.dart';
 
 class IosAddressTile extends StatelessWidget {
-  final int index;
-  const IosAddressTile({super.key, required this.index});
+  final AddressData addressData;
+  const IosAddressTile({super.key, required this.addressData});
 
   _openAddressInfoSheet(BuildContext context, BuildContext dataBlocContext, AddressData addressData) {
     showCupertinoModalSheet(
@@ -62,7 +62,6 @@ class IosAddressTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
-      AddressData addressData = dataState.addressList[index];
       return Slidable(
         groupTag: 'AddressItem',
         key: ValueKey(addressData.authenticatedUser.account.id),
