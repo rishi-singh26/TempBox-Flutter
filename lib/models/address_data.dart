@@ -37,6 +37,9 @@ class AddressData extends Equatable {
     );
   }
 
+  /// return true when address in not deleted or disabled and isactive and false otherwise
+  bool get isAddressActive => !authenticatedUser.account.isDeleted && !authenticatedUser.account.isDisabled && isActive;
+
   @override
   List<Object?> get props => [
         addressName,
