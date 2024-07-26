@@ -24,15 +24,14 @@ class IosMessageDetail extends StatelessWidget {
           child: const SizedBox.shrink(),
         );
       }
+      Message messageWithHtml = dataState.messageIdToMessageMap[dataState.selectedMessage!.id] ?? dataState.selectedMessage!;
       return CupertinoPageScaffold(
         backgroundColor: CupertinoColors.systemGroupedBackground,
         navigationBar: CupertinoNavigationBar(
-          middle: Text(UiService.getMessageFromName(dataState.selectedMessage!)),
-          backgroundColor: AppColors.navBarColor,
-          border: null,
+          middle: Text(UiService.getMessageFromName(messageWithHtml)),
           previousPageTitle: dataState.selectedAddress!.addressName,
         ),
-        child: RenderMessage(message: dataState.selectedMessage!),
+        child: RenderMessage(message: messageWithHtml),
       );
     });
   }
