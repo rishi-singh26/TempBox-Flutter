@@ -7,11 +7,13 @@ class BlurredContainer extends StatelessWidget {
   final Size size;
   final BorderRadiusGeometry borderRadius;
   final ImageFilter filter;
+  final EdgeInsetsGeometry? padding;
   const BlurredContainer({
     super.key,
     required this.child,
     required this.size,
     required this.filter,
+    this.padding = EdgeInsets.zero,
     this.borderRadius = BorderRadius.zero,
   });
 
@@ -22,6 +24,7 @@ class BlurredContainer extends StatelessWidget {
       child: BackdropFilter(
         filter: filter,
         child: Container(
+          padding: padding,
           width: size.width,
           height: size.height,
           // decoration: BoxDecoration(

@@ -20,6 +20,7 @@ class _IosAddAddressState extends State<IosAddAddress> {
   bool showSpinner = false;
   Domain? selectedDomain;
   List<Domain> domainsList = [];
+  bool useRandomAddress = false;
   bool useRandomPassword = true;
 
   late TextEditingController addressNameController;
@@ -35,11 +36,6 @@ class _IosAddAddressState extends State<IosAddAddress> {
     ));
     _getDomains();
     super.initState();
-  }
-
-  _updateRandomAddress() {
-    addressController.text = UiService.generateRandomString(10);
-    setState(() {});
   }
 
   _getDomains() async {
@@ -91,6 +87,15 @@ class _IosAddAddressState extends State<IosAddAddress> {
       );
     } else {
       passwordController.text = '';
+    }
+  }
+
+  _toggleRandomAddress(bool value) {
+    setState(() => useRandomAddress = value);
+    if (value) {
+      addressController.text = UiService.generateRandomString(10);
+    } else {
+      addressController.text = '';
     }
   }
 
@@ -179,10 +184,10 @@ class _IosAddAddressState extends State<IosAddAddress> {
                         ),
                       ),
                     ),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: CupertinoButton(onPressed: _updateRandomAddress, child: const Text('Random address')),
-                    )
+                    CupertinoFormRow(
+                      prefix: const Text('Use random address'),
+                      child: CupertinoSwitch(value: useRandomAddress, onChanged: _toggleRandomAddress),
+                    ),
                   ],
                 ),
                 CupertinoListSection.insetGrouped(
