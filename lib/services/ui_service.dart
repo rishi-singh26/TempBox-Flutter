@@ -75,12 +75,12 @@ class UiService {
   }
 
   static String getStatusText(AddressData addressData) {
-    if (!addressData.isActive) {
-      return 'Archived';
-    } else if (addressData.authenticatedUser.account.isDeleted) {
+    if (addressData.authenticatedUser.account.isDeleted) {
       return 'Deleted';
     } else if (addressData.authenticatedUser.account.isDisabled) {
       return 'Disabled';
+    } else if (!addressData.isActive) {
+      return 'Archived';
     } else {
       return 'Active';
     }
@@ -88,21 +88,21 @@ class UiService {
 
   static Color getStatusColor(AddressData addressData, [bool useCupertinoColor = true]) {
     if (useCupertinoColor) {
-      if (!addressData.isActive) {
-        return CupertinoColors.systemYellow;
-      } else if (addressData.authenticatedUser.account.isDeleted) {
+      if (addressData.authenticatedUser.account.isDeleted) {
         return CupertinoColors.systemRed;
       } else if (addressData.authenticatedUser.account.isDisabled) {
+        return CupertinoColors.systemYellow;
+      } else if (!addressData.isActive) {
         return CupertinoColors.systemYellow;
       } else {
         return CupertinoColors.systemGreen;
       }
     } else {
-      if (!addressData.isActive) {
-        return Colors.yellow;
-      } else if (addressData.authenticatedUser.account.isDeleted) {
+      if (addressData.authenticatedUser.account.isDeleted) {
         return Colors.red;
       } else if (addressData.authenticatedUser.account.isDisabled) {
+        return Colors.yellow;
+      } else if (!addressData.isActive) {
         return Colors.yellow;
       } else {
         return Colors.green;
