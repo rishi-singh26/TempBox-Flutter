@@ -53,13 +53,13 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
     final choice = await AlertService.getConformation<bool>(
       context: context,
       title: 'Alert',
-      content: 'Are you sure you want to ${address.isActive == true ? 'archive' : 'activate'} this address?',
+      content: 'Are you sure you want to ${address.archived ? 'unarchive' : 'archive'} this address?',
     );
     if (choice == true && dataBlocContext.mounted) {
-      if (address.isActive == true) {
-        BlocProvider.of<DataBloc>(dataBlocContext).add(ArchiveAddressEvent(address));
-      } else {
+      if (address.archived) {
         BlocProvider.of<DataBloc>(dataBlocContext).add(UnarchiveAddressEvent(address));
+      } else {
+        BlocProvider.of<DataBloc>(dataBlocContext).add(ArchiveAddressEvent(address));
       }
     }
   }
@@ -159,16 +159,15 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
             }),
             titleWidth: 150.0,
             actions: [
-              if (dataState.selectedAddress?.isActive == true)
-                ToolBarIconButton(
-                  icon: const MacosIcon(CupertinoIcons.refresh_circled),
-                  onPressed: dataState.selectedAddress == null || dataState.selectedAddress?.isActive != true
-                      ? null
-                      : () => _refreshInbox(dataBlocContext, dataState.selectedAddress),
-                  label: 'Refresh',
-                  showLabel: false,
-                  tooltipMessage: 'Refresh inbox',
-                ),
+              ToolBarIconButton(
+                icon: const MacosIcon(CupertinoIcons.refresh_circled),
+                onPressed: dataState.selectedAddress == null || dataState.selectedAddress?.archived == true
+                    ? null
+                    : () => _refreshInbox(dataBlocContext, dataState.selectedAddress),
+                label: 'Refresh',
+                showLabel: false,
+                tooltipMessage: 'Refresh inbox',
+              ),
               ToolBarIconButton(
                 icon: const MacosIcon(CupertinoIcons.info_circle),
                 onPressed: dataState.selectedAddress == null ? null : () => _showAddressInfo(dataBlocContext, dataState.selectedAddress),
@@ -177,11 +176,11 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
                 tooltipMessage: 'Address information',
               ),
               ToolBarIconButton(
-                icon: const MacosIcon(CupertinoIcons.archivebox),
+                icon: MacosIcon(dataState.selectedAddress?.archived == false ? CupertinoIcons.archivebox : CupertinoIcons.archivebox_fill),
                 onPressed: dataState.selectedAddress == null ? null : () => _toggleArchiveAddress(dataBlocContext, dataState.selectedAddress),
-                label: 'Archive',
+                label: dataState.selectedAddress?.archived == false ? 'Archive' : 'Unarchive',
                 showLabel: false,
-                tooltipMessage: dataState.selectedAddress?.isActive == true ? 'Archive address' : 'Activate Address',
+                tooltipMessage: dataState.selectedAddress?.archived == false ? 'Archive Address' : 'Unarchive Address',
               ),
               ToolBarIconButton(
                 icon: const MacosIcon(CupertinoIcons.trash),
@@ -195,7 +194,7 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
               const ToolBarSpacer(),
               ToolBarIconButton(
                 icon: MacosIcon(dataState.selectedMessage?.seen ?? false ? CupertinoIcons.envelope_badge_fill : CupertinoIcons.envelope_open_fill),
-                onPressed: dataState.selectedMessage == null || dataState.selectedAddress?.isActive != true
+                onPressed: dataState.selectedMessage == null || dataState.selectedAddress?.archived == true
                     ? null
                     : () => _toggleMessageSeenStatus(dataBlocContext, dataState),
                 label: dataState.selectedMessage?.seen ?? false ? 'Mark unread' : 'Mark read',
@@ -204,7 +203,7 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
               ),
               ToolBarIconButton(
                 icon: const MacosIcon(CupertinoIcons.share),
-                onPressed: dataState.selectedMessage == null || dataState.selectedAddress?.isActive != true ? null : () {},
+                onPressed: dataState.selectedMessage == null ? null : () {},
                 label: 'Share',
                 showLabel: false,
                 tooltipMessage: 'Share message',

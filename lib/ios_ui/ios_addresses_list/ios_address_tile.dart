@@ -48,13 +48,10 @@ class IosAddressTile extends StatelessWidget {
   }
 
   _toggleArchiveAddress(BuildContext context, BuildContext dataBlocContext, AddressData addressData) async {
-    String alertMessage = 'Are you sure you want to archive this address?';
-    if (!addressData.isActive) {
-      alertMessage = 'Are you sure you want to activate this address?';
-    }
+    String alertMessage = 'Are you sure you want to ${addressData.archived ? 'unarchive' : 'archive'} this address?';
     bool? choice = await AlertService.getConformation(context: context, title: 'Alert', content: alertMessage);
     if (choice == true && dataBlocContext.mounted) {
-      if (!addressData.isActive) {
+      if (addressData.archived) {
         BlocProvider.of<DataBloc>(dataBlocContext).add(UnarchiveAddressEvent(addressData));
         return;
       }
@@ -87,7 +84,7 @@ class IosAddressTile extends StatelessWidget {
               onPressed: (_) => _toggleArchiveAddress(context, dataBlocContext, addressData),
               backgroundColor: CupertinoColors.systemIndigo,
               foregroundColor: CupertinoColors.white,
-              icon: addressData.isActive ? CupertinoIcons.archivebox_fill : CupertinoIcons.archivebox,
+              icon: addressData.archived ? CupertinoIcons.archivebox_fill : CupertinoIcons.archivebox,
             ),
             SlidableAction(
               onPressed: (_) => _deleteAddress(context, dataBlocContext, addressData),

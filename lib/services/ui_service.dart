@@ -79,7 +79,7 @@ class UiService {
       return 'Deleted';
     } else if (addressData.authenticatedUser.account.isDisabled) {
       return 'Disabled';
-    } else if (!addressData.isActive) {
+    } else if (addressData.archived) {
       return 'Archived';
     } else {
       return 'Active';
@@ -92,7 +92,7 @@ class UiService {
         return CupertinoColors.systemRed;
       } else if (addressData.authenticatedUser.account.isDisabled) {
         return CupertinoColors.systemYellow;
-      } else if (!addressData.isActive) {
+      } else if (addressData.archived) {
         return CupertinoColors.systemYellow;
       } else {
         return CupertinoColors.systemGreen;
@@ -102,7 +102,7 @@ class UiService {
         return Colors.red;
       } else if (addressData.authenticatedUser.account.isDisabled) {
         return Colors.yellow;
-      } else if (!addressData.isActive) {
+      } else if (addressData.archived) {
         return Colors.yellow;
       } else {
         return Colors.green;

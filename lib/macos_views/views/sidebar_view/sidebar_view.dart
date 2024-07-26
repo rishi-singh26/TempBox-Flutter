@@ -22,47 +22,45 @@ class SidebarView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
-      return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
-        List<SidebarItem> active = [];
-        List<SidebarItem> archived = [];
-        addToList(AddressData a) => a.isActive
-            ? active.add(SidebarItem(
-                leading: const MacosIcon(CupertinoIcons.tray, size: 15),
-                label: Text(
-                  UiService.getAccountName(a),
-                  style: MacosTheme.of(context).typography.body,
+      List<SidebarItem> active = [];
+      List<SidebarItem> archived = [];
+      addToList(AddressData a) => a.archived
+          ? archived.add(SidebarItem(
+              leading: const MacosIcon(CupertinoIcons.tray, size: 15),
+              label: Text(
+                UiService.getAccountName(a),
+                style: MacosTheme.of(context).typography.body,
+              ),
+              trailing: Text((dataState.accountIdToAddressesMap[a.authenticatedUser.account.id]?.length ?? 0).toString()),
+            ))
+          : active.add(SidebarItem(
+              leading: const MacosIcon(CupertinoIcons.tray, size: 15),
+              label: Text(
+                UiService.getAccountName(a),
+                style: MacosTheme.of(context).typography.body,
+              ),
+              trailing: Text((dataState.accountIdToAddressesMap[a.authenticatedUser.account.id]?.length ?? 0).toString()),
+            ));
+      dataState.addressList.forEach(addToList);
+      return SidebarItems(
+        currentIndex: _getSelectedIndex(dataState.selectedAddress, dataState.addressList),
+        onChanged: (i) {
+          BlocProvider.of<DataBloc>(dataBlocContext).add(SelectAddressEvent(dataState.addressList[i]));
+        },
+        scrollController: scrollController,
+        items: dataState.addressList.isEmpty
+            ? []
+            : [
+                SidebarItem(
+                  label: const Text('Active'),
+                  disclosureItems: active,
                 ),
-                trailing: Text((dataState.accountIdToAddressesMap[a.authenticatedUser.account.id]?.length ?? 0).toString()),
-              ))
-            : archived.add(SidebarItem(
-                leading: const MacosIcon(CupertinoIcons.tray, size: 15),
-                label: Text(
-                  UiService.getAccountName(a),
-                  style: MacosTheme.of(context).typography.body,
-                ),
-                trailing: Text((dataState.accountIdToAddressesMap[a.authenticatedUser.account.id]?.length ?? 0).toString()),
-              ));
-        dataState.addressList.forEach(addToList);
-        return SidebarItems(
-          currentIndex: _getSelectedIndex(dataState.selectedAddress, dataState.addressList),
-          onChanged: (i) {
-            BlocProvider.of<DataBloc>(dataBlocContext).add(SelectAddressEvent(dataState.addressList[i]));
-          },
-          scrollController: scrollController,
-          items: dataState.addressList.isEmpty
-              ? []
-              : [
-                  SidebarItem(
-                    label: const Text('Active'),
-                    disclosureItems: active,
-                  ),
-                  SidebarItem(
-                    label: const Text('Archived'),
-                    disclosureItems: archived,
-                  )
-                ],
-        );
-      });
+                SidebarItem(
+                  label: const Text('Archived'),
+                  disclosureItems: archived,
+                )
+              ],
+      );
     });
   }
 }

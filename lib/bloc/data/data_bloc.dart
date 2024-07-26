@@ -76,7 +76,7 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
       try {
         List<AddressData> addresses = state.addressList.map((a) {
           if (a.authenticatedUser.account.id == event.addressData.authenticatedUser.account.id) {
-            return a.copyWith(isActive: false);
+            return a.copyWith(archived: true);
           }
           return a;
         }).toList();
@@ -86,7 +86,7 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
 
         emit(state.copyWith(
           addressList: addresses,
-          selectedAddress: event.addressData.copyWith(isActive: false),
+          selectedAddress: event.addressData.copyWith(archived: true),
           messageIdToMessageMap: updatedMessageIdToMessageMap,
         ));
       } catch (e) {
@@ -98,13 +98,13 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
       try {
         List<AddressData> addresses = state.addressList.map((a) {
           if (a.authenticatedUser.account.id == event.addressData.authenticatedUser.account.id) {
-            return a.copyWith(isActive: true);
+            return a.copyWith(archived: false);
           }
           return a;
         }).toList();
         emit(state.copyWith(
           addressList: addresses,
-          selectedAddress: event.addressData.copyWith(isActive: true),
+          selectedAddress: event.addressData.copyWith(archived: false),
         ));
       } catch (e) {
         debugPrint(e.toString());
@@ -209,13 +209,13 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
         for (var address in event.addresses) {
           AuthenticatedUser? user = await MailTm.login(address: address.authenticatedUser.account.address, password: address.password);
           if (user == null) {
-            loggedInAddresses.add(address.copyWith(isActive: false));
+            loggedInAddresses.add(address.copyWith(archived: false));
           } else {
             final messages = await user.messagesAt(1);
             messages.isNotEmpty ? accountIdToAddressesMap[user.account.id] = messages : null;
             address.copyWith(authenticatedUser: user);
           }
-          loggedInAddresses.add(user != null ? address.copyWith(authenticatedUser: user) : address.copyWith(isActive: false));
+          loggedInAddresses.add(user != null ? address.copyWith(authenticatedUser: user) : address.copyWith(archived: false));
         }
         emit(state.copyWith(
             addressList: [...state.addressList, ...loggedInAddresses],

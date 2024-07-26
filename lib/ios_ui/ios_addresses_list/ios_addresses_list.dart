@@ -98,13 +98,13 @@ class IosAddressesList extends StatelessWidget {
                       List<Widget> active = [];
                       List<Widget> archived = [];
                       for (var i = 0; i < dataState.addressList.length; i++) {
-                        if (dataState.addressList[i].isActive) {
-                          active.add(IosAddressTile(
+                        if (dataState.addressList[i].archived) {
+                          archived.add(IosAddressTile(
                             index: i,
                             key: Key(dataState.addressList[i].authenticatedUser.account.id),
                           ));
                         } else {
-                          archived.add(IosAddressTile(
+                          active.add(IosAddressTile(
                             index: i,
                             key: Key(dataState.addressList[i].authenticatedUser.account.id),
                           ));

@@ -72,7 +72,7 @@ class _AddAddressState extends State<AddAddress> {
           AddAddressDataEvent(AddressData(
             addressName: addressNameController.text,
             authenticatedUser: authenticatedUser,
-            isActive: true,
+            archived: false,
             password: password,
           )),
         );
