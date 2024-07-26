@@ -41,8 +41,11 @@ class _IosExportPageState extends State<IosExportPage> {
       AlertService.showAlert(
         context: context,
         title: 'Alert',
-        content: result == true ? 'Selected addresses exported successfully.' : 'Something went wrong, addresses not exported',
+        content: result == true
+            ? 'Selected addresses exported successfully to TempBox folder on your device.'
+            : 'Something went wrong, addresses not exported',
       );
+      setState(() {});
     }
   }
 

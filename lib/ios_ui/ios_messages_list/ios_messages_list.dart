@@ -40,27 +40,27 @@ class IosMessagesList extends StatelessWidget {
       if (messages == null || messages.isEmpty) {
         return CupertinoPageScaffold(
           backgroundColor: CupertinoColors.systemGroupedBackground,
-          child: SafeArea(
-            child: CustomScrollView(slivers: [
-              CupertinoSliverRefreshControl(onRefresh: () => _onRefresh(dataBlocContext, dataState.selectedAddress!)),
-              CupertinoSliverNavigationBar(
-                border: null,
-                backgroundColor: AppColors.navBarColor,
-                largeTitle: Text(UiService.getAccountName(dataState.selectedAddress!)),
-                previousPageTitle: 'TempBox',
-              ),
-              const SliverToBoxAdapter(
-                child: SizedBox(height: 400, child: Center(child: Text('No message available'))),
-              ),
-            ]),
-          ),
+          child: CustomScrollView(slivers: [
+            CupertinoSliverRefreshControl(onRefresh: () => _onRefresh(dataBlocContext, dataState.selectedAddress!)),
+            CupertinoSliverNavigationBar(
+              border: null,
+              backgroundColor: AppColors.navBarColor,
+              largeTitle: Text(UiService.getAccountName(dataState.selectedAddress!)),
+              previousPageTitle: 'TempBox',
+            ),
+            const SliverToBoxAdapter(
+              child: SizedBox(height: 400, child: Center(child: Text('No message available'))),
+            ),
+          ]),
         );
       }
       return CupertinoPageScaffold(
         backgroundColor: CupertinoColors.systemGroupedBackground,
         child: SlidableAutoCloseBehavior(
-          child: SafeArea(
-            child: CustomScrollView(slivers: [
+          child: LayoutBuilder(builder: (context, constraints) {
+            bool isVertical = constraints.maxHeight > constraints.maxWidth;
+            double horizontalPadding = isVertical ? 0 : 50;
+            return CustomScrollView(slivers: [
               CupertinoSliverRefreshControl(onRefresh: () => _onRefresh(dataBlocContext, dataState.selectedAddress!)),
               CupertinoSliverNavigationBar(
                 backgroundColor: AppColors.navBarColor,
@@ -76,11 +76,14 @@ class IosMessagesList extends StatelessWidget {
                 ),
                 itemCount: messages.length,
                 itemBuilder: (context, index) {
-                  return IosMessageTile(message: messages[index], selectedAddress: dataState.selectedAddress!);
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                    child: IosMessageTile(message: messages[index], selectedAddress: dataState.selectedAddress!),
+                  );
                 },
               ),
-            ]),
-          ),
+            ]);
+          }),
         ),
       );
     });

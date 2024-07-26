@@ -227,6 +227,13 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
         debugPrint(e.toString());
       }
     });
+
+    on<ResetStateEvent>((ResetStateEvent event, Emitter<DataState> emit) async {
+      for (var address in state.addressList) {
+        await address.authenticatedUser.delete();
+      }
+      emit(DataState.initial());
+    });
   }
 
   Map<String, List<Message>> _mergeMaps(Map<String, List<Message>> map1, Map<String, List<Message>> map2) {

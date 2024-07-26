@@ -96,3 +96,10 @@ class ImportAddresses extends DataEvent {
   @override
   List<Object> get props => [addresses];
 }
+
+class ResetStateEvent extends DataEvent {
+  const ResetStateEvent();
+
+  @override
+  List<Object> get props => [];
+}
