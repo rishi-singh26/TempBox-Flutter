@@ -42,11 +42,11 @@ class IosAddressesList extends StatelessWidget {
     return CupertinoPageScaffold(
       backgroundColor: CupertinoColors.systemGroupedBackground,
       child: BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
-        return SafeArea(
-          child: Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              SlidableAutoCloseBehavior(
+        return Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            SlidableAutoCloseBehavior(
+              child: SafeArea(
                 child: CustomScrollView(
                   slivers: [
                     CupertinoSliverRefreshControl(
@@ -98,13 +98,13 @@ class IosAddressesList extends StatelessWidget {
                       List<Widget> active = [];
                       List<Widget> archived = [];
                       for (var i = 0; i < dataState.addressList.length; i++) {
-                        if (dataState.addressList[i].isActive) {
-                          active.add(IosAddressTile(
+                        if (dataState.addressList[i].archived) {
+                          archived.add(IosAddressTile(
                             index: i,
                             key: Key(dataState.addressList[i].authenticatedUser.account.id),
                           ));
                         } else {
-                          archived.add(IosAddressTile(
+                          active.add(IosAddressTile(
                             index: i,
                             key: Key(dataState.addressList[i].authenticatedUser.account.id),
                           ));
@@ -131,9 +131,9 @@ class IosAddressesList extends StatelessWidget {
                   ],
                 ),
               ),
-              const BottomBar(),
-            ],
-          ),
+            ),
+            const BottomBar(),
+          ],
         );
       }),
     );

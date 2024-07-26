@@ -54,13 +54,10 @@ class AddressTile extends StatelessWidget {
   }
 
   _toggleArchiveAddress(BuildContext context, BuildContext dataBlocContext, AddressData addressData) async {
-    String alertMessage = 'Are you sure you want to archive this address?';
-    if (!addressData.isActive) {
-      alertMessage = 'Are you sure you want to activate this address?';
-    }
+    String alertMessage = 'Are you sure you want to ${addressData.archived ? 'unarchive' : 'archive'} this address?';
     bool? choice = await AlertService.getConformation(context: context, title: 'Alert', content: alertMessage);
     if (choice == true && dataBlocContext.mounted) {
-      if (!addressData.isActive) {
+      if (addressData.archived) {
         BlocProvider.of<DataBloc>(dataBlocContext).add(UnarchiveAddressEvent(addressData));
         return;
       }
@@ -71,7 +68,7 @@ class AddressTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
-      String messageCount = (dataState.accountIdToAddressesMap[addressData.authenticatedUser.account.id]?.length ?? 0).toString();
+      String messageCount = (dataState.accountIdToMessagesMap[addressData.authenticatedUser.account.id]?.length ?? 0).toString();
       return CardListTile(
         isFirst: isFirst,
         isLast: isLast,
@@ -97,7 +94,7 @@ class AddressTile extends StatelessWidget {
                 onPressed: (_) => _toggleArchiveAddress(context, dataBlocContext, addressData),
                 backgroundColor: Colors.indigo,
                 foregroundColor: Colors.white,
-                icon: addressData.isActive ? Icons.archive_rounded : Icons.unarchive_rounded,
+                icon: addressData.archived ? Icons.unarchive_rounded : Icons.archive_rounded,
               ),
               SlidableAction(
                 onPressed: (_) => _deleteAddress(context, dataBlocContext, addressData),

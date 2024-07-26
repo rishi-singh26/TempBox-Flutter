@@ -79,7 +79,7 @@ class _WinuiAddAddressState extends State<WinuiAddAddress> {
           AddAddressDataEvent(AddressData(
             addressName: addressNameController.text,
             authenticatedUser: authenticatedUser,
-            isActive: true,
+            archived: false,
             password: password,
           )),
         );

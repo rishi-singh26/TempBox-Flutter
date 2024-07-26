@@ -29,7 +29,7 @@ class _MacuiAddressInfoState extends State<MacuiAddressInfo> {
   @override
   void initState() {
     verifiedAddressData = widget.addressData;
-    if (widget.addressData.isActive) {
+    if (!widget.addressData.archived) {
       try {
         final user = MailTm.getUser(widget.addressData.authenticatedUser.account.id);
         if (user != null) {

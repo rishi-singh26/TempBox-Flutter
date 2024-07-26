@@ -19,9 +19,10 @@ class MessageDetail extends StatelessWidget {
           body: const SizedBox.shrink(),
         );
       }
+      Message messageWithHtml = dataState.messageIdToMessageMap[dataState.selectedMessage!.id] ?? dataState.selectedMessage!;
       return Scaffold(
         appBar: AppBar(title: Text(UiService.getMessageFromName(message))),
-        body: RenderMessage(message: dataState.selectedMessage!),
+        body: RenderMessage(message: messageWithHtml),
       );
     });
   }

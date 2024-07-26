@@ -46,7 +46,7 @@ class MessageList extends StatelessWidget {
       if (dataState.selectedAddress == null) {
         return const SliverToBoxAdapter(child: Center(child: Text('Address not selected')));
       }
-      List<Message>? messages = dataState.accountIdToAddressesMap[dataState.selectedAddress!.authenticatedUser.account.id];
+      List<Message>? messages = dataState.accountIdToMessagesMap[dataState.selectedAddress!.authenticatedUser.account.id];
       if (messages == null) {
         return const SliverToBoxAdapter(child: Center(child: Text('Inbox empty')));
       }

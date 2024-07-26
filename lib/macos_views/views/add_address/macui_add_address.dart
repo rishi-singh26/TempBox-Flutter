@@ -77,7 +77,7 @@ class _MacUIAddAddressState extends State<MacUIAddAddress> {
           AddAddressDataEvent(AddressData(
             addressName: addressNameController.text,
             authenticatedUser: authenticatedUser,
-            isActive: true,
+            archived: false,
             password: password,
           )),
         );

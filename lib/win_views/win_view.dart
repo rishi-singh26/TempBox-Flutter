@@ -143,13 +143,13 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
     final choice = await AlertService.getConformation<bool>(
       context: context,
       title: 'Alert',
-      content: 'Are you sure you want to ${address.isActive == true ? 'archive' : 'activate'} this address?',
+      content: 'Are you sure you want to ${address.archived ? 'unarchive' : 'archive'} this address?',
     );
     if (choice == true && dataBlocContext.mounted) {
-      if (address.isActive == true) {
-        BlocProvider.of<DataBloc>(dataBlocContext).add(ArchiveAddressEvent(address));
-      } else {
+      if (address.archived) {
         BlocProvider.of<DataBloc>(dataBlocContext).add(UnarchiveAddressEvent(address));
+      } else {
+        BlocProvider.of<DataBloc>(dataBlocContext).add(ArchiveAddressEvent(address));
       }
     }
   }
@@ -220,7 +220,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
       List<AddressData> active = [];
       List<AddressData> archived = [];
-      addToList(AddressData a) => a.isActive ? active.add(a) : archived.add(a);
+      addToList(AddressData a) => a.archived ? archived.add(a) : active.add(a);
       dataState.addressList.forEach(addToList);
       int? selectedIndex =
           dataState.selectedAddress == null || dataState.addressList.isEmpty ? null : _getSelectedIndex(dataState.selectedAddress!, active, archived);
@@ -229,31 +229,32 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
           leading: const AppLogo(size: 20, borderRadius: BorderRadius.all(Radius.circular(15))),
           title: const DragToMoveArea(child: Align(alignment: AlignmentDirectional.centerStart, child: Text('TempBox'))),
           actions: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-            if (dataState.selectedAddress?.isActive == true)
-              Tooltip(
-                message: 'Refresh inbox',
-                child: IconButton(
-                  icon: const Icon(CupertinoIcons.refresh_thick, size: 20),
-                  onPressed: dataState.selectedAddress == null ? null : _refreshInbox(dataBlocContext, dataState.selectedAddress),
-                ),
+            Tooltip(
+              message: 'Refresh inbox',
+              child: IconButton(
+                icon: const Icon(CupertinoIcons.refresh_thick, size: 20),
+                onPressed: dataState.selectedAddress == null || dataState.selectedAddress?.archived == true
+                    ? null
+                    : () => _refreshInbox(dataBlocContext, dataState.selectedAddress),
               ),
+            ),
             const SizedBox(width: 10),
             Tooltip(
               message: 'Address information',
               child: IconButton(
                 icon: const Icon(CupertinoIcons.info_circle, size: 20),
-                onPressed: dataState.selectedAddress == null ? null : _showAddressInfo(dataBlocContext, dataState.selectedAddress),
+                onPressed: dataState.selectedAddress == null ? null : () => _showAddressInfo(dataBlocContext, dataState.selectedAddress),
               ),
             ),
-            if (dataState.selectedAddress?.isActive == true) const SizedBox(width: 10),
+            const SizedBox(width: 10),
             Tooltip(
-              message: dataState.selectedAddress?.isActive == true ? 'Archive Address' : 'Activate Address',
+              message: dataState.selectedAddress?.archived == true ? 'Unarchive Address' : 'Archive Address',
               child: IconButton(
                 icon: Icon(
-                  dataState.selectedAddress?.isActive == true ? CupertinoIcons.archivebox_fill : CupertinoIcons.archivebox,
+                  dataState.selectedAddress?.archived == true ? CupertinoIcons.archivebox_fill : CupertinoIcons.archivebox,
                   size: 20,
                 ),
-                onPressed: dataState.selectedAddress == null ? null : _toggleArchiveAddress(dataBlocContext, dataState.selectedAddress),
+                onPressed: dataState.selectedAddress == null ? null : () => _toggleArchiveAddress(dataBlocContext, dataState.selectedAddress),
               ),
             ),
             const SizedBox(width: 10),
@@ -261,7 +262,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
               message: 'Delete address',
               child: IconButton(
                 icon: const Icon(CupertinoIcons.trash, size: 20),
-                onPressed: dataState.selectedAddress == null ? null : _deleteAddress(dataBlocContext, dataState.selectedAddress),
+                onPressed: dataState.selectedAddress == null ? null : () => _deleteAddress(dataBlocContext, dataState.selectedAddress),
               ),
             ),
             const SizedBox(width: 10),
@@ -271,7 +272,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
               message: dataState.selectedMessage?.seen ?? false ? 'Mark message as unread' : 'Mark message as read',
               child: IconButton(
                 icon: Icon(dataState.selectedMessage?.seen ?? false ? CupertinoIcons.envelope_badge : CupertinoIcons.envelope_open, size: 20),
-                onPressed: dataState.selectedMessage == null ? null : _toggleMessageSeenStatus(dataBlocContext, dataState),
+                onPressed: dataState.selectedMessage == null ? null : () => _toggleMessageSeenStatus(dataBlocContext, dataState),
               ),
             ),
             const SizedBox(width: 10),
@@ -287,7 +288,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
               message: 'Delete message',
               child: IconButton(
                 icon: const Icon(CupertinoIcons.trash, size: 20),
-                onPressed: dataState.selectedMessage == null ? null : _deleteMessage(dataBlocContext, dataState),
+                onPressed: dataState.selectedMessage == null ? null : () => _deleteMessage(dataBlocContext, dataState),
               ),
             ),
             const SizedBox(width: 10),
