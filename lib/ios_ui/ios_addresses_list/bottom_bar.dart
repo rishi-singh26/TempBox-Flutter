@@ -21,66 +21,70 @@ class BottomBar extends StatelessWidget {
     return BlocBuilder<DataBloc, DataState>(
       buildWhen: (previous, current) => false,
       builder: (dataBlocContext, dataState) {
-        return BlurredContainer(
-          size: const Size(double.infinity, 80),
-          filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 5),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    child: const Padding(
-                      padding: EdgeInsets.only(left: 18),
-                      child: Row(
-                        children: [
-                          Icon(CupertinoIcons.add_circled_solid, size: 27),
-                          SizedBox(width: 10),
-                          Text('New Address', style: TextStyle(fontWeight: FontWeight.bold)),
-                        ],
+        return LayoutBuilder(builder: (context, constraints) {
+          bool isVertical = constraints.maxHeight > constraints.maxWidth;
+          return BlurredContainer(
+            padding: isVertical ? null : const EdgeInsets.symmetric(horizontal: 60),
+            size: Size(double.infinity, isVertical ? 80 : 60),
+            filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
+            child: Column(
+              children: [
+                const SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      child: const Padding(
+                        padding: EdgeInsets.only(left: 18),
+                        child: Row(
+                          children: [
+                            Icon(CupertinoIcons.add_circled_solid, size: 27),
+                            SizedBox(width: 10),
+                            Text('New Address', style: TextStyle(fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
+                      onPressed: () {
+                        showCupertinoModalSheet(
+                          context: context,
+                          builder: (context) => BlocProvider.value(value: BlocProvider.of<DataBloc>(dataBlocContext), child: const IosAddAddress()),
+                        );
+                      },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 18),
+                      child: RichText(
+                        text: TextSpan(
+                          text: "Powered by ",
+                          style: CupertinoTheme.of(context).textTheme.tabLabelTextStyle.copyWith(fontSize: 15),
+                          children: <TextSpan>[
+                            TextSpan(
+                              text: 'mail.tm',
+                              style: TextStyle(color: CupertinoTheme.of(context).primaryColor),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () async {
+                                  bool? choice = await AlertService.getConformation(
+                                    context: context,
+                                    title: 'Do you want to continue?',
+                                    content: 'This will open mail.tm website.',
+                                  );
+                                  if (choice == true) {
+                                    await launchUrl(Uri.parse('https://mail.tm'));
+                                  }
+                                },
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    onPressed: () {
-                      showCupertinoModalSheet(
-                        context: context,
-                        builder: (context) => BlocProvider.value(value: BlocProvider.of<DataBloc>(dataBlocContext), child: const IosAddAddress()),
-                      );
-                    },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 18),
-                    child: RichText(
-                      text: TextSpan(
-                        text: "Powered by ",
-                        style: CupertinoTheme.of(context).textTheme.tabLabelTextStyle.copyWith(fontSize: 15),
-                        children: <TextSpan>[
-                          TextSpan(
-                            text: 'mail.tm',
-                            style: TextStyle(color: CupertinoTheme.of(context).primaryColor),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () async {
-                                bool? choice = await AlertService.getConformation(
-                                  context: context,
-                                  title: 'Do you want to continue?',
-                                  content: 'This will open mail.tm website.',
-                                );
-                                if (choice == true) {
-                                  await launchUrl(Uri.parse('https://mail.tm'));
-                                }
-                              },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10)
-            ],
-          ),
-        );
+                  ],
+                ),
+                const SizedBox(height: 10)
+              ],
+            ),
+          );
+        });
       },
     );
   }

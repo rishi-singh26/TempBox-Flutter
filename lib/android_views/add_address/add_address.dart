@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
@@ -23,6 +22,7 @@ class _AddAddressState extends State<AddAddress> {
   bool showSpinner = false;
   Domain? selectedDomain;
   List<Domain> domainsList = [];
+  bool useRandomAddress = false;
   bool useRandomPassword = true;
 
   late TextEditingController addressNameController;
@@ -38,11 +38,6 @@ class _AddAddressState extends State<AddAddress> {
     ));
     _getDomains();
     super.initState();
-  }
-
-  _updateRandomAddress() {
-    addressController.text = UiService.generateRandomString(10);
-    setState(() {});
   }
 
   _getDomains() async {
@@ -156,17 +151,13 @@ class _AddAddressState extends State<AddAddress> {
                 ),
                 CardListTile(
                   isLast: true,
-                  child: ListTile(
-                    title: RichText(
-                      text: TextSpan(
-                        text: 'Random address',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyLarge
-                            ?.copyWith(color: Theme.of(context).buttonTheme.colorScheme?.primary ?? Colors.green),
-                        recognizer: TapGestureRecognizer()..onTap = showSpinner ? null : _updateRandomAddress,
-                      ),
-                    ),
+                  child: SwitchListTile(
+                    value: useRandomAddress,
+                    onChanged: (v) => setState(() {
+                      useRandomAddress = v;
+                      addressController.text = v == false ? '' : UiService.generateRandomString(10);
+                    }),
+                    title: const Text('Use random address'),
                   ),
                 ),
                 vGap(30),

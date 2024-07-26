@@ -42,11 +42,11 @@ class IosAddressesList extends StatelessWidget {
     return CupertinoPageScaffold(
       backgroundColor: CupertinoColors.systemGroupedBackground,
       child: BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
-        return SafeArea(
-          child: Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              SlidableAutoCloseBehavior(
+        return Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            SlidableAutoCloseBehavior(
+              child: SafeArea(
                 child: CustomScrollView(
                   slivers: [
                     CupertinoSliverRefreshControl(
@@ -131,9 +131,9 @@ class IosAddressesList extends StatelessWidget {
                   ],
                 ),
               ),
-              const BottomBar(),
-            ],
-          ),
+            ),
+            const BottomBar(),
+          ],
         );
       }),
     );

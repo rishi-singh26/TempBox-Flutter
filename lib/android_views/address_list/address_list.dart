@@ -104,7 +104,6 @@ class _AddressListState extends State<AddressList> {
         ],
         applicationName: 'TempBox',
         applicationVersion: '1.0.0',
-        applicationLegalese: 'Powered by mail.tm and Flutter',
       );
     }
   }
@@ -120,45 +119,45 @@ class _AddressListState extends State<AddressList> {
           builder: (dataBlocContext, dataState) {
             return SlidableAutoCloseBehavior(
               child: Scaffold(
-                body: Builder(builder: (context) {
+                body: LayoutBuilder(builder: (context, constraints) {
+                  bool isVertical = constraints.maxHeight > constraints.maxWidth;
                   if (dataState.addressList.isEmpty) {
                     return const CustomScrollView(slivers: [SliverAppBar.large(title: Text('TempBox'))]);
                   }
                   List<AddressData> active = [];
                   List<AddressData> archived = [];
-                  addToList(a) => a.isActive ? active.add(a) : archived.add(a);
+                  addToList(AddressData a) => a.archived ? archived.add(a) : active.add(a);
                   dataState.addressList.forEach(addToList);
+                  List<Widget> actions = [
+                    PopupMenuButton<int>(
+                      initialValue: null,
+                      onSelected: (int item) => _handleOptionTap(context, dataBlocContext, item),
+                      itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+                        PopupMenuItem<int>(
+                          enabled: dataState.addressList.isNotEmpty,
+                          value: 0,
+                          child: const ListTile(leading: Icon(Icons.arrow_circle_up_rounded), title: Text('Export Addresses')),
+                        ),
+                        const PopupMenuItem<int>(
+                          value: 1,
+                          child: ListTile(leading: Icon(Icons.arrow_circle_down_rounded), title: Text('Import Addresses')),
+                        ),
+                        const PopupMenuDivider(),
+                        const PopupMenuItem<int>(
+                          value: 2,
+                          child: ListTile(leading: Icon(Icons.info_outline_rounded), title: Text('About TempBox')),
+                        ),
+                      ],
+                    ),
+                  ];
                   return RefreshIndicator(
                     onRefresh: () async {
                       BlocProvider.of<DataBloc>(dataBlocContext).add(const LoginToAccountsEvent());
                     },
                     child: CustomScrollView(
                       slivers: [
-                        SliverAppBar.large(
-                          title: Text(widget.title),
-                          actions: [
-                            PopupMenuButton<int>(
-                              initialValue: null,
-                              onSelected: (int item) => _handleOptionTap(context, dataBlocContext, item),
-                              itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-                                PopupMenuItem<int>(
-                                  enabled: dataState.addressList.isNotEmpty,
-                                  value: 0,
-                                  child: const ListTile(leading: Icon(Icons.arrow_circle_up_rounded), title: Text('Export Addresses')),
-                                ),
-                                const PopupMenuItem<int>(
-                                  value: 1,
-                                  child: ListTile(leading: Icon(Icons.arrow_circle_down_rounded), title: Text('Import Addresses')),
-                                ),
-                                const PopupMenuDivider(),
-                                const PopupMenuItem<int>(
-                                  value: 2,
-                                  child: ListTile(leading: Icon(Icons.info_outline_rounded), title: Text('About TempBox')),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                        if (isVertical) SliverAppBar.large(title: Text(widget.title), actions: actions),
+                        if (!isVertical) SliverAppBar(title: Text(widget.title), actions: actions, pinned: true),
                         if (active.isNotEmpty)
                           SliverToBoxAdapter(
                             child: Padding(
