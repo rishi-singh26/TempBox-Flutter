@@ -121,11 +121,11 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
         messages.isNotEmpty ? updatesMessagesMap[event.addressData.authenticatedUser.account.id] = messages : null;
         // updated the selected message with updated data
         Message? selectedMessage = messages.where((m) => m.id == state.selectedMessage?.id).firstOrNull;
+        emit(state.copyWith(accountIdToMessagesMap: updatesMessagesMap));
         if (selectedMessage != null) {
           add(SelectMessageEvent(message: selectedMessage, addressData: event.addressData, shouldUpdateMessage: false));
           return;
         }
-        emit(state.copyWith(accountIdToMessagesMap: updatesMessagesMap));
       } catch (e) {
         debugPrint(e.toString());
       }
