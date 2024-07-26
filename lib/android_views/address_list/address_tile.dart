@@ -68,7 +68,7 @@ class AddressTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
-      String messageCount = (dataState.accountIdToAddressesMap[addressData.authenticatedUser.account.id]?.length ?? 0).toString();
+      String messageCount = (dataState.accountIdToMessagesMap[addressData.authenticatedUser.account.id]?.length ?? 0).toString();
       return CardListTile(
         isFirst: isFirst,
         isLast: isLast,

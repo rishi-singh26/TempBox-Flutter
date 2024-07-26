@@ -13,7 +13,7 @@ class DataState extends Equatable {
   final Message? selectedMessage;
 
   /// map of account id to list of messages
-  final Map<String, List<Message>> accountIdToAddressesMap;
+  final Map<String, List<Message>> accountIdToMessagesMap;
 
   /// Map of messageId to message data, used to store the complete message data that includes the html
   /// so we dont need to fetch the message every time and messages can be accessed offline.
@@ -24,7 +24,7 @@ class DataState extends Equatable {
     required this.addressList,
     required this.selectedAddress,
     required this.selectedMessage,
-    required this.accountIdToAddressesMap,
+    required this.accountIdToMessagesMap,
     required this.messageIdToMessageMap,
   });
 
@@ -32,14 +32,14 @@ class DataState extends Equatable {
       : addressList = [],
         selectedAddress = null,
         selectedMessage = null,
-        accountIdToAddressesMap = {},
+        accountIdToMessagesMap = {},
         messageIdToMessageMap = {};
 
   Map<String, dynamic> toJson() => {
         'addressList': addressList.map((e) => e.toJson()).toList(),
         'selectedAddress': selectedAddress?.toJson(),
         'selectedMessage': selectedMessage?.toJson(),
-        'accountIdToAddressesMap': accountIdToAddressesMap.map(
+        'accountIdToMessagesMap': accountIdToMessagesMap.map(
           (key, value) => MapEntry(key, value.map((e) => e.toJson()).toList()),
         ),
         'messageIdToMessageMap': messageIdToMessageMap.map((key, value) => MapEntry(key, value.toJson())),
@@ -51,7 +51,7 @@ class DataState extends Equatable {
             json.containsKey('selectedAddress') && json['selectedAddress'] != null ? AddressData.fromJson(json['selectedAddress']) : null,
         // selectedMessage: json.containsKey('selectedMessage') && json['selectedMessage'] != null ? Message.fromJson(json['selectedMessage']) : null,
         selectedMessage: null,
-        accountIdToAddressesMap: (json['accountIdToAddressesMap'] as Map<String, dynamic>).map(
+        accountIdToMessagesMap: (json['accountIdToMessagesMap'] as Map<String, dynamic>).map(
           (key, value) => MapEntry(key, (value as List).map((e) => Message.fromJson(e)).toList()),
         ),
         messageIdToMessageMap: (json['messageIdToMessageMap'] as Map<String, dynamic>).map((key, value) => MapEntry(key, Message.fromJson(value))),
@@ -62,7 +62,7 @@ class DataState extends Equatable {
         addressList,
         selectedAddress ?? 'selectedAddress',
         selectedMessage ?? 'SelectedMessage',
-        accountIdToAddressesMap,
+        accountIdToMessagesMap,
         messageIdToMessageMap,
       ];
 
@@ -72,14 +72,14 @@ class DataState extends Equatable {
     bool? setSelectedAddressToNull,
     Message? selectedMessage,
     bool? setSelectedMessageToNull,
-    Map<String, List<Message>>? accountIdToAddressesMap,
+    Map<String, List<Message>>? accountIdToMessagesMap,
     Map<String, Message>? messageIdToMessageMap,
   }) {
     return DataState(
       addressList: addressList ?? this.addressList,
       selectedAddress: setSelectedAddressToNull == true ? null : selectedAddress ?? this.selectedAddress,
       selectedMessage: setSelectedMessageToNull == true ? null : selectedMessage ?? this.selectedMessage,
-      accountIdToAddressesMap: accountIdToAddressesMap ?? this.accountIdToAddressesMap,
+      accountIdToMessagesMap: accountIdToMessagesMap ?? this.accountIdToMessagesMap,
       messageIdToMessageMap: messageIdToMessageMap ?? this.messageIdToMessageMap,
     );
   }

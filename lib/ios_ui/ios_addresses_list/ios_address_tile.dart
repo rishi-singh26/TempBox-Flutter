@@ -98,7 +98,7 @@ class IosAddressTile extends StatelessWidget {
           title: Text(UiService.getAccountName(addressData)),
           leading: const Icon(CupertinoIcons.tray),
           trailing: const CupertinoListTileChevron(),
-          additionalInfo: Text((dataState.accountIdToAddressesMap[addressData.authenticatedUser.account.id]?.length ?? '').toString()),
+          additionalInfo: Text((dataState.accountIdToMessagesMap[addressData.authenticatedUser.account.id]?.length ?? '').toString()),
           onTap: () => _navigateToMessagesList(context, dataBlocContext, addressData),
         ),
       );

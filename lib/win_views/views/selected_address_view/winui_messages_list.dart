@@ -39,7 +39,7 @@ class _WinuiMessagesListState extends State<WinuiMessagesList> {
       if (dataState.selectedAddress == null) {
         return const Center(child: Text('No address selected'));
       }
-      List<Message>? messages = dataState.accountIdToAddressesMap[dataState.selectedAddress!.authenticatedUser.account.id];
+      List<Message>? messages = dataState.accountIdToMessagesMap[dataState.selectedAddress!.authenticatedUser.account.id];
       if (messages == null || messages.isEmpty) {
         return const Center(child: Text('No Messages'));
       }

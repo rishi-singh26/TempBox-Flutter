@@ -36,7 +36,7 @@ class IosMessagesList extends StatelessWidget {
           ]),
         );
       }
-      List<Message>? messages = dataState.accountIdToAddressesMap[dataState.selectedAddress!.authenticatedUser.account.id];
+      List<Message>? messages = dataState.accountIdToMessagesMap[dataState.selectedAddress!.authenticatedUser.account.id];
       if (messages == null || messages.isEmpty) {
         return CupertinoPageScaffold(
           backgroundColor: CupertinoColors.systemGroupedBackground,

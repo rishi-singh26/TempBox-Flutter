@@ -129,7 +129,7 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
   Widget build(BuildContext context) {
     return BlocBuilder<DataBloc, DataState>(
       buildWhen: (previous, current) {
-        if (previous.accountIdToAddressesMap != current.accountIdToAddressesMap ||
+        if (previous.accountIdToMessagesMap != current.accountIdToMessagesMap ||
             previous.selectedAddress != current.selectedAddress ||
             previous.selectedMessage != current.selectedMessage) {
           return true;
@@ -143,7 +143,7 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
               if (dataState.selectedAddress == null) {
                 return const Text("Inbox");
               }
-              List<Message>? messages = dataState.accountIdToAddressesMap[dataState.selectedAddress!.authenticatedUser.account.id];
+              List<Message>? messages = dataState.accountIdToMessagesMap[dataState.selectedAddress!.authenticatedUser.account.id];
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
