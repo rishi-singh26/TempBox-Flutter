@@ -234,7 +234,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
                 message: 'Refresh inbox',
                 child: IconButton(
                   icon: const Icon(CupertinoIcons.refresh_thick, size: 20),
-                  onPressed: dataState.selectedAddress == null ? null : _refreshInbox(dataBlocContext, dataState.selectedAddress),
+                  onPressed: dataState.selectedAddress == null ? null : () => _refreshInbox(dataBlocContext, dataState.selectedAddress),
                 ),
               ),
             const SizedBox(width: 10),
@@ -242,7 +242,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
               message: 'Address information',
               child: IconButton(
                 icon: const Icon(CupertinoIcons.info_circle, size: 20),
-                onPressed: dataState.selectedAddress == null ? null : _showAddressInfo(dataBlocContext, dataState.selectedAddress),
+                onPressed: dataState.selectedAddress == null ? null : () => _showAddressInfo(dataBlocContext, dataState.selectedAddress),
               ),
             ),
             if (dataState.selectedAddress?.isActive == true) const SizedBox(width: 10),
@@ -253,7 +253,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
                   dataState.selectedAddress?.isActive == true ? CupertinoIcons.archivebox_fill : CupertinoIcons.archivebox,
                   size: 20,
                 ),
-                onPressed: dataState.selectedAddress == null ? null : _toggleArchiveAddress(dataBlocContext, dataState.selectedAddress),
+                onPressed: dataState.selectedAddress == null ? null : () => _toggleArchiveAddress(dataBlocContext, dataState.selectedAddress),
               ),
             ),
             const SizedBox(width: 10),
@@ -261,7 +261,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
               message: 'Delete address',
               child: IconButton(
                 icon: const Icon(CupertinoIcons.trash, size: 20),
-                onPressed: dataState.selectedAddress == null ? null : _deleteAddress(dataBlocContext, dataState.selectedAddress),
+                onPressed: dataState.selectedAddress == null ? null : () => _deleteAddress(dataBlocContext, dataState.selectedAddress),
               ),
             ),
             const SizedBox(width: 10),
@@ -271,7 +271,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
               message: dataState.selectedMessage?.seen ?? false ? 'Mark message as unread' : 'Mark message as read',
               child: IconButton(
                 icon: Icon(dataState.selectedMessage?.seen ?? false ? CupertinoIcons.envelope_badge : CupertinoIcons.envelope_open, size: 20),
-                onPressed: dataState.selectedMessage == null ? null : _toggleMessageSeenStatus(dataBlocContext, dataState),
+                onPressed: dataState.selectedMessage == null ? null : () => _toggleMessageSeenStatus(dataBlocContext, dataState),
               ),
             ),
             const SizedBox(width: 10),
@@ -287,7 +287,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
               message: 'Delete message',
               child: IconButton(
                 icon: const Icon(CupertinoIcons.trash, size: 20),
-                onPressed: dataState.selectedMessage == null ? null : _deleteMessage(dataBlocContext, dataState),
+                onPressed: dataState.selectedMessage == null ? null : () => _deleteMessage(dataBlocContext, dataState),
               ),
             ),
             const SizedBox(width: 10),

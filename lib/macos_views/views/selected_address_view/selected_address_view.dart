@@ -158,34 +158,13 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
               );
             }),
             titleWidth: 150.0,
-            leading: MacosTooltip(
-              message: 'Toggle Sidebar',
-              useMousePosition: false,
-              child: MacosIconButton(
-                icon: MacosIcon(
-                  CupertinoIcons.sidebar_left,
-                  color: MacosTheme.brightnessOf(context).resolve(
-                    const Color.fromRGBO(0, 0, 0, 0.5),
-                    const Color.fromRGBO(255, 255, 255, 0.5),
-                  ),
-                  size: 20.0,
-                ),
-                boxConstraints: const BoxConstraints(
-                  minHeight: 20,
-                  minWidth: 20,
-                  maxWidth: 48,
-                  maxHeight: 38,
-                ),
-                onPressed: () => MacosWindowScope.of(context).toggleSidebar(),
-              ),
-            ),
             actions: [
               if (dataState.selectedAddress?.isActive == true)
                 ToolBarIconButton(
                   icon: const MacosIcon(CupertinoIcons.refresh_circled),
                   onPressed: dataState.selectedAddress == null || dataState.selectedAddress?.isActive != true
                       ? null
-                      : _refreshInbox(dataBlocContext, dataState.selectedAddress),
+                      : () => _refreshInbox(dataBlocContext, dataState.selectedAddress),
                   label: 'Refresh',
                   showLabel: false,
                   tooltipMessage: 'Refresh inbox',
@@ -218,7 +197,7 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
                 icon: MacosIcon(dataState.selectedMessage?.seen ?? false ? CupertinoIcons.envelope_badge_fill : CupertinoIcons.envelope_open_fill),
                 onPressed: dataState.selectedMessage == null || dataState.selectedAddress?.isActive != true
                     ? null
-                    : _toggleMessageSeenStatus(dataBlocContext, dataState),
+                    : () => _toggleMessageSeenStatus(dataBlocContext, dataState),
                 label: dataState.selectedMessage?.seen ?? false ? 'Mark unread' : 'Mark read',
                 showLabel: false,
                 tooltipMessage: dataState.selectedMessage?.seen ?? false ? 'Mark message as unread' : 'Mark message as read',
@@ -232,7 +211,7 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
               ),
               ToolBarIconButton(
                 icon: const MacosIcon(CupertinoIcons.trash),
-                onPressed: dataState.selectedMessage == null ? null : _deleteMessage(dataBlocContext, dataState),
+                onPressed: dataState.selectedMessage == null ? null : () => _deleteMessage(dataBlocContext, dataState),
                 label: 'Delete',
                 showLabel: false,
                 tooltipMessage: 'Delete message',
