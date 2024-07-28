@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 class FSService {
   /// Pick file
@@ -90,15 +91,21 @@ class FSService {
         message: 'Empty file name',
       );
     }
-    PickDirResp dirResp = await pickDirectory();
-    if (!dirResp.status) {
-      return SaveFileResp(
-        file: File('dummy_path'),
-        status: false,
-        message: dirResp.message,
-      );
+    String filePath = '/$filename';
+    if (Platform.isIOS) {
+      Directory docsDir = await getApplicationDocumentsDirectory();
+      filePath = '${docsDir.path}$filePath';
+    } else {
+      PickDirResp dirResp = await pickDirectory();
+      if (!dirResp.status) {
+        return SaveFileResp(
+          file: File('dummy_path'),
+          status: false,
+          message: dirResp.message,
+        );
+      }
+      filePath = '${dirResp.path}$filePath';
     }
-    String filePath = '${dirResp.path}/$filename';
     WriteFileResp writeFileResp = await writeFileContents(File(filePath), fileData);
     if (!writeFileResp.status) {
       return SaveFileResp(

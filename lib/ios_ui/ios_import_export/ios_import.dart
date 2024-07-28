@@ -63,6 +63,7 @@ class _IosImportPageState extends State<IosImportPage> {
           slivers: [
             CupertinoSliverNavigationBar(
               backgroundColor: MediaQuery.of(context).platformBrightness != Brightness.dark ? AppColors.navBarColor : null,
+              border: null,
               largeTitle: const Text('Import Addresses'),
               leading: CupertinoButton(
                 padding: EdgeInsets.zero,
