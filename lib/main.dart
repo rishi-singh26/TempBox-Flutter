@@ -9,7 +9,11 @@ import 'package:tempbox/android_views/android_app_view.dart';
 import 'package:tempbox/ios_ui/ios_view.dart';
 import 'package:tempbox/macos_views/macos_view.dart';
 import 'package:tempbox/win_views/win_view.dart';
+import 'package:tempbox/yaru_views/theme.dart';
+import 'package:tempbox/yaru_views/yaru_view.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:flutter/semantics.dart';
+import 'package:yaru/yaru.dart';
 
 /// This method initializes macos_window_utils and styles the window.
 Future<void> _configureMacosWindowUtils() async {
@@ -48,6 +52,10 @@ void main() async {
     runApp(const WinApp());
   } else if (Platform.isIOS) {
     runApp(const IosView());
+  } else if (Platform.isLinux) {
+    await YaruWindowTitleBar.ensureInitialized();
+    SemanticsBinding.instance.ensureSemantics();
+    runApp(InheritedYaruVariant(child: const YaruView()));
   } else {
     SystemTheme.accentColor.load();
     SystemTheme.fallbackColor = const Color(0xFFBA1F33);
