@@ -25,7 +25,6 @@ dependencies:
   file_picker: ^8.0.0+1
   cupertino_modal_sheet: ^1.1.0
   pull_down_button: ^0.9.4
-  yaru: ^4.1.0
 
 dev_dependencies:
   flutter_test:
