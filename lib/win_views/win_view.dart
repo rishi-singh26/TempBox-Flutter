@@ -215,6 +215,38 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
     }
   }
 
+  NavigationPaneItem _buildHeader(String title) {
+    return PaneItemHeader(
+      header: Padding(padding: const EdgeInsets.only(bottom: 4), child: Text(title)),
+    );
+  }
+
+  NavigationPaneItem _buildPaneItem(AddressData a) {
+    return PaneItem(
+      key: Key(a.authenticatedUser.account.id),
+      icon: const Icon(CupertinoIcons.tray),
+      title: Text(UiService.getAccountName(a)),
+      body: const SizedBox.shrink(),
+    );
+  }
+
+  List<NavigationPaneItem> _getPaneItems(List<AddressData> active, List<AddressData> archived) {
+    if (active.isEmpty && archived.isEmpty) {
+      return [];
+    } else if (active.isEmpty && archived.isNotEmpty) {
+      return [_buildHeader('Archived'), ...archived.map((a) => _buildPaneItem(a))];
+    } else if (active.isNotEmpty && archived.isEmpty) {
+      return [_buildHeader('Active'), ...active.map((a) => _buildPaneItem(a))];
+    } else {
+      return [
+        _buildHeader('Active'),
+        ...active.map((a) => _buildPaneItem(a)),
+        _buildHeader('Archived'),
+        ...archived.map((a) => _buildPaneItem(a)),
+      ];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
@@ -348,24 +380,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
             }
           },
           size: NavigationPaneSize(openWidth: MediaQuery.of(context).size.width / 5, openMinWidth: 250, openMaxWidth: 250),
-          items: dataState.addressList.isEmpty
-              ? []
-              : [
-                  PaneItemHeader(header: const Text('Active')),
-                  ...active.map((a) => PaneItem(
-                        key: Key(a.authenticatedUser.account.id),
-                        icon: const Icon(CupertinoIcons.tray),
-                        title: Text(UiService.getAccountName(a)),
-                        body: const SizedBox.shrink(),
-                      )),
-                  PaneItemHeader(header: const Text('Archived')),
-                  ...archived.map((a) => PaneItem(
-                        key: Key(a.authenticatedUser.account.id),
-                        icon: const Icon(CupertinoIcons.tray),
-                        title: Text(UiService.getAccountName(a)),
-                        body: const SizedBox.shrink(),
-                      )),
-                ],
+          items: _getPaneItems(active, archived),
           displayMode: PaneDisplayMode.open,
           toggleable: true,
           selected: selectedIndex,

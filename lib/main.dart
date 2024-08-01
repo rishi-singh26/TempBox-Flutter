@@ -41,7 +41,7 @@ void main() async {
     await configureWindowSize(minSize: const Size(1000, 550));
     await _configureMacosWindowUtils();
     runApp(const MacOSView());
-  } else if (Platform.isWindows) {
+  } else if (Platform.isWindows || Platform.isLinux) {
     await configureWindowSize(minSize: const Size(1200, 550));
     SystemTheme.accentColor.load();
     SystemTheme.fallbackColor = const Color(0xFFBA1F33);

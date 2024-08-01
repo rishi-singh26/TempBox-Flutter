@@ -30,7 +30,7 @@ class AlertService {
           ),
         ),
       );
-    } else if (Platform.isWindows) {
+    } else if (Platform.isWindows || Platform.isLinux) {
       return await fluent_ui.showDialog<T>(
         context: context,
         builder: (context) => fluent_ui.ContentDialog(
@@ -160,7 +160,7 @@ class AlertService {
           ),
         ),
       );
-    } else if (Platform.isWindows) {
+    } else if (Platform.isWindows || Platform.isLinux) {
       return await showDialog<T>(
         context: context,
         builder: (context) => fluent_ui.ContentDialog(
