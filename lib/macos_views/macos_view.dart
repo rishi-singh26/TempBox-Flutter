@@ -89,6 +89,7 @@ class MacOsHome extends StatelessWidget {
               title: RichText(
                 text: TextSpan(
                   text: "Powered by ",
+                  style: MacosTheme.of(context).typography.body,
                   children: <TextSpan>[
                     TextSpan(
                       text: 'mail.tm',

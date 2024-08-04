@@ -11,7 +11,11 @@ class UiService {
   static List<String> monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
   static String getAccountName(AddressData addressData) {
-    return addressData.addressName.isNotEmpty ? addressData.addressName : addressData.authenticatedUser.account.address.split('@').first;
+    if (addressData.addressName.isNotEmpty) {
+      return '${addressData.addressName.substring(0, addressData.addressName.length > 15 ? 15 : addressData.addressName.length)}...';
+    } else {
+      return addressData.authenticatedUser.account.address.split('@').first;
+    }
   }
 
   static String getMessageFromName(Message message) {
