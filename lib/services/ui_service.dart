@@ -10,9 +10,10 @@ import 'package:tempbox/services/byte_converter_service.dart';
 class UiService {
   static List<String> monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-  static String getAccountName(AddressData addressData) {
+  static String getAccountName(AddressData addressData, {bool shortName = false}) {
     if (addressData.addressName.isNotEmpty) {
-      return '${addressData.addressName.substring(0, addressData.addressName.length > 15 ? 15 : addressData.addressName.length)}...';
+      final bool shouldShorten = addressData.addressName.length > 15 && shortName;
+      return '${addressData.addressName.substring(0, shouldShorten ? 15 : addressData.addressName.length)}${shouldShorten ? "..." : ""}';
     } else {
       return addressData.authenticatedUser.account.address.split('@').first;
     }
