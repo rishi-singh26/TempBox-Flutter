@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -117,5 +119,65 @@ class UiService {
 
   static String getQuotaString(int bytes, SizeUnit unit) {
     return ByteConverterService.fromBytes(bytes.toDouble()).toHumanReadable(unit);
+  }
+
+  static Future<AuthenticatedUser?> login(String email, String password) async {
+    Token? token = await _getToken(email, password);
+    if (token == null) return null;
+    return await _getAccount(token);
+  }
+
+  static Future<Token?> _getToken(String email, String password) async {
+    final url = Uri.parse('https://api.mail.tm/token');
+    final client = HttpClient();
+
+    try {
+      final request = await client.getUrl(url);
+      String jsonBody = json.encode({"address": email, "password": password});
+      request.headers.set(HttpHeaders.contentTypeHeader, 'application/ld+json');
+      request.headers.set(HttpHeaders.contentLengthHeader, jsonBody.length);
+      request.add(utf8.encode(jsonBody));
+
+      final response = await request.close();
+
+      if (response.statusCode == HttpStatus.ok) {
+        final responseBody = await response.transform(utf8.decoder).join();
+        final jsonData = json.decode(responseBody);
+        return Token.fromJson(jsonData);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      // print('Error: $e');
+      return null;
+    } finally {
+      client.close();
+    }
+  }
+
+  static Future<AuthenticatedUser?> _getAccount(Token token) async {
+    final url = Uri.parse('https://api.mail.tm/account/${token.id}');
+    final client = HttpClient();
+
+    try {
+      final request = await client.getUrl(url);
+      request.headers.set(HttpHeaders.contentTypeHeader, 'application/ld+json');
+      request.headers.set(HttpHeaders.authorizationHeader, 'Bearer ${token.token}');
+
+      final response = await request.close();
+
+      if (response.statusCode == HttpStatus.ok) {
+        final responseBody = await response.transform(utf8.decoder).join();
+        final jsonData = json.decode(responseBody);
+        return AuthenticatedUser.fromJson(jsonData);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      // print('Error: $e');
+      return null;
+    } finally {
+      client.close();
+    }
   }
 }
