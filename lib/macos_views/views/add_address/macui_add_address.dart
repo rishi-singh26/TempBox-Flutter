@@ -7,6 +7,8 @@ import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/macos_views/views/macui_address_info/macos_card.dart';
 import 'package:tempbox/models/address_data.dart';
+import 'package:tempbox/services/alert_service.dart';
+import 'package:tempbox/services/regex.dart';
 import 'package:tempbox/services/ui_service.dart';
 
 class MacUIAddAddress extends StatefulWidget {
@@ -82,7 +84,9 @@ class _MacUIAddAddressState extends State<MacUIAddAddress> {
     if (_selectedSegment == 0) {
       return addressController.text.isNotEmpty && passwordController.text.isNotEmpty && selectedDomain != null;
     } else {
-      return loginAddressController.text.isNotEmpty && loginPasswordController.text.isNotEmpty;
+      return loginAddressController.text.isNotEmpty &&
+          RegxService.validateEmail(loginAddressController.text) &&
+          loginPasswordController.text.isNotEmpty;
     }
   }
 
@@ -102,17 +106,22 @@ class _MacUIAddAddressState extends State<MacUIAddAddress> {
         );
       } else {
         password = loginPasswordController.text;
-        authenticatedUser = await MailTm.login(address: loginAddressController.text, password: password);
+        authenticatedUser = await UiService.login(loginAddressController.text, password);
       }
 
       if (authenticatedUser != null && dataBlocContext.mounted) {
-        BlocProvider.of<DataBloc>(dataBlocContext).add(AddAddressDataEvent(AddressData(
-          addressName: addressNameController.text,
-          authenticatedUser: authenticatedUser,
-          archived: false,
-          password: password,
-        )));
+        BlocProvider.of<DataBloc>(dataBlocContext).add(
+          AddAddressDataEvent(AddressData(
+            addressName: addressNameController.text,
+            authenticatedUser: authenticatedUser,
+            archived: false,
+            password: password,
+          )),
+        );
         Navigator.canPop(dataBlocContext) ? Navigator.pop(dataBlocContext) : null;
+      } else if (dataBlocContext.mounted) {
+        await AlertService.showSnackBar(dataBlocContext, 'Invalid Credentials :', 'Please enter valid login credentials');
+        setState(() => showSpinner = false);
       }
     } catch (e) {
       debugPrint(e.toString());
@@ -123,6 +132,7 @@ class _MacUIAddAddressState extends State<MacUIAddAddress> {
   @override
   Widget build(BuildContext context) {
     vGap(double height) => SizedBox(height: height);
+    final theme = MacosTheme.of(context);
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
       return LayoutBuilder(builder: (context, constraints) {
         return MacosSheet(
@@ -148,9 +158,9 @@ class _MacUIAddAddressState extends State<MacUIAddAddress> {
                         onValueChanged: (int? value) => setState(() {
                           if (value != null) _selectedSegment = value;
                         }),
-                        children: const <int, Widget>{
-                          0: Padding(padding: EdgeInsets.symmetric(horizontal: 20), child: Text('Create')),
-                          1: Padding(padding: EdgeInsets.symmetric(horizontal: 20), child: Text('Login')),
+                        children: <int, Widget>{
+                          0: Padding(padding: const EdgeInsets.symmetric(horizontal: 20), child: Text('Create', style: theme.typography.body)),
+                          1: Padding(padding: const EdgeInsets.symmetric(horizontal: 20), child: Text('Login', style: theme.typography.body)),
                         },
                       ),
                     ),
