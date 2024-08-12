@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:mailtm_client/mailtm_client.dart';
 import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/byte_converter_service.dart';
@@ -124,60 +125,55 @@ class UiService {
   static Future<AuthenticatedUser?> login(String email, String password) async {
     Token? token = await _getToken(email, password);
     if (token == null) return null;
-    return await _getAccount(token);
+    return await _getAccount(token, password);
   }
 
   static Future<Token?> _getToken(String email, String password) async {
     final url = Uri.parse('https://api.mail.tm/token');
-    final client = HttpClient();
 
     try {
-      final request = await client.getUrl(url);
-      String jsonBody = json.encode({"address": email, "password": password});
-      request.headers.set(HttpHeaders.contentTypeHeader, 'application/ld+json');
-      request.headers.set(HttpHeaders.contentLengthHeader, jsonBody.length);
-      request.add(utf8.encode(jsonBody));
-
-      final response = await request.close();
+      String jsonBody = jsonEncode({"address": email, "password": password});
+      final response = await http.post(
+        url,
+        headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+        body: jsonBody,
+      );
 
       if (response.statusCode == HttpStatus.ok) {
-        final responseBody = await response.transform(utf8.decoder).join();
-        final jsonData = json.decode(responseBody);
-        return Token.fromJson(jsonData);
+        return Token.fromJson(jsonDecode(response.body));
       } else {
         return null;
       }
     } catch (e) {
       // print('Error: $e');
       return null;
-    } finally {
-      client.close();
     }
   }
 
-  static Future<AuthenticatedUser?> _getAccount(Token token) async {
-    final url = Uri.parse('https://api.mail.tm/account/${token.id}');
-    final client = HttpClient();
+  static Future<AuthenticatedUser?> _getAccount(Token token, String password) async {
+    final url = Uri.parse('https://api.mail.tm/me');
 
     try {
-      final request = await client.getUrl(url);
-      request.headers.set(HttpHeaders.contentTypeHeader, 'application/ld+json');
-      request.headers.set(HttpHeaders.authorizationHeader, 'Bearer ${token.token}');
-
-      final response = await request.close();
+      final response = await http.get(
+        url,
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/ld+json',
+          HttpHeaders.authorizationHeader: 'Bearer ${token.token}',
+        },
+      );
 
       if (response.statusCode == HttpStatus.ok) {
-        final responseBody = await response.transform(utf8.decoder).join();
-        final jsonData = json.decode(responseBody);
-        return AuthenticatedUser.fromJson(jsonData);
+        return AuthenticatedUser(
+          account: Account.fromJson(jsonDecode(response.body)),
+          password: password,
+          token: token.token,
+        );
       } else {
         return null;
       }
     } catch (e) {
       // print('Error: $e');
       return null;
-    } finally {
-      client.close();
     }
   }
 }
