@@ -43,7 +43,7 @@ class SidebarView extends StatelessWidget {
           ? archived.add(SidebarItem(
               leading: const MacosIcon(CupertinoIcons.tray, size: 15),
               label: Text(
-                UiService.getAccountName(a),
+                UiService.getAccountName(a, shortName: true),
                 style: MacosTheme.of(context).typography.body,
               ),
               trailing: Text((dataState.accountIdToMessagesMap[a.authenticatedUser.account.id]?.length ?? 0).toString()),
@@ -51,7 +51,7 @@ class SidebarView extends StatelessWidget {
           : active.add(SidebarItem(
               leading: const MacosIcon(CupertinoIcons.tray, size: 15),
               label: Text(
-                UiService.getAccountName(a),
+                UiService.getAccountName(a, shortName: true),
                 style: MacosTheme.of(context).typography.body,
               ),
               trailing: Text((dataState.accountIdToMessagesMap[a.authenticatedUser.account.id]?.length ?? 0).toString()),

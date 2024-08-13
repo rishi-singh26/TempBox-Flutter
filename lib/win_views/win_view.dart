@@ -221,28 +221,32 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
     );
   }
 
-  NavigationPaneItem _buildPaneItem(AddressData a) {
+  NavigationPaneItem _buildPaneItem(AddressData a, DataState state) {
     return PaneItem(
       key: Key(a.authenticatedUser.account.id),
       icon: const Icon(CupertinoIcons.tray),
       title: Text(UiService.getAccountName(a)),
       body: const SizedBox.shrink(),
+      trailing: Padding(
+        padding: const EdgeInsets.only(right: 8.0),
+        child: Text((state.accountIdToMessagesMap[a.authenticatedUser.account.id]?.length ?? 0).toString()),
+      ),
     );
   }
 
-  List<NavigationPaneItem> _getPaneItems(List<AddressData> active, List<AddressData> archived) {
+  List<NavigationPaneItem> _getPaneItems(List<AddressData> active, List<AddressData> archived, DataState state) {
     if (active.isEmpty && archived.isEmpty) {
       return [];
     } else if (active.isEmpty && archived.isNotEmpty) {
-      return [_buildHeader('Archived'), ...archived.map((a) => _buildPaneItem(a))];
+      return [_buildHeader('Archived'), ...archived.map((a) => _buildPaneItem(a, state))];
     } else if (active.isNotEmpty && archived.isEmpty) {
-      return [_buildHeader('Active'), ...active.map((a) => _buildPaneItem(a))];
+      return [_buildHeader('Active'), ...active.map((a) => _buildPaneItem(a, state))];
     } else {
       return [
         _buildHeader('Active'),
-        ...active.map((a) => _buildPaneItem(a)),
+        ...active.map((a) => _buildPaneItem(a, state)),
         _buildHeader('Archived'),
-        ...archived.map((a) => _buildPaneItem(a)),
+        ...archived.map((a) => _buildPaneItem(a, state)),
       ];
     }
   }
@@ -380,7 +384,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
             }
           },
           size: NavigationPaneSize(openWidth: MediaQuery.of(context).size.width / 5, openMinWidth: 250, openMaxWidth: 250),
-          items: _getPaneItems(active, archived),
+          items: _getPaneItems(active, archived, dataState),
           displayMode: PaneDisplayMode.open,
           toggleable: true,
           selected: selectedIndex,

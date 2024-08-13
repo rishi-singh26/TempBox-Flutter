@@ -11,7 +11,10 @@ class RenderMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final html = message.html.isEmpty ? '<p>Loading...</p>' : message.html.join('');
+    String headerHTML =
+        "<div style='display: flex; margin-left: 10px; margin-bottom: 10px;'><div style='display: flex; width: 40px; height: 40px; border-radius: 20px; background-color: #007AFF; align-items: center; justify-content: center; color: white; font-weight: bold;'>${UiService.getMessageFromName(message).substring(0, 1)}</div><div style='margin-left: 10px;'><div style='font-weight: bold;'>${UiService.getMessageFromName(message)}</div><a href='mailto:${message.from['address'] ?? ''}'>${message.from['address'] ?? ''}</a></div></div>";
+
+    final html = message.html.isEmpty ? '<p>Loading...</p>' : headerHTML + message.html.join('');
     return HtmlWidget(
       renderMode: RenderMode.listView,
       html,

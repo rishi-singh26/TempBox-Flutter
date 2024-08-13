@@ -82,8 +82,8 @@ class MacOsHome extends StatelessWidget {
                 },
               ),
             ),
-            minWidth: 240,
-            maxWidth: 270,
+            minWidth: 270,
+            maxWidth: 300,
             builder: (context, scrollController) => SidebarView(scrollController: scrollController),
             bottom: MacosListTile(
               title: RichText(
