@@ -26,7 +26,7 @@ class CupertinoUILicensePageState extends State<LibraryLicense> {
     return CupertinoPageScaffold(
       backgroundColor: CupertinoColors.systemGroupedBackground,
       navigationBar: CupertinoNavigationBar(
-        backgroundColor: AppColors.navBarColor,
+        backgroundColor: MediaQuery.of(context).platformBrightness != Brightness.dark ? AppColors.navBarColor : null,
         border: null,
         middle: const Text("Licenses"),
         trailing: CupertinoButton(
