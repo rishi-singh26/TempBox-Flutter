@@ -1,7 +1,7 @@
 name: tempbox
 description: "A new Flutter project."
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: '>=3.4.1 <4.0.0'
@@ -25,6 +25,7 @@ dependencies:
   file_picker: ^8.0.0+1
   cupertino_modal_sheet: ^1.1.0
   pull_down_button: ^0.9.4
+  http: ^1.2.2
 
 dev_dependencies:
   flutter_test:

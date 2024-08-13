@@ -148,7 +148,7 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(UiService.getAccountName(dataState.selectedAddress!)),
+                  Text(UiService.getAccountName(dataState.selectedAddress!), maxLines: 1),
                   if (messages != null)
                     Text(
                       UiService.getInboxSubtitleFromMessages(messages),

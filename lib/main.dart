@@ -43,14 +43,14 @@ void main() async {
     runApp(const MacOSView());
   } else if (Platform.isWindows || Platform.isLinux) {
     await configureWindowSize(minSize: const Size(1200, 550));
-    SystemTheme.accentColor.load();
     SystemTheme.fallbackColor = const Color(0xFFBA1F33);
+    SystemTheme.accentColor.load();
     runApp(const WinApp());
   } else if (Platform.isIOS) {
     runApp(const IosView());
   } else {
-    SystemTheme.accentColor.load();
     SystemTheme.fallbackColor = const Color(0xFFBA1F33);
+    SystemTheme.accentColor.load();
     runApp(const AndroidAppView());
   }
 }

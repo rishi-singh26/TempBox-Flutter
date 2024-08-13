@@ -82,13 +82,14 @@ class MacOsHome extends StatelessWidget {
                 },
               ),
             ),
-            minWidth: 240,
-            maxWidth: 270,
+            minWidth: 270,
+            maxWidth: 300,
             builder: (context, scrollController) => SidebarView(scrollController: scrollController),
             bottom: MacosListTile(
               title: RichText(
                 text: TextSpan(
                   text: "Powered by ",
+                  style: MacosTheme.of(context).typography.body,
                   children: <TextSpan>[
                     TextSpan(
                       text: 'mail.tm',
