@@ -38,7 +38,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HydratedBloc.storage = await HydratedStorage.build(storageDirectory: await getApplicationSupportDirectory());
   if (Platform.isMacOS) {
-    await configureWindowSize(minSize: const Size(1000, 550));
+    await configureWindowSize(minSize: const Size(1100, 550));
     await _configureMacosWindowUtils();
     runApp(const MacOSView());
   } else if (Platform.isWindows || Platform.isLinux) {
