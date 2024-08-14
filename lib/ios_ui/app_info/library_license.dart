@@ -68,7 +68,7 @@ class CupertinoUILicensePageState extends State<LibraryLicense> {
                       licenseData!.packageLicenseBindings[currentPackage]!.map((binding) => licenseData.licenses[binding]).toList();
                   return _Tile(
                     title: currentPackage,
-                    subtitle: '${packageLicenses.length} Licenses',
+                    subtitle: '${packageLicenses.length} License${packageLicenses.length > 1 ? 's' : ''}',
                     isFirst: index == 0,
                     isLast: index == licensesData.data!.packages.length - 1,
                     onPress: () {
