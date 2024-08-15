@@ -8,6 +8,7 @@ import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/macos_views/platform_menus.dart';
 import 'package:tempbox/macos_views/views/add_address/macui_add_address.dart';
+import 'package:tempbox/macos_views/views/mac_app_info/mac_app_info.dart';
 import 'package:tempbox/macos_views/views/selected_address_view/selected_address_view.dart';
 import 'package:tempbox/macos_views/views/sidebar_view/sidebar_view.dart';
 import 'package:tempbox/services/alert_service.dart';
@@ -85,30 +86,45 @@ class MacOsHome extends StatelessWidget {
             minWidth: 270,
             maxWidth: 300,
             builder: (context, scrollController) => SidebarView(scrollController: scrollController),
-            bottom: MacosListTile(
-              title: RichText(
-                text: TextSpan(
-                  text: "Powered by ",
-                  style: MacosTheme.of(context).typography.body,
-                  children: <TextSpan>[
-                    TextSpan(
-                      text: 'mail.tm',
-                      style: TextStyle(color: MacosTheme.of(context).primaryColor),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () async {
-                          bool? choice = await AlertService.getConformation(
-                            context: context,
-                            title: 'Do you want to continue?',
-                            content: 'This will open mail.tm website.',
-                          );
-                          if (choice == true) {
-                            await launchUrl(Uri.parse('https://mail.tm'));
-                          }
-                        },
-                    ),
-                  ],
+            bottom: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                RichText(
+                  text: TextSpan(
+                    text: "Powered by ",
+                    style: MacosTheme.of(context).typography.body,
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: 'mail.tm',
+                        style: TextStyle(color: MacosTheme.of(context).primaryColor),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () async {
+                            bool? choice = await AlertService.getConformation(
+                              context: context,
+                              title: 'Do you want to continue?',
+                              content: 'This will open mail.tm website.',
+                            );
+                            if (choice == true) {
+                              await launchUrl(Uri.parse('https://mail.tm'));
+                            }
+                          },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+                MacosIconButton(
+                  icon: const MacosIcon(CupertinoIcons.info_circle),
+                  onPressed: () {
+                    showMacosSheet(
+                      context: context,
+                      builder: (_) => BlocProvider.value(
+                        value: BlocProvider.of<DataBloc>(dataBlocContext),
+                        child: const MacAppInfo(),
+                      ),
+                    );
+                  },
+                )
+              ],
             ),
           ),
           child: const SelectedAddressView(),
