@@ -6,6 +6,8 @@
 
 <a href="https://apps.apple.com/us/app/tempbox/id6575345984?itsct=apps_box_badge&amp;itscg=30200" style="display: inline-block; overflow: hidden; border-radius: 13px; width: 250px; height: 83px;"><img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp;releaseDate=1722038400" alt="Download on the App Store" style="border-radius: 13px; width: 250px; height: 83px;"></a>
 
+<a href="https://apps.apple.com/us/app/tempbox-anonymous-emails/id6633421717?mt=12&amp;itsct=apps_box_badge&amp;itscg=30200" style="display: inline-block; overflow: hidden; border-radius: 13px; width: 250px; height: 83px;"><img src="https://tools.applemediaservices.com/api/badges/download-on-the-mac-app-store/black/en-us?size=250x83&amp;releaseDate=1723593600" alt="Download on the Mac App Store" style="border-radius: 13px; width: 250px; height: 83px;"></a>
+
 
 Instant disposable emails for Mac powered by [Mail.tm](https://mail.tm)
 
