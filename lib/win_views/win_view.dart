@@ -305,6 +305,27 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
             const SizedBox(width: 10),
             const Divider(direction: Axis.vertical),
             const SizedBox(width: 10),
+            DropDownButton(
+              title: const Icon(FluentIcons.more, size: 15),
+              items: [
+                MenuFlyoutItem(
+                  text: const Text('Export Addresses'),
+                  onPressed: () => _exportAddresses(context, dataBlocContext),
+                ),
+                MenuFlyoutItem(
+                  text: const Text('Import Addresses'),
+                  onPressed: () => _importAddresses(context, dataBlocContext),
+                ),
+                const MenuFlyoutSeparator(),
+                MenuFlyoutItem(
+                  text: const Text('Removed Addresses'),
+                  onPressed: () => _removedAddresses(context, dataBlocContext),
+                ),
+              ],
+            ),
+            const SizedBox(width: 10),
+            const Divider(direction: Axis.vertical),
+            const SizedBox(width: 10),
             const WindowButtons(),
           ]),
         ),
@@ -341,26 +362,6 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
           toggleable: true,
           selected: selectedIndex,
           footerItems: [
-            PaneItem(
-              icon: const Icon(FluentIcons.export),
-              title: const Text('Export Addresses'),
-              body: const SizedBox.shrink(),
-              onTap: () => _exportAddresses(context, dataBlocContext),
-            ),
-            PaneItem(
-              icon: const Icon(FluentIcons.import),
-              title: const Text('Import Addresses'),
-              body: const SizedBox.shrink(),
-              onTap: () => _importAddresses(context, dataBlocContext),
-            ),
-            PaneItemSeparator(),
-            PaneItem(
-              icon: const Icon(CupertinoIcons.clear_circled),
-              title: const Text('Removed Addresses'),
-              body: const SizedBox.shrink(),
-              onTap: () => _removedAddresses(context, dataBlocContext),
-            ),
-            PaneItemSeparator(),
             PaneItemHeader(
               header: Padding(
                 padding: const EdgeInsets.only(left: 8.0),
