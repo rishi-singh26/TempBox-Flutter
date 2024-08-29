@@ -17,8 +17,11 @@ class DataState extends Equatable {
 
   /// Map of messageId to message data, used to store the complete message data that includes the html
   /// so we dont need to fetch the message every time and messages can be accessed offline.
-  /// It will store message which user hase opened and all messages for archived accounts.
+  /// It will store message which user has opened and all messages for archived accounts.
   final Map<String, Message> messageIdToMessageMap;
+
+  /// List of removed addresses, these addresses can be restored
+  final List<AddressData> removedAddresses;
 
   const DataState({
     required this.addressList,
@@ -26,6 +29,7 @@ class DataState extends Equatable {
     required this.selectedMessage,
     required this.accountIdToMessagesMap,
     required this.messageIdToMessageMap,
+    required this.removedAddresses,
   });
 
   DataState.initial()
@@ -33,7 +37,8 @@ class DataState extends Equatable {
         selectedAddress = null,
         selectedMessage = null,
         accountIdToMessagesMap = {},
-        messageIdToMessageMap = {};
+        messageIdToMessageMap = {},
+        removedAddresses = [];
 
   Map<String, dynamic> toJson() => {
         'addressList': addressList.map((e) => e.toJson()).toList(),
@@ -43,6 +48,7 @@ class DataState extends Equatable {
           (key, value) => MapEntry(key, value.map((e) => e.toJson()).toList()),
         ),
         'messageIdToMessageMap': messageIdToMessageMap.map((key, value) => MapEntry(key, value.toJson())),
+        'removedAddresses': removedAddresses.map((e) => e.toJson()).toList(),
       };
 
   factory DataState.fromJson(Map<String, dynamic> json) => DataState(
@@ -55,6 +61,7 @@ class DataState extends Equatable {
           (key, value) => MapEntry(key, (value as List).map((e) => Message.fromJson(e)).toList()),
         ),
         messageIdToMessageMap: (json['messageIdToMessageMap'] as Map<String, dynamic>).map((key, value) => MapEntry(key, Message.fromJson(value))),
+        removedAddresses: json.containsKey('removedAddresses') ? (json['removedAddresses'] as List).map((e) => AddressData.fromJson(e)).toList() : [],
       );
 
   @override
@@ -64,6 +71,7 @@ class DataState extends Equatable {
         selectedMessage ?? 'SelectedMessage',
         accountIdToMessagesMap,
         messageIdToMessageMap,
+        removedAddresses,
       ];
 
   copyWith({
@@ -74,6 +82,7 @@ class DataState extends Equatable {
     bool? setSelectedMessageToNull,
     Map<String, List<Message>>? accountIdToMessagesMap,
     Map<String, Message>? messageIdToMessageMap,
+    List<AddressData>? removedAddresses,
   }) {
     return DataState(
       addressList: addressList ?? this.addressList,
@@ -81,6 +90,7 @@ class DataState extends Equatable {
       selectedMessage: setSelectedMessageToNull == true ? null : selectedMessage ?? this.selectedMessage,
       accountIdToMessagesMap: accountIdToMessagesMap ?? this.accountIdToMessagesMap,
       messageIdToMessageMap: messageIdToMessageMap ?? this.messageIdToMessageMap,
+      removedAddresses: removedAddresses ?? this.removedAddresses,
     );
   }
 }

@@ -47,6 +47,18 @@ class IosAddressTile extends StatelessWidget {
     }
   }
 
+  _removeAddress(BuildContext context, BuildContext dataBlocContext, AddressData addressData) async {
+    bool? choice = await AlertService.getConformation(
+      context: context,
+      title: 'Alert',
+      content:
+          'Are you sure you want to remove this address?\nThis address will not be deleted, just removed from here.\nYou can bring it back from the removed addresses section.',
+    );
+    if (choice == true && dataBlocContext.mounted) {
+      BlocProvider.of<DataBloc>(dataBlocContext).add(RemoveAddressEvent(addressData));
+    }
+  }
+
   _toggleArchiveAddress(BuildContext context, BuildContext dataBlocContext, AddressData addressData) async {
     String alertMessage = 'Are you sure you want to ${addressData.archived ? 'unarchive' : 'archive'} this address?';
     bool? choice = await AlertService.getConformation(context: context, title: 'Alert', content: alertMessage);
@@ -66,7 +78,17 @@ class IosAddressTile extends StatelessWidget {
         groupTag: 'AddressItem',
         key: ValueKey(addressData.authenticatedUser.account.id),
         startActionPane: ActionPane(
+          extentRatio: 0.25,
           motion: const DrawerMotion(),
+          dismissible: DismissiblePane(
+            confirmDismiss: () async {
+              _openAddressInfoSheet(context, dataBlocContext, addressData);
+              return false;
+            },
+            onDismissed: () {},
+            closeOnCancel: true,
+            dismissThreshold: 0.5,
+          ),
           children: [
             SlidableAction(
               onPressed: (_) => _openAddressInfoSheet(context, dataBlocContext, addressData),
@@ -77,13 +99,29 @@ class IosAddressTile extends StatelessWidget {
           ],
         ),
         endActionPane: ActionPane(
+          extentRatio: 0.75,
           motion: const DrawerMotion(),
+          dismissible: DismissiblePane(
+            confirmDismiss: () async {
+              await _deleteAddress(context, dataBlocContext, addressData);
+              return false;
+            },
+            onDismissed: () {},
+            closeOnCancel: true,
+            dismissThreshold: 0.5,
+          ),
           children: [
             SlidableAction(
               onPressed: (_) => _toggleArchiveAddress(context, dataBlocContext, addressData),
               backgroundColor: CupertinoColors.systemIndigo,
               foregroundColor: CupertinoColors.white,
               icon: addressData.archived ? CupertinoIcons.archivebox_fill : CupertinoIcons.archivebox,
+            ),
+            SlidableAction(
+              onPressed: (_) => _removeAddress(context, dataBlocContext, addressData),
+              backgroundColor: Colors.amber,
+              foregroundColor: Colors.white,
+              icon: CupertinoIcons.clear_circled,
             ),
             SlidableAction(
               onPressed: (_) => _deleteAddress(context, dataBlocContext, addressData),

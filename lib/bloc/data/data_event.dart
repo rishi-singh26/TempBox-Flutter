@@ -37,6 +37,22 @@ class DeleteAddressEvent extends DataEvent {
   List<Object> get props => [addressData];
 }
 
+class RemoveAddressEvent extends DataEvent {
+  final AddressData addressData;
+  const RemoveAddressEvent(this.addressData);
+
+  @override
+  List<Object> get props => [addressData];
+}
+
+class RestoreAddressesEvent extends DataEvent {
+  final List<AddressData> addresses;
+  const RestoreAddressesEvent(this.addresses);
+
+  @override
+  List<Object> get props => [addresses];
+}
+
 class ArchiveAddressEvent extends DataEvent {
   final AddressData addressData;
   const ArchiveAddressEvent(this.addressData);

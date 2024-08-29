@@ -12,6 +12,7 @@ import 'package:tempbox/ios_ui/ios_addresses_list/ios_address_tile.dart';
 import 'package:tempbox/ios_ui/app_info/ios_app_info.dart';
 import 'package:tempbox/ios_ui/ios_import_export/ios_export.dart';
 import 'package:tempbox/ios_ui/ios_import_export/ios_import.dart';
+import 'package:tempbox/ios_ui/ios_removed_addresses/ios_removed_addresses.dart';
 import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/export_import_address.dart';
 
@@ -35,6 +36,11 @@ class IosAddressesList extends StatelessWidget {
           ),
         );
       }
+    } else if (value == 2) {
+      showCupertinoModalSheet(
+        context: context,
+        builder: (context) => BlocProvider.value(value: BlocProvider.of<DataBloc>(dataBlocContext), child: const IosRemovedAddressesPage()),
+      );
     } else {
       showCupertinoModalSheet(
         context: context,
@@ -69,9 +75,10 @@ class IosAddressesList extends StatelessWidget {
                       trailing: PullDownButton(
                         itemBuilder: (context) => [
                           PullDownMenuItem(
+                            enabled: dataState.addressList.isNotEmpty,
                             title: 'Export Addresses',
                             icon: CupertinoIcons.arrow_up_circle,
-                            onTap: dataState.addressList.isNotEmpty ? () => _handleOptionTap(context, dataBlocContext, 0) : null,
+                            onTap: () => _handleOptionTap(context, dataBlocContext, 0),
                           ),
                           PullDownMenuItem(
                             title: 'Import Addresses',
@@ -80,9 +87,16 @@ class IosAddressesList extends StatelessWidget {
                           ),
                           const PullDownMenuDivider.large(),
                           PullDownMenuItem(
+                            enabled: dataState.removedAddresses.isNotEmpty,
+                            title: 'Removed Addresses',
+                            icon: CupertinoIcons.clear_circled,
+                            onTap: () => _handleOptionTap(context, dataBlocContext, 2),
+                          ),
+                          const PullDownMenuDivider.large(),
+                          PullDownMenuItem(
                             title: 'About TempBox',
                             icon: CupertinoIcons.info_circle,
-                            onTap: () => _handleOptionTap(context, dataBlocContext, 2),
+                            onTap: () => _handleOptionTap(context, dataBlocContext, 3),
                           ),
                         ],
                         buttonBuilder: (context, showMenu) => CupertinoButton(

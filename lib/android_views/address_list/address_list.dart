@@ -5,6 +5,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:tempbox/android_views/android_app_info.dart';
 import 'package:tempbox/android_views/import_export/export.dart';
 import 'package:tempbox/android_views/import_export/import.dart';
+import 'package:tempbox/android_views/removed_addresses/removed_addresses.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
@@ -61,6 +62,15 @@ class _AddressListState extends State<AddressList> {
           builder: (context) => BlocProvider.value(value: BlocProvider.of<DataBloc>(dataBlocContext), child: ImportPage(addresses: addresses)),
         );
       }
+    } else if (value == 2) {
+      OverlayService.showOverLay(
+        context: context,
+        useSafeArea: true,
+        isScrollControlled: true,
+        clipBehavior: Clip.hardEdge,
+        enableDrag: true,
+        builder: (context) => BlocProvider.value(value: BlocProvider.of<DataBloc>(dataBlocContext), child: const RemovedAddressesPage()),
+      );
     } else {
       OverlayService.showOverLay(
         context: context,
@@ -89,13 +99,6 @@ class _AddressListState extends State<AddressList> {
               child: Scaffold(
                 body: LayoutBuilder(builder: (context, constraints) {
                   bool isVertical = constraints.maxHeight > constraints.maxWidth;
-                  if (dataState.addressList.isEmpty) {
-                    return const CustomScrollView(slivers: [SliverAppBar.large(title: Text('TempBox'))]);
-                  }
-                  List<AddressData> active = [];
-                  List<AddressData> archived = [];
-                  addToList(AddressData a) => a.archived ? archived.add(a) : active.add(a);
-                  dataState.addressList.forEach(addToList);
                   List<Widget> actions = [
                     PopupMenuButton<int>(
                       initialValue: null,
@@ -111,13 +114,28 @@ class _AddressListState extends State<AddressList> {
                           child: ListTile(leading: Icon(Icons.arrow_circle_down_rounded), title: Text('Import Addresses')),
                         ),
                         const PopupMenuDivider(),
-                        const PopupMenuItem<int>(
+                        PopupMenuItem<int>(
+                          enabled: dataState.removedAddresses.isNotEmpty,
                           value: 2,
+                          child: const ListTile(leading: Icon(Icons.arrow_circle_down_rounded), title: Text('Removed Addresses')),
+                        ),
+                        const PopupMenuDivider(),
+                        const PopupMenuItem<int>(
+                          value: 3,
                           child: ListTile(leading: Icon(Icons.info_outline_rounded), title: Text('About TempBox')),
                         ),
                       ],
                     ),
                   ];
+                  if (dataState.addressList.isEmpty) {
+                    return CustomScrollView(
+                      slivers: [SliverAppBar.large(title: const Text('TempBox'), actions: actions)],
+                    );
+                  }
+                  List<AddressData> active = [];
+                  List<AddressData> archived = [];
+                  addToList(AddressData a) => a.archived ? archived.add(a) : active.add(a);
+                  dataState.addressList.forEach(addToList);
                   return RefreshIndicator(
                     onRefresh: () async {
                       BlocProvider.of<DataBloc>(dataBlocContext).add(const LoginToAccountsEvent());
