@@ -132,10 +132,6 @@ class _AddressListState extends State<AddressList> {
                       slivers: [SliverAppBar.large(title: const Text('TempBox'), actions: actions)],
                     );
                   }
-                  List<AddressData> active = [];
-                  List<AddressData> archived = [];
-                  addToList(AddressData a) => a.archived ? archived.add(a) : active.add(a);
-                  dataState.addressList.forEach(addToList);
                   return RefreshIndicator(
                     onRefresh: () async {
                       BlocProvider.of<DataBloc>(dataBlocContext).add(const LoginToAccountsEvent());
@@ -144,29 +140,13 @@ class _AddressListState extends State<AddressList> {
                       slivers: [
                         if (isVertical) SliverAppBar.large(title: Text(widget.title), actions: actions),
                         if (!isVertical) SliverAppBar(title: Text(widget.title), actions: actions, pinned: true),
-                        if (active.isNotEmpty)
-                          SliverToBoxAdapter(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 22),
-                              child: Text('Active', style: theme.textTheme.bodyLarge),
-                            ),
-                          ),
                         SliverList.builder(
-                          itemCount: active.length,
-                          itemBuilder: (context, index) =>
-                              AddressTile(addressData: active[index], isFirst: index == 0, isLast: index == active.length - 1),
-                        ),
-                        if (archived.isNotEmpty)
-                          SliverToBoxAdapter(
-                            child: Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(22, 20, 22, 5),
-                              child: Text('Archived', style: theme.textTheme.bodyLarge),
-                            ),
+                          itemCount: dataState.addressList.length,
+                          itemBuilder: (context, index) => AddressTile(
+                            addressData: dataState.addressList[index],
+                            isFirst: index == 0,
+                            isLast: index == dataState.addressList.length - 1,
                           ),
-                        SliverList.builder(
-                          itemCount: archived.length,
-                          itemBuilder: (context, index) =>
-                              AddressTile(addressData: archived[index], isFirst: index == 0, isLast: index == archived.length - 1),
                         ),
                       ],
                     ),

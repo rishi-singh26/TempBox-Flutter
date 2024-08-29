@@ -104,16 +104,6 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
     super.dispose();
   }
 
-  int? _getSelectedIndex(AddressData selected, List<AddressData> active, List<AddressData> archived) {
-    final indexInActive = active.indexWhere((a) => a.authenticatedUser.account.id == selected.authenticatedUser.account.id);
-    if (indexInActive >= 0) {
-      return indexInActive;
-    } else {
-      final indexInInactive = archived.indexWhere((a) => a.authenticatedUser.account.id == selected.authenticatedUser.account.id);
-      return indexInInactive >= 0 ? (indexInInactive + active.length) : null;
-    }
-  }
-
   _importAddresses(BuildContext context, BuildContext dataBlocContext) async {
     List<AddressData>? addresses = await ExportImportAddress.importAddreses();
     if (context.mounted && addresses != null) {
@@ -159,24 +149,6 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
     );
     if (choice == true && dataBlocContext.mounted) {
       BlocProvider.of<DataBloc>(dataBlocContext).add(RemoveAddressEvent(address));
-    }
-  }
-
-  _toggleArchiveAddress(BuildContext dataBlocContext, AddressData? address) async {
-    if (address == null) {
-      return;
-    }
-    final choice = await AlertService.getConformation<bool>(
-      context: context,
-      title: 'Alert',
-      content: 'Are you sure you want to ${address.archived ? 'unarchive' : 'archive'} this address?',
-    );
-    if (choice == true && dataBlocContext.mounted) {
-      if (address.archived) {
-        BlocProvider.of<DataBloc>(dataBlocContext).add(UnarchiveAddressEvent(address));
-      } else {
-        BlocProvider.of<DataBloc>(dataBlocContext).add(ArchiveAddressEvent(address));
-      }
     }
   }
 
@@ -260,32 +232,12 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
     );
   }
 
-  List<NavigationPaneItem> _getPaneItems(List<AddressData> active, List<AddressData> archived, DataState state) {
-    if (active.isEmpty && archived.isEmpty) {
-      return [];
-    } else if (active.isEmpty && archived.isNotEmpty) {
-      return [_buildHeader('Archived'), ...archived.map((a) => _buildPaneItem(a, state))];
-    } else if (active.isNotEmpty && archived.isEmpty) {
-      return [_buildHeader('Active'), ...active.map((a) => _buildPaneItem(a, state))];
-    } else {
-      return [
-        _buildHeader('Active'),
-        ...active.map((a) => _buildPaneItem(a, state)),
-        _buildHeader('Archived'),
-        ...archived.map((a) => _buildPaneItem(a, state)),
-      ];
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
-      List<AddressData> active = [];
-      List<AddressData> archived = [];
-      addToList(AddressData a) => a.archived ? archived.add(a) : active.add(a);
-      dataState.addressList.forEach(addToList);
-      int? selectedIndex =
-          dataState.selectedAddress == null || dataState.addressList.isEmpty ? null : _getSelectedIndex(dataState.selectedAddress!, active, archived);
+      int? selectedIndex = dataState.selectedAddress == null || dataState.addressList.isEmpty
+          ? null
+          : dataState.addressList.indexWhere((a) => a == dataState.selectedAddress);
       return NavigationView(
         appBar: NavigationAppBar(
           leading: const AppLogo(size: 20, borderRadius: BorderRadius.all(Radius.circular(15))),
@@ -314,17 +266,6 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
               child: IconButton(
                 icon: const Icon(CupertinoIcons.clear_circled, size: 20),
                 onPressed: dataState.selectedAddress == null ? null : () => _removeAddress(dataBlocContext, dataState.selectedAddress),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Tooltip(
-              message: dataState.selectedAddress?.archived == true ? 'Unarchive Address' : 'Archive Address',
-              child: IconButton(
-                icon: Icon(
-                  dataState.selectedAddress?.archived == true ? CupertinoIcons.archivebox_fill : CupertinoIcons.archivebox,
-                  size: 20,
-                ),
-                onPressed: dataState.selectedAddress == null ? null : () => _toggleArchiveAddress(dataBlocContext, dataState.selectedAddress),
               ),
             ),
             const SizedBox(width: 10),
@@ -389,17 +330,13 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
             if (dataState.addressList.isEmpty) {
               return;
             }
-            if (index < active.length) {
-              BlocProvider.of<DataBloc>(dataBlocContext).add(SelectAddressEvent(active[index]));
-              return;
-            }
-            if (index >= active.length && index < (active.length + archived.length)) {
-              BlocProvider.of<DataBloc>(dataBlocContext).add(SelectAddressEvent(archived[index - active.length]));
+            if (index < dataState.addressList.length) {
+              BlocProvider.of<DataBloc>(dataBlocContext).add(SelectAddressEvent(dataState.addressList[index]));
               return;
             }
           },
           size: NavigationPaneSize(openWidth: MediaQuery.of(context).size.width / 5, openMinWidth: 250, openMaxWidth: 250),
-          items: _getPaneItems(active, archived, dataState),
+          items: dataState.addressList.map((a) => _buildPaneItem(a, dataState)).toList(),
           displayMode: PaneDisplayMode.open,
           toggleable: true,
           selected: selectedIndex,

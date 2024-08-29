@@ -65,18 +65,6 @@ class AddressTile extends StatelessWidget {
     }
   }
 
-  _toggleArchiveAddress(BuildContext context, BuildContext dataBlocContext, AddressData addressData) async {
-    String alertMessage = 'Are you sure you want to ${addressData.archived ? 'unarchive' : 'archive'} this address?';
-    bool? choice = await AlertService.getConformation(context: context, title: 'Alert', content: alertMessage);
-    if (choice == true && dataBlocContext.mounted) {
-      if (addressData.archived) {
-        BlocProvider.of<DataBloc>(dataBlocContext).add(UnarchiveAddressEvent(addressData));
-        return;
-      }
-      BlocProvider.of<DataBloc>(dataBlocContext).add(ArchiveAddressEvent(addressData));
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
@@ -110,7 +98,7 @@ class AddressTile extends StatelessWidget {
             ],
           ),
           endActionPane: ActionPane(
-            extentRatio: 0.75,
+            extentRatio: 0.5,
             motion: const DrawerMotion(),
             dismissible: DismissiblePane(
               confirmDismiss: () async {
@@ -123,14 +111,8 @@ class AddressTile extends StatelessWidget {
             ),
             children: [
               SlidableAction(
-                onPressed: (_) => _toggleArchiveAddress(context, dataBlocContext, addressData),
-                backgroundColor: Colors.indigo,
-                foregroundColor: Colors.white,
-                icon: addressData.archived ? Icons.unarchive_rounded : Icons.archive_rounded,
-              ),
-              SlidableAction(
                 onPressed: (_) => _removeAddress(context, dataBlocContext, addressData),
-                backgroundColor: Colors.amber,
+                backgroundColor: Colors.indigo,
                 foregroundColor: Colors.white,
                 icon: Icons.close_rounded,
               ),

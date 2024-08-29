@@ -53,22 +53,6 @@ class RestoreAddressesEvent extends DataEvent {
   List<Object> get props => [addresses];
 }
 
-class ArchiveAddressEvent extends DataEvent {
-  final AddressData addressData;
-  const ArchiveAddressEvent(this.addressData);
-
-  @override
-  List<Object> get props => [addressData];
-}
-
-class UnarchiveAddressEvent extends DataEvent {
-  final AddressData addressData;
-  const UnarchiveAddressEvent(this.addressData);
-
-  @override
-  List<Object> get props => [addressData];
-}
-
 class GetMessagesEvent extends DataEvent {
   final AddressData addressData;
   const GetMessagesEvent({required this.addressData});

@@ -106,53 +106,24 @@ class IosAddressesList extends StatelessWidget {
                         ),
                       ),
                     ),
-                    // if (dataState.addressList.isNotEmpty)
-                    //   SliverToBoxAdapter(
-                    //     child: Padding(
-                    //       padding: EdgeInsetsDirectional.fromSTEB(horizontalPadding, 8, horizontalPadding, 14),
-                    //       child: const CupertinoSearchTextField(),
-                    //     ),
-                    //   ),
                     Builder(builder: (context) {
                       if (dataState.addressList.isEmpty) {
                         return const SliverToBoxAdapter(child: Center(child: Text('')));
                       }
-                      List<Widget> active = [];
-                      List<Widget> archived = [];
+                      List<Widget> children = [];
                       for (var i = 0; i < dataState.addressList.length; i++) {
-                        if (dataState.addressList[i].archived) {
-                          archived.add(IosAddressTile(
-                            addressData: dataState.addressList[i],
-                            key: Key(dataState.addressList[i].authenticatedUser.account.id),
-                          ));
-                        } else {
-                          active.add(IosAddressTile(
-                            addressData: dataState.addressList[i],
-                            key: Key(dataState.addressList[i].authenticatedUser.account.id),
-                          ));
-                        }
+                        children.add(IosAddressTile(
+                          addressData: dataState.addressList[i],
+                          key: Key(dataState.addressList[i].authenticatedUser.account.id),
+                        ));
                       }
                       return SliverList.list(
                         children: [
-                          if (active.isNotEmpty)
+                          if (children.isNotEmpty)
                             CupertinoListSection.insetGrouped(
                               margin: EdgeInsetsDirectional.fromSTEB(horizontalPadding, 0, horizontalPadding, 10),
                               key: const Key('ActiveAccounts'),
-                              header: Padding(
-                                padding: isVertical ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 70),
-                                child: const Text('Active'),
-                              ),
-                              children: active,
-                            ),
-                          if (archived.isNotEmpty)
-                            CupertinoListSection.insetGrouped(
-                              key: const Key('ArchivedAccounts'),
-                              margin: EdgeInsetsDirectional.fromSTEB(horizontalPadding, 0, horizontalPadding, 101),
-                              header: Padding(
-                                padding: isVertical ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 70),
-                                child: const Text('Archived'),
-                              ),
-                              children: archived,
+                              children: children,
                             ),
                         ],
                       );

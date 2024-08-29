@@ -59,14 +59,12 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
 
     on<DeleteAddressEvent>((DeleteAddressEvent event, Emitter<DataState> emit) async {
       try {
-        List<AddressData> addresses =
-            state.addressList.where((a) => a.authenticatedUser.account.id != event.addressData.authenticatedUser.account.id).toList();
+        List<AddressData> addresses = state.addressList.where((a) => a != event.addressData).toList();
         bool result = await event.addressData.authenticatedUser.delete();
         if (result) {
           emit(state.copyWith(
             addressList: addresses,
-            setSelectedAddressToNull: state.selectedAddress != null &&
-                state.selectedAddress!.authenticatedUser.account.id == event.addressData.authenticatedUser.account.id,
+            setSelectedAddressToNull: state.selectedAddress != null && state.selectedAddress == event.addressData,
           ));
         }
       } catch (e) {
@@ -98,48 +96,6 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
           removedAddresses: removedAddresses.toList(),
         ));
         add(const LoginToAccountsEvent());
-      } catch (e) {
-        debugPrint(e.toString());
-      }
-    });
-
-    on<ArchiveAddressEvent>((ArchiveAddressEvent event, Emitter<DataState> emit) async {
-      try {
-        List<AddressData> addresses = state.addressList.map((a) {
-          if (a.authenticatedUser.account.id == event.addressData.authenticatedUser.account.id) {
-            return a.copyWith(archived: true);
-          }
-          return a;
-        }).toList();
-
-        List<Message> messages = await event.addressData.authenticatedUser.messagesAt(1);
-        Map<String, List<Message>> updatedAccountIdToMessgesMap = {...state.accountIdToMessagesMap};
-        Map<String, Message> updatedMessageIdToMessageMap = await _getMessagesWithHTMlFor(messages, event.addressData.authenticatedUser);
-        updatedAccountIdToMessgesMap[event.addressData.authenticatedUser.account.id] = messages;
-
-        emit(state.copyWith(
-          addressList: addresses,
-          selectedAddress: event.addressData.copyWith(archived: true),
-          messageIdToMessageMap: updatedMessageIdToMessageMap,
-          accountIdToMessagesMap: updatedAccountIdToMessgesMap,
-        ));
-      } catch (e) {
-        debugPrint(e.toString());
-      }
-    });
-
-    on<UnarchiveAddressEvent>((UnarchiveAddressEvent event, Emitter<DataState> emit) async {
-      try {
-        List<AddressData> addresses = state.addressList.map((a) {
-          if (a.authenticatedUser.account.id == event.addressData.authenticatedUser.account.id) {
-            return a.copyWith(archived: false);
-          }
-          return a;
-        }).toList();
-        emit(state.copyWith(
-          addressList: addresses,
-          selectedAddress: event.addressData.copyWith(archived: false),
-        ));
       } catch (e) {
         debugPrint(e.toString());
       }

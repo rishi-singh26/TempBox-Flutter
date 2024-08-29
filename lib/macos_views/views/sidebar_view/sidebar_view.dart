@@ -19,43 +19,18 @@ class SidebarView extends StatelessWidget {
     return index >= 0 ? index : 0;
   }
 
-  List<SidebarItem> _getPaneItems(List<SidebarItem> active, List<SidebarItem> archived) {
-    if (active.isEmpty && archived.isEmpty) {
-      return [];
-    } else if (active.isEmpty && archived.isNotEmpty) {
-      return [SidebarItem(label: const Text('Archived'), disclosureItems: archived)];
-    } else if (active.isNotEmpty && archived.isEmpty) {
-      return [SidebarItem(label: const Text('Active'), disclosureItems: active)];
-    } else {
-      return [
-        SidebarItem(label: const Text('Active'), disclosureItems: active),
-        SidebarItem(label: const Text('Archived'), disclosureItems: archived)
-      ];
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
-      List<SidebarItem> active = [];
-      List<SidebarItem> archived = [];
-      addToList(AddressData a) => a.archived
-          ? archived.add(SidebarItem(
-              leading: const MacosIcon(CupertinoIcons.tray, size: 15),
-              label: Text(
-                UiService.getAccountName(a, shortName: true),
-                style: MacosTheme.of(context).typography.body,
-              ),
-              trailing: Text((dataState.accountIdToMessagesMap[a.authenticatedUser.account.id]?.length ?? 0).toString()),
-            ))
-          : active.add(SidebarItem(
-              leading: const MacosIcon(CupertinoIcons.tray, size: 15),
-              label: Text(
-                UiService.getAccountName(a, shortName: true),
-                style: MacosTheme.of(context).typography.body,
-              ),
-              trailing: Text((dataState.accountIdToMessagesMap[a.authenticatedUser.account.id]?.length ?? 0).toString()),
-            ));
+      List<SidebarItem> addresses = [];
+      addToList(AddressData a) => addresses.add(SidebarItem(
+            leading: const MacosIcon(CupertinoIcons.tray, size: 15),
+            label: Text(
+              UiService.getAccountName(a, shortName: true),
+              style: MacosTheme.of(context).typography.body,
+            ),
+            trailing: Text((dataState.accountIdToMessagesMap[a.authenticatedUser.account.id]?.length ?? 0).toString()),
+          ));
       dataState.addressList.forEach(addToList);
       return SidebarItems(
         currentIndex: _getSelectedIndex(dataState.selectedAddress, dataState.addressList),
@@ -63,7 +38,7 @@ class SidebarView extends StatelessWidget {
           BlocProvider.of<DataBloc>(dataBlocContext).add(SelectAddressEvent(dataState.addressList[i]));
         },
         scrollController: scrollController,
-        items: _getPaneItems(active, archived),
+        items: addresses,
       );
     });
   }

@@ -7,10 +7,14 @@ import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/macos_views/views/macui_address_info/macui_address_info.dart';
+import 'package:tempbox/macos_views/views/macui_export_import/macui_export.dart';
+import 'package:tempbox/macos_views/views/macui_export_import/macui_import.dart';
+import 'package:tempbox/macos_views/views/macui_removed_addresses/macui_removed_addresses.dart';
 import 'package:tempbox/macos_views/views/message_detail/macui_message_detail.dart';
 import 'package:tempbox/macos_views/views/selected_address_view/macui_messages_list.dart';
 import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/alert_service.dart';
+import 'package:tempbox/services/export_import_address.dart';
 import 'package:tempbox/services/ui_service.dart';
 
 class SelectedAddressView extends StatefulWidget {
@@ -24,24 +28,6 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
   double ratingValue = 0;
   double capacitorValue = 0;
   double sliderValue = 0.3;
-
-  _toggleArchiveAddress(BuildContext dataBlocContext, AddressData? address) async {
-    if (address == null) {
-      return;
-    }
-    final choice = await AlertService.getConformation<bool>(
-      context: context,
-      title: 'Alert',
-      content: 'Are you sure you want to ${address.archived ? 'unarchive' : 'archive'} this address?',
-    );
-    if (choice == true && dataBlocContext.mounted) {
-      if (address.archived) {
-        BlocProvider.of<DataBloc>(dataBlocContext).add(UnarchiveAddressEvent(address));
-      } else {
-        BlocProvider.of<DataBloc>(dataBlocContext).add(ArchiveAddressEvent(address));
-      }
-    }
-  }
 
   _removeAddress(BuildContext dataBlocContext, AddressData? address) async {
     if (address == null) {
@@ -119,6 +105,36 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
     }
   }
 
+  _importAddresses(BuildContext context, BuildContext dataBlocContext) async {
+    List<AddressData>? addresses = await ExportImportAddress.importAddreses();
+    if (context.mounted && addresses != null) {
+      showMacosSheet(
+        context: context,
+        builder: (_) => BlocProvider.value(value: BlocProvider.of<DataBloc>(dataBlocContext), child: MacuiImport(addresses: addresses)),
+      );
+    }
+  }
+
+  _exportAddresses(BuildContext context, BuildContext dataBlocContext) async {
+    await Future.delayed(
+      const Duration(milliseconds: 50),
+      () => showMacosSheet(
+        context: context,
+        builder: (_) => BlocProvider.value(value: BlocProvider.of<DataBloc>(dataBlocContext), child: const MacuiExport()),
+      ),
+    );
+  }
+
+  _removedAddresses(BuildContext context, BuildContext dataBlocContext) async {
+    await Future.delayed(
+      const Duration(milliseconds: 50),
+      () => showMacosSheet(
+        context: context,
+        builder: (_) => BlocProvider.value(value: BlocProvider.of<DataBloc>(dataBlocContext), child: const MacUiRemovedAddresses()),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DataBloc, DataState>(
@@ -177,13 +193,6 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
                 tooltipMessage: 'Remove address',
               ),
               ToolBarIconButton(
-                icon: MacosIcon(dataState.selectedAddress?.archived == false ? CupertinoIcons.archivebox : CupertinoIcons.archivebox_fill),
-                onPressed: dataState.selectedAddress == null ? null : () => _toggleArchiveAddress(dataBlocContext, dataState.selectedAddress),
-                label: dataState.selectedAddress?.archived == false ? 'Archive' : 'Unarchive',
-                showLabel: false,
-                tooltipMessage: dataState.selectedAddress?.archived == false ? 'Archive Address' : 'Unarchive Address',
-              ),
-              ToolBarIconButton(
                 icon: const MacosIcon(CupertinoIcons.trash),
                 onPressed: dataState.selectedAddress == null ? null : () => _deleteAddress(dataBlocContext, dataState.selectedAddress),
                 label: 'Delete',
@@ -215,6 +224,32 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
                 label: 'Delete',
                 showLabel: false,
                 tooltipMessage: 'Delete message',
+              ),
+              const ToolBarSpacer(),
+              const ToolBarDivider(),
+              const ToolBarSpacer(),
+              ToolBarPullDownButton(
+                label: 'Actions',
+                icon: CupertinoIcons.ellipsis_circle,
+                tooltipMessage: 'Perform tasks with the selected items',
+                items: [
+                  MacosPulldownMenuItem(
+                    label: 'Import Addresses',
+                    title: const Text('Import Addresses'),
+                    onTap: () => _importAddresses(context, dataBlocContext),
+                  ),
+                  MacosPulldownMenuItem(
+                    label: 'Export Addresses',
+                    title: const Text('Export Addresses'),
+                    onTap: () => _exportAddresses(context, dataBlocContext),
+                  ),
+                  const MacosPulldownMenuDivider(),
+                  MacosPulldownMenuItem(
+                    label: 'Removed Addresses',
+                    title: const Text('Removed Addresses'),
+                    onTap: () => _removedAddresses(context, dataBlocContext),
+                  ),
+                ],
               ),
             ],
           ),
