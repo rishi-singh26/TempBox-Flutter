@@ -61,12 +61,43 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
       try {
         List<AddressData> addresses =
             state.addressList.where((a) => a.authenticatedUser.account.id != event.addressData.authenticatedUser.account.id).toList();
-        await event.addressData.authenticatedUser.delete();
+        bool result = await event.addressData.authenticatedUser.delete();
+        if (result) {
+          emit(state.copyWith(
+            addressList: addresses,
+            setSelectedAddressToNull: state.selectedAddress != null &&
+                state.selectedAddress!.authenticatedUser.account.id == event.addressData.authenticatedUser.account.id,
+          ));
+        }
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+    });
+
+    on<RemoveAddressEvent>((RemoveAddressEvent event, Emitter<DataState> emit) async {
+      try {
+        List<AddressData> addresses = state.addressList.where((a) => a != event.addressData).toList();
         emit(state.copyWith(
           addressList: addresses,
-          setSelectedAddressToNull:
-              state.selectedAddress != null && state.selectedAddress!.authenticatedUser.account.id == event.addressData.authenticatedUser.account.id,
+          removedAddresses: [...state.removedAddresses, event.addressData],
+          setSelectedAddressToNull: true,
         ));
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+    });
+
+    on<RestoreAddressesEvent>((RestoreAddressesEvent event, Emitter<DataState> emit) async {
+      try {
+        final set1 = state.removedAddresses.toSet();
+        final set2 = event.addresses.toSet();
+        // Symmetric difference (users unique to each list)
+        final removedAddresses = set1.union(set2).difference(set1.intersection(set2));
+        emit(state.copyWith(
+          addressList: [...state.addressList, ...event.addresses],
+          removedAddresses: removedAddresses.toList(),
+        ));
+        add(const LoginToAccountsEvent());
       } catch (e) {
         debugPrint(e.toString());
       }

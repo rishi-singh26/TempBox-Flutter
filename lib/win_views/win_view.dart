@@ -18,6 +18,7 @@ import 'package:tempbox/win_views/views/selected_address_view/winui_selected_add
 import 'package:tempbox/win_views/views/winui_address_info/winui_address_info.dart';
 import 'package:tempbox/win_views/views/winui_import_export/winui_export.dart';
 import 'package:tempbox/win_views/views/winui_import_export/winui_import.dart';
+import 'package:tempbox/win_views/views/winui_removed_addresses/winui_removed_addresses.dart';
 import 'package:tempbox/win_views/window_buttons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:window_manager/window_manager.dart';
@@ -134,6 +135,31 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
         child: const WinuiExport(),
       ),
     );
+  }
+
+  _removedAddresses(BuildContext context, BuildContext dataBlocContext) async {
+    showDialog(
+      context: context,
+      builder: (_) => BlocProvider.value(
+        value: BlocProvider.of<DataBloc>(dataBlocContext),
+        child: const WinuiRemovedAddresses(),
+      ),
+    );
+  }
+
+  _removeAddress(BuildContext dataBlocContext, AddressData? address) async {
+    if (address == null) {
+      return;
+    }
+    final choice = await AlertService.getConformation<bool>(
+      context: context,
+      title: 'Alert',
+      content:
+          'Are you sure you want to remove this address?\nThis address will not be deleted, just removed from the list here.\nYou can bring it back from the removed addresses section.',
+    );
+    if (choice == true && dataBlocContext.mounted) {
+      BlocProvider.of<DataBloc>(dataBlocContext).add(RemoveAddressEvent(address));
+    }
   }
 
   _toggleArchiveAddress(BuildContext dataBlocContext, AddressData? address) async {
@@ -284,6 +310,14 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
             ),
             const SizedBox(width: 10),
             Tooltip(
+              message: 'Remove Address',
+              child: IconButton(
+                icon: const Icon(CupertinoIcons.clear_circled, size: 20),
+                onPressed: dataState.selectedAddress == null ? null : () => _removeAddress(dataBlocContext, dataState.selectedAddress),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Tooltip(
               message: dataState.selectedAddress?.archived == true ? 'Unarchive Address' : 'Archive Address',
               child: IconButton(
                 icon: Icon(
@@ -330,25 +364,6 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
             const SizedBox(width: 10),
             const Divider(direction: Axis.vertical),
             const SizedBox(width: 10),
-            Tooltip(
-              message: 'Import addresses',
-              child: IconButton(
-                icon: const Icon(FluentIcons.import, size: 20),
-                onPressed: () => _importAddresses(context, dataBlocContext),
-              ),
-            ),
-            if (dataState.addressList.isNotEmpty) const SizedBox(width: 10),
-            if (dataState.addressList.isNotEmpty)
-              Tooltip(
-                message: 'Export addresses',
-                child: IconButton(
-                  icon: const Icon(FluentIcons.export, size: 20),
-                  onPressed: () => _exportAddresses(context, dataBlocContext),
-                ),
-              ),
-            const SizedBox(width: 10),
-            const Divider(direction: Axis.vertical),
-            const SizedBox(width: 10),
             const WindowButtons(),
           ]),
         ),
@@ -378,7 +393,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
               BlocProvider.of<DataBloc>(dataBlocContext).add(SelectAddressEvent(active[index]));
               return;
             }
-            if (index >= active.length) {
+            if (index >= active.length && index < (active.length + archived.length)) {
               BlocProvider.of<DataBloc>(dataBlocContext).add(SelectAddressEvent(archived[index - active.length]));
               return;
             }
@@ -389,6 +404,25 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
           toggleable: true,
           selected: selectedIndex,
           footerItems: [
+            PaneItem(
+              icon: const Icon(FluentIcons.export),
+              title: const Text('Export Addresses'),
+              body: const SizedBox.shrink(),
+              onTap: () => _exportAddresses(context, dataBlocContext),
+            ),
+            PaneItem(
+              icon: const Icon(FluentIcons.import),
+              title: const Text('Import Addresses'),
+              body: const SizedBox.shrink(),
+              onTap: () => _importAddresses(context, dataBlocContext),
+            ),
+            PaneItemSeparator(),
+            PaneItem(
+              icon: const Icon(CupertinoIcons.clear_circled),
+              title: const Text('Removed Addresses'),
+              body: const SizedBox.shrink(),
+              onTap: () => _removedAddresses(context, dataBlocContext),
+            ),
             PaneItemSeparator(),
             PaneItemHeader(
               header: Padding(

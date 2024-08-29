@@ -110,16 +110,16 @@ class AlertService {
     bool useDestructiveBtn = true, // when true the action button style is descrictive
   }) async {
     if (Platform.isMacOS) {
-      return await _getConfirmationMacOS(
-        context: context,
-        title: title,
-        content: content,
-        confirmBtnTxt: confirmBtnTxt,
-        secondaryBtnTxt: secondaryBtnTxt,
-        truncateContent: truncateContent,
-        truncateContentLength: truncateContentLength,
-      );
-    } else if (Platform.isWindows || Platform.isLinux) {
+      //   return await _getConfirmationMacOS(
+      //     context: context,
+      //     title: title,
+      //     content: content,
+      //     confirmBtnTxt: confirmBtnTxt,
+      //     secondaryBtnTxt: secondaryBtnTxt,
+      //     truncateContent: truncateContent,
+      //     truncateContentLength: truncateContentLength,
+      //   );
+      // } else if (Platform.isWindows || Platform.isLinux) {
       return await _getConfirmationWindowsAndLinux(
         context: context,
         title: title,
