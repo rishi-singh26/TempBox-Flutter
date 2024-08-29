@@ -219,7 +219,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
     );
   }
 
-  NavigationPaneItem _buildPaneItem(AddressData a, DataState state) {
+  NavigationPaneItem _buildPaneItem(AddressData a, DataState state, BuildContext dataBlocContext) {
     return PaneItem(
       key: Key(a.authenticatedUser.account.id),
       icon: const Icon(CupertinoIcons.tray),
@@ -227,7 +227,37 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
       body: const SizedBox.shrink(),
       trailing: Padding(
         padding: const EdgeInsets.only(right: 8.0),
-        child: Text((state.accountIdToMessagesMap[a.authenticatedUser.account.id]?.length ?? 0).toString()),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text((state.accountIdToMessagesMap[a.authenticatedUser.account.id]?.length ?? 0).toString()),
+            const SizedBox(width: 5),
+            DropDownButton(
+              buttonBuilder: (context, onOpen) {
+                return IconButton(icon: const Icon(CupertinoIcons.ellipsis_circle), onPressed: onOpen);
+              },
+              title: const Icon(FluentIcons.more, size: 15),
+              items: [
+                MenuFlyoutItem(leading: const Icon(CupertinoIcons.refresh_thick), text: const Text('Refresh Inbox'), onPressed: () {}),
+                MenuFlyoutItem(
+                  leading: const Icon(CupertinoIcons.info_circle),
+                  text: const Text('Address Info'),
+                  onPressed: state.selectedAddress == null ? null : () => _showAddressInfo(dataBlocContext, state.selectedAddress),
+                ),
+                MenuFlyoutItem(
+                  leading: const Icon(CupertinoIcons.clear_circled),
+                  text: const Text('Remove Address'),
+                  onPressed: state.selectedAddress == null ? null : () => _removeAddress(dataBlocContext, state.selectedAddress),
+                ),
+                MenuFlyoutItem(
+                  leading: const Icon(CupertinoIcons.trash),
+                  text: const Text('Delete Address'),
+                  onPressed: state.selectedAddress == null ? null : () => _deleteAddress(dataBlocContext, state.selectedAddress),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -261,22 +291,6 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
               ),
             ),
             const SizedBox(width: 10),
-            Tooltip(
-              message: 'Remove Address',
-              child: IconButton(
-                icon: const Icon(CupertinoIcons.clear_circled, size: 20),
-                onPressed: dataState.selectedAddress == null ? null : () => _removeAddress(dataBlocContext, dataState.selectedAddress),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Tooltip(
-              message: 'Delete address',
-              child: IconButton(
-                icon: const Icon(CupertinoIcons.trash, size: 20),
-                onPressed: dataState.selectedAddress == null ? null : () => _deleteAddress(dataBlocContext, dataState.selectedAddress),
-              ),
-            ),
-            const SizedBox(width: 10),
             const Divider(direction: Axis.vertical),
             const SizedBox(width: 10),
             Tooltip(
@@ -306,11 +320,14 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
             const Divider(direction: Axis.vertical),
             const SizedBox(width: 10),
             DropDownButton(
+              buttonBuilder: (context, onOpen) {
+                return IconButton(icon: const Icon(CupertinoIcons.ellipsis_circle, size: 20), onPressed: onOpen);
+              },
               title: const Icon(FluentIcons.more, size: 15),
               items: [
                 MenuFlyoutItem(
                   text: const Text('Export Addresses'),
-                  onPressed: () => _exportAddresses(context, dataBlocContext),
+                  onPressed: dataState.addressList.isNotEmpty ? () => _exportAddresses(context, dataBlocContext) : null,
                 ),
                 MenuFlyoutItem(
                   text: const Text('Import Addresses'),
@@ -319,7 +336,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
                 const MenuFlyoutSeparator(),
                 MenuFlyoutItem(
                   text: const Text('Removed Addresses'),
-                  onPressed: () => _removedAddresses(context, dataBlocContext),
+                  onPressed: dataState.removedAddresses.isNotEmpty ? () => _removedAddresses(context, dataBlocContext) : null,
                 ),
               ],
             ),
@@ -357,7 +374,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
             }
           },
           size: NavigationPaneSize(openWidth: MediaQuery.of(context).size.width / 5, openMinWidth: 250, openMaxWidth: 250),
-          items: dataState.addressList.map((a) => _buildPaneItem(a, dataState)).toList(),
+          items: dataState.addressList.map((a) => _buildPaneItem(a, dataState, dataBlocContext)).toList(),
           displayMode: PaneDisplayMode.open,
           toggleable: true,
           selected: selectedIndex,
