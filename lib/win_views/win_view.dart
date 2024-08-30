@@ -213,12 +213,6 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
     }
   }
 
-  NavigationPaneItem _buildHeader(String title) {
-    return PaneItemHeader(
-      header: Padding(padding: const EdgeInsets.only(bottom: 4), child: Text(title)),
-    );
-  }
-
   NavigationPaneItem _buildPaneItem(AddressData a, DataState state, BuildContext dataBlocContext) {
     return PaneItem(
       key: Key(a.authenticatedUser.account.id),
@@ -238,7 +232,13 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
               },
               title: const Icon(FluentIcons.more, size: 15),
               items: [
-                MenuFlyoutItem(leading: const Icon(CupertinoIcons.refresh_thick), text: const Text('Refresh Inbox'), onPressed: () {}),
+                MenuFlyoutItem(
+                  leading: const Icon(CupertinoIcons.refresh_thick),
+                  text: const Text('Refresh Inbox'),
+                  onPressed: state.selectedAddress == null || state.selectedAddress?.archived == true
+                      ? null
+                      : () => _refreshInbox(dataBlocContext, state.selectedAddress),
+                ),
                 MenuFlyoutItem(
                   leading: const Icon(CupertinoIcons.info_circle),
                   text: const Text('Address Info'),
