@@ -102,7 +102,7 @@ class AddressTile extends StatelessWidget {
             motion: const DrawerMotion(),
             dismissible: DismissiblePane(
               confirmDismiss: () async {
-                await _deleteAddress(context, dataBlocContext, addressData);
+                _deleteAddress(context, dataBlocContext, addressData);
                 return false;
               },
               onDismissed: () {},
