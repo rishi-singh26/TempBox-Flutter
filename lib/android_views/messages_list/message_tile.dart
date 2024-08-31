@@ -38,6 +38,13 @@ class MessageTile extends StatelessWidget {
     }
   }
 
+  _toggleMessageReadStatus(BuildContext dataBlocContext, AddressData selectedAddress) {
+    BlocProvider.of<DataBloc>(dataBlocContext).add(ToggleMessageReadUnread(
+      addressData: selectedAddress,
+      message: message,
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     SizedBox hGap(double size) => SizedBox(width: size);
@@ -49,14 +56,18 @@ class MessageTile extends StatelessWidget {
           key: ValueKey(message.id),
           startActionPane: ActionPane(
             motion: const DrawerMotion(),
+            dismissible: DismissiblePane(
+              confirmDismiss: () async {
+                _toggleMessageReadStatus(dataBlocContext, dataState.selectedAddress!);
+                return false;
+              },
+              onDismissed: () {},
+              closeOnCancel: true,
+              dismissThreshold: 0.5,
+            ),
             children: [
               SlidableAction(
-                onPressed: (context) {
-                  BlocProvider.of<DataBloc>(dataBlocContext).add(ToggleMessageReadUnread(
-                    addressData: dataState.selectedAddress!,
-                    message: message,
-                  ));
-                },
+                onPressed: (_) => _toggleMessageReadStatus(dataBlocContext, dataState.selectedAddress!),
                 backgroundColor: const Color(0XFF0B84FF),
                 foregroundColor: Colors.white,
                 icon: message.seen ? Icons.mark_email_unread_rounded : Icons.mark_email_read_rounded,
@@ -65,6 +76,15 @@ class MessageTile extends StatelessWidget {
           ),
           endActionPane: ActionPane(
             motion: const DrawerMotion(),
+            dismissible: DismissiblePane(
+              confirmDismiss: () async {
+                _deleteMessage(context, dataBlocContext, dataState.selectedAddress!);
+                return false;
+              },
+              onDismissed: () {},
+              closeOnCancel: true,
+              dismissThreshold: 0.5,
+            ),
             children: [
               SlidableAction(
                 onPressed: (_) => _deleteMessage(context, dataBlocContext, dataState.selectedAddress!),

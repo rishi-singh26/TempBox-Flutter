@@ -47,4 +47,12 @@ class AddressData extends Equatable {
         archived,
         password,
       ];
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AddressData && runtimeType == other.runtimeType && authenticatedUser.account.id == other.authenticatedUser.account.id;
+
+  @override
+  int get hashCode => authenticatedUser.account.id.hashCode;
 }

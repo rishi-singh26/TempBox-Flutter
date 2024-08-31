@@ -18,6 +18,7 @@ import 'package:tempbox/win_views/views/selected_address_view/winui_selected_add
 import 'package:tempbox/win_views/views/winui_address_info/winui_address_info.dart';
 import 'package:tempbox/win_views/views/winui_import_export/winui_export.dart';
 import 'package:tempbox/win_views/views/winui_import_export/winui_import.dart';
+import 'package:tempbox/win_views/views/winui_removed_addresses/winui_removed_addresses.dart';
 import 'package:tempbox/win_views/window_buttons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:window_manager/window_manager.dart';
@@ -103,16 +104,6 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
     super.dispose();
   }
 
-  int? _getSelectedIndex(AddressData selected, List<AddressData> active, List<AddressData> archived) {
-    final indexInActive = active.indexWhere((a) => a.authenticatedUser.account.id == selected.authenticatedUser.account.id);
-    if (indexInActive >= 0) {
-      return indexInActive;
-    } else {
-      final indexInInactive = archived.indexWhere((a) => a.authenticatedUser.account.id == selected.authenticatedUser.account.id);
-      return indexInInactive >= 0 ? (indexInInactive + active.length) : null;
-    }
-  }
-
   _importAddresses(BuildContext context, BuildContext dataBlocContext) async {
     List<AddressData>? addresses = await ExportImportAddress.importAddreses();
     if (context.mounted && addresses != null) {
@@ -136,21 +127,28 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
     );
   }
 
-  _toggleArchiveAddress(BuildContext dataBlocContext, AddressData? address) async {
+  _removedAddresses(BuildContext context, BuildContext dataBlocContext) async {
+    showDialog(
+      context: context,
+      builder: (_) => BlocProvider.value(
+        value: BlocProvider.of<DataBloc>(dataBlocContext),
+        child: const WinuiRemovedAddresses(),
+      ),
+    );
+  }
+
+  _removeAddress(BuildContext dataBlocContext, AddressData? address) async {
     if (address == null) {
       return;
     }
     final choice = await AlertService.getConformation<bool>(
       context: context,
       title: 'Alert',
-      content: 'Are you sure you want to ${address.archived ? 'unarchive' : 'archive'} this address?',
+      content:
+          'Are you sure you want to remove this address?\nThis address will not be deleted, just removed from the list here.\nYou can bring it back from the removed addresses section.',
     );
     if (choice == true && dataBlocContext.mounted) {
-      if (address.archived) {
-        BlocProvider.of<DataBloc>(dataBlocContext).add(UnarchiveAddressEvent(address));
-      } else {
-        BlocProvider.of<DataBloc>(dataBlocContext).add(ArchiveAddressEvent(address));
-      }
+      BlocProvider.of<DataBloc>(dataBlocContext).add(RemoveAddressEvent(address));
     }
   }
 
@@ -215,13 +213,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
     }
   }
 
-  NavigationPaneItem _buildHeader(String title) {
-    return PaneItemHeader(
-      header: Padding(padding: const EdgeInsets.only(bottom: 4), child: Text(title)),
-    );
-  }
-
-  NavigationPaneItem _buildPaneItem(AddressData a, DataState state) {
+  NavigationPaneItem _buildPaneItem(AddressData a, DataState state, BuildContext dataBlocContext) {
     return PaneItem(
       key: Key(a.authenticatedUser.account.id),
       icon: const Icon(CupertinoIcons.tray),
@@ -229,37 +221,53 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
       body: const SizedBox.shrink(),
       trailing: Padding(
         padding: const EdgeInsets.only(right: 8.0),
-        child: Text((state.accountIdToMessagesMap[a.authenticatedUser.account.id]?.length ?? 0).toString()),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text((state.accountIdToMessagesMap[a.authenticatedUser.account.id]?.length ?? 0).toString()),
+            const SizedBox(width: 5),
+            DropDownButton(
+              buttonBuilder: (context, onOpen) {
+                return IconButton(icon: const Icon(CupertinoIcons.ellipsis_circle), onPressed: onOpen);
+              },
+              title: const Icon(FluentIcons.more, size: 15),
+              items: [
+                MenuFlyoutItem(
+                  leading: const Icon(CupertinoIcons.refresh_thick),
+                  text: const Text('Refresh Inbox'),
+                  onPressed: state.selectedAddress == null || state.selectedAddress?.archived == true
+                      ? null
+                      : () => _refreshInbox(dataBlocContext, state.selectedAddress),
+                ),
+                MenuFlyoutItem(
+                  leading: const Icon(CupertinoIcons.info_circle),
+                  text: const Text('Address Info'),
+                  onPressed: state.selectedAddress == null ? null : () => _showAddressInfo(dataBlocContext, state.selectedAddress),
+                ),
+                MenuFlyoutItem(
+                  leading: const Icon(CupertinoIcons.clear_circled),
+                  text: const Text('Remove Address'),
+                  onPressed: state.selectedAddress == null ? null : () => _removeAddress(dataBlocContext, state.selectedAddress),
+                ),
+                MenuFlyoutItem(
+                  leading: const Icon(CupertinoIcons.trash),
+                  text: const Text('Delete Address'),
+                  onPressed: state.selectedAddress == null ? null : () => _deleteAddress(dataBlocContext, state.selectedAddress),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
-  }
-
-  List<NavigationPaneItem> _getPaneItems(List<AddressData> active, List<AddressData> archived, DataState state) {
-    if (active.isEmpty && archived.isEmpty) {
-      return [];
-    } else if (active.isEmpty && archived.isNotEmpty) {
-      return [_buildHeader('Archived'), ...archived.map((a) => _buildPaneItem(a, state))];
-    } else if (active.isNotEmpty && archived.isEmpty) {
-      return [_buildHeader('Active'), ...active.map((a) => _buildPaneItem(a, state))];
-    } else {
-      return [
-        _buildHeader('Active'),
-        ...active.map((a) => _buildPaneItem(a, state)),
-        _buildHeader('Archived'),
-        ...archived.map((a) => _buildPaneItem(a, state)),
-      ];
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
-      List<AddressData> active = [];
-      List<AddressData> archived = [];
-      addToList(AddressData a) => a.archived ? archived.add(a) : active.add(a);
-      dataState.addressList.forEach(addToList);
-      int? selectedIndex =
-          dataState.selectedAddress == null || dataState.addressList.isEmpty ? null : _getSelectedIndex(dataState.selectedAddress!, active, archived);
+      int? selectedIndex = dataState.selectedAddress == null || dataState.addressList.isEmpty
+          ? null
+          : dataState.addressList.indexWhere((a) => a == dataState.selectedAddress);
       return NavigationView(
         appBar: NavigationAppBar(
           leading: const AppLogo(size: 20, borderRadius: BorderRadius.all(Radius.circular(15))),
@@ -280,25 +288,6 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
               child: IconButton(
                 icon: const Icon(CupertinoIcons.info_circle, size: 20),
                 onPressed: dataState.selectedAddress == null ? null : () => _showAddressInfo(dataBlocContext, dataState.selectedAddress),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Tooltip(
-              message: dataState.selectedAddress?.archived == true ? 'Unarchive Address' : 'Archive Address',
-              child: IconButton(
-                icon: Icon(
-                  dataState.selectedAddress?.archived == true ? CupertinoIcons.archivebox_fill : CupertinoIcons.archivebox,
-                  size: 20,
-                ),
-                onPressed: dataState.selectedAddress == null ? null : () => _toggleArchiveAddress(dataBlocContext, dataState.selectedAddress),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Tooltip(
-              message: 'Delete address',
-              child: IconButton(
-                icon: const Icon(CupertinoIcons.trash, size: 20),
-                onPressed: dataState.selectedAddress == null ? null : () => _deleteAddress(dataBlocContext, dataState.selectedAddress),
               ),
             ),
             const SizedBox(width: 10),
@@ -330,22 +319,27 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
             const SizedBox(width: 10),
             const Divider(direction: Axis.vertical),
             const SizedBox(width: 10),
-            Tooltip(
-              message: 'Import addresses',
-              child: IconButton(
-                icon: const Icon(FluentIcons.import, size: 20),
-                onPressed: () => _importAddresses(context, dataBlocContext),
-              ),
-            ),
-            if (dataState.addressList.isNotEmpty) const SizedBox(width: 10),
-            if (dataState.addressList.isNotEmpty)
-              Tooltip(
-                message: 'Export addresses',
-                child: IconButton(
-                  icon: const Icon(FluentIcons.export, size: 20),
-                  onPressed: () => _exportAddresses(context, dataBlocContext),
+            DropDownButton(
+              buttonBuilder: (context, onOpen) {
+                return IconButton(icon: const Icon(CupertinoIcons.ellipsis_circle, size: 20), onPressed: onOpen);
+              },
+              title: const Icon(FluentIcons.more, size: 15),
+              items: [
+                MenuFlyoutItem(
+                  text: const Text('Export Addresses'),
+                  onPressed: dataState.addressList.isNotEmpty ? () => _exportAddresses(context, dataBlocContext) : null,
                 ),
-              ),
+                MenuFlyoutItem(
+                  text: const Text('Import Addresses'),
+                  onPressed: () => _importAddresses(context, dataBlocContext),
+                ),
+                const MenuFlyoutSeparator(),
+                MenuFlyoutItem(
+                  text: const Text('Removed Addresses'),
+                  onPressed: dataState.removedAddresses.isNotEmpty ? () => _removedAddresses(context, dataBlocContext) : null,
+                ),
+              ],
+            ),
             const SizedBox(width: 10),
             const Divider(direction: Axis.vertical),
             const SizedBox(width: 10),
@@ -374,22 +368,17 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
             if (dataState.addressList.isEmpty) {
               return;
             }
-            if (index < active.length) {
-              BlocProvider.of<DataBloc>(dataBlocContext).add(SelectAddressEvent(active[index]));
-              return;
-            }
-            if (index >= active.length) {
-              BlocProvider.of<DataBloc>(dataBlocContext).add(SelectAddressEvent(archived[index - active.length]));
+            if (index < dataState.addressList.length) {
+              BlocProvider.of<DataBloc>(dataBlocContext).add(SelectAddressEvent(dataState.addressList[index]));
               return;
             }
           },
           size: NavigationPaneSize(openWidth: MediaQuery.of(context).size.width / 5, openMinWidth: 250, openMaxWidth: 250),
-          items: _getPaneItems(active, archived, dataState),
+          items: dataState.addressList.map((a) => _buildPaneItem(a, dataState, dataBlocContext)).toList(),
           displayMode: PaneDisplayMode.open,
           toggleable: true,
           selected: selectedIndex,
           footerItems: [
-            PaneItemSeparator(),
             PaneItemHeader(
               header: Padding(
                 padding: const EdgeInsets.only(left: 8.0),

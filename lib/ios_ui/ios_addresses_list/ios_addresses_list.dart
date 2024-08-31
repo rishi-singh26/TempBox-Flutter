@@ -12,6 +12,7 @@ import 'package:tempbox/ios_ui/ios_addresses_list/ios_address_tile.dart';
 import 'package:tempbox/ios_ui/app_info/ios_app_info.dart';
 import 'package:tempbox/ios_ui/ios_import_export/ios_export.dart';
 import 'package:tempbox/ios_ui/ios_import_export/ios_import.dart';
+import 'package:tempbox/ios_ui/ios_removed_addresses/ios_removed_addresses.dart';
 import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/export_import_address.dart';
 
@@ -35,6 +36,11 @@ class IosAddressesList extends StatelessWidget {
           ),
         );
       }
+    } else if (value == 2) {
+      showCupertinoModalSheet(
+        context: context,
+        builder: (context) => BlocProvider.value(value: BlocProvider.of<DataBloc>(dataBlocContext), child: const IosRemovedAddressesPage()),
+      );
     } else {
       showCupertinoModalSheet(
         context: context,
@@ -69,9 +75,10 @@ class IosAddressesList extends StatelessWidget {
                       trailing: PullDownButton(
                         itemBuilder: (context) => [
                           PullDownMenuItem(
+                            enabled: dataState.addressList.isNotEmpty,
                             title: 'Export Addresses',
                             icon: CupertinoIcons.arrow_up_circle,
-                            onTap: dataState.addressList.isNotEmpty ? () => _handleOptionTap(context, dataBlocContext, 0) : null,
+                            onTap: () => _handleOptionTap(context, dataBlocContext, 0),
                           ),
                           PullDownMenuItem(
                             title: 'Import Addresses',
@@ -80,9 +87,16 @@ class IosAddressesList extends StatelessWidget {
                           ),
                           const PullDownMenuDivider.large(),
                           PullDownMenuItem(
+                            enabled: dataState.removedAddresses.isNotEmpty,
+                            title: 'Removed Addresses',
+                            icon: CupertinoIcons.clear_circled,
+                            onTap: () => _handleOptionTap(context, dataBlocContext, 2),
+                          ),
+                          const PullDownMenuDivider.large(),
+                          PullDownMenuItem(
                             title: 'About TempBox',
                             icon: CupertinoIcons.info_circle,
-                            onTap: () => _handleOptionTap(context, dataBlocContext, 2),
+                            onTap: () => _handleOptionTap(context, dataBlocContext, 3),
                           ),
                         ],
                         buttonBuilder: (context, showMenu) => CupertinoButton(
@@ -92,53 +106,24 @@ class IosAddressesList extends StatelessWidget {
                         ),
                       ),
                     ),
-                    // if (dataState.addressList.isNotEmpty)
-                    //   SliverToBoxAdapter(
-                    //     child: Padding(
-                    //       padding: EdgeInsetsDirectional.fromSTEB(horizontalPadding, 8, horizontalPadding, 14),
-                    //       child: const CupertinoSearchTextField(),
-                    //     ),
-                    //   ),
                     Builder(builder: (context) {
                       if (dataState.addressList.isEmpty) {
                         return const SliverToBoxAdapter(child: Center(child: Text('')));
                       }
-                      List<Widget> active = [];
-                      List<Widget> archived = [];
+                      List<Widget> children = [];
                       for (var i = 0; i < dataState.addressList.length; i++) {
-                        if (dataState.addressList[i].archived) {
-                          archived.add(IosAddressTile(
-                            addressData: dataState.addressList[i],
-                            key: Key(dataState.addressList[i].authenticatedUser.account.id),
-                          ));
-                        } else {
-                          active.add(IosAddressTile(
-                            addressData: dataState.addressList[i],
-                            key: Key(dataState.addressList[i].authenticatedUser.account.id),
-                          ));
-                        }
+                        children.add(IosAddressTile(
+                          addressData: dataState.addressList[i],
+                          key: Key(dataState.addressList[i].authenticatedUser.account.id),
+                        ));
                       }
                       return SliverList.list(
                         children: [
-                          if (active.isNotEmpty)
+                          if (children.isNotEmpty)
                             CupertinoListSection.insetGrouped(
                               margin: EdgeInsetsDirectional.fromSTEB(horizontalPadding, 0, horizontalPadding, 10),
                               key: const Key('ActiveAccounts'),
-                              header: Padding(
-                                padding: isVertical ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 70),
-                                child: const Text('Active'),
-                              ),
-                              children: active,
-                            ),
-                          if (archived.isNotEmpty)
-                            CupertinoListSection.insetGrouped(
-                              key: const Key('ArchivedAccounts'),
-                              margin: EdgeInsetsDirectional.fromSTEB(horizontalPadding, 0, horizontalPadding, 101),
-                              header: Padding(
-                                padding: isVertical ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 70),
-                                child: const Text('Archived'),
-                              ),
-                              children: archived,
+                              children: children,
                             ),
                         ],
                       );

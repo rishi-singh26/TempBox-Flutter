@@ -53,15 +53,15 @@ class AddressTile extends StatelessWidget {
     }
   }
 
-  _toggleArchiveAddress(BuildContext context, BuildContext dataBlocContext, AddressData addressData) async {
-    String alertMessage = 'Are you sure you want to ${addressData.archived ? 'unarchive' : 'archive'} this address?';
-    bool? choice = await AlertService.getConformation(context: context, title: 'Alert', content: alertMessage);
+  _removeAddress(BuildContext context, BuildContext dataBlocContext, AddressData addressData) async {
+    bool? choice = await AlertService.getConformation(
+      context: context,
+      title: 'Alert',
+      content:
+          'Are you sure you want to remove this address?\nThis address will not be deleted, just removed from the list here.\nYou can bring it back from the removed addresses section.',
+    );
     if (choice == true && dataBlocContext.mounted) {
-      if (addressData.archived) {
-        BlocProvider.of<DataBloc>(dataBlocContext).add(UnarchiveAddressEvent(addressData));
-        return;
-      }
-      BlocProvider.of<DataBloc>(dataBlocContext).add(ArchiveAddressEvent(addressData));
+      BlocProvider.of<DataBloc>(dataBlocContext).add(RemoveAddressEvent(addressData));
     }
   }
 
@@ -76,7 +76,17 @@ class AddressTile extends StatelessWidget {
           groupTag: 'AddressItem',
           key: ValueKey(addressData.authenticatedUser.account.id),
           startActionPane: ActionPane(
+            extentRatio: 0.25,
             motion: const DrawerMotion(),
+            dismissible: DismissiblePane(
+              confirmDismiss: () async {
+                _openAddressInfoSheet(context, dataBlocContext, addressData);
+                return false;
+              },
+              onDismissed: () {},
+              closeOnCancel: true,
+              dismissThreshold: 0.5,
+            ),
             children: [
               SlidableAction(
                 onPressed: (_) => _openAddressInfoSheet(context, dataBlocContext, addressData),
@@ -88,13 +98,23 @@ class AddressTile extends StatelessWidget {
             ],
           ),
           endActionPane: ActionPane(
+            extentRatio: 0.5,
             motion: const DrawerMotion(),
+            dismissible: DismissiblePane(
+              confirmDismiss: () async {
+                _deleteAddress(context, dataBlocContext, addressData);
+                return false;
+              },
+              onDismissed: () {},
+              closeOnCancel: true,
+              dismissThreshold: 0.5,
+            ),
             children: [
               SlidableAction(
-                onPressed: (_) => _toggleArchiveAddress(context, dataBlocContext, addressData),
+                onPressed: (_) => _removeAddress(context, dataBlocContext, addressData),
                 backgroundColor: Colors.indigo,
                 foregroundColor: Colors.white,
-                icon: addressData.archived ? Icons.unarchive_rounded : Icons.archive_rounded,
+                icon: Icons.close_rounded,
               ),
               SlidableAction(
                 onPressed: (_) => _deleteAddress(context, dataBlocContext, addressData),

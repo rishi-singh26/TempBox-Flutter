@@ -12,6 +12,7 @@ import 'package:tempbox/macos_views/views/mac_app_info/mac_app_info.dart';
 import 'package:tempbox/macos_views/views/selected_address_view/selected_address_view.dart';
 import 'package:tempbox/macos_views/views/sidebar_view/sidebar_view.dart';
 import 'package:tempbox/services/alert_service.dart';
+import 'package:tempbox/shared/components/custom_cupertino_tile.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MacOSView extends StatelessWidget {
@@ -117,10 +118,7 @@ class MacOsHome extends StatelessWidget {
                   onPressed: () {
                     showMacosSheet(
                       context: context,
-                      builder: (_) => BlocProvider.value(
-                        value: BlocProvider.of<DataBloc>(dataBlocContext),
-                        child: const MacAppInfo(),
-                      ),
+                      builder: (_) => BlocProvider.value(value: BlocProvider.of<DataBloc>(dataBlocContext), child: const MacAppInfo()),
                     );
                   },
                 )
@@ -128,6 +126,41 @@ class MacOsHome extends StatelessWidget {
             ),
           ),
           child: const SelectedAddressView(),
+        ),
+      );
+    });
+  }
+}
+
+class CustomSidebarItem extends StatelessWidget {
+  const CustomSidebarItem({
+    super.key,
+    required this.title,
+    this.trailingIcon,
+    this.leadingIcon,
+    required this.onTap,
+  });
+
+  final String title;
+  final IconData? trailingIcon;
+  final IconData? leadingIcon;
+  final void Function() onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final typography = MacosTypography.of(context);
+    return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
+      return Container(
+        margin: const EdgeInsets.symmetric(vertical: 2.5),
+        clipBehavior: Clip.hardEdge,
+        decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(5))),
+        child: CustomCupertinoListTile(
+          leading: leadingIcon == null ? null : MacosIcon(leadingIcon, size: 18, color: CupertinoColors.systemGrey.resolveFrom(context)),
+          title: Text(title, style: typography.callout),
+          trailing: trailingIcon == null ? null : MacosIcon(trailingIcon, size: 18, color: CupertinoColors.systemGrey.resolveFrom(context)),
+          backgroundColor: const Color(0X00FFFFFF),
+          backgroundColorActivated: CupertinoColors.systemGrey4.resolveFrom(context),
+          onTap: onTap,
         ),
       );
     });

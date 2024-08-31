@@ -1,4 +1,3 @@
-import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:macos_ui/macos_ui.dart';
 // ignore: implementation_imports
@@ -10,6 +9,7 @@ import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/macos_views/views/macui_address_info/macui_address_info.dart';
 import 'package:tempbox/macos_views/views/macui_export_import/macui_export.dart';
 import 'package:tempbox/macos_views/views/macui_export_import/macui_import.dart';
+import 'package:tempbox/macos_views/views/macui_removed_addresses/macui_removed_addresses.dart';
 import 'package:tempbox/macos_views/views/message_detail/macui_message_detail.dart';
 import 'package:tempbox/macos_views/views/selected_address_view/macui_messages_list.dart';
 import 'package:tempbox/models/address_data.dart';
@@ -28,55 +28,6 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
   double ratingValue = 0;
   double capacitorValue = 0;
   double sliderValue = 0.3;
-
-  _importAddresses(BuildContext context, BuildContext dataBlocContext) async {
-    List<AddressData>? addresses = await ExportImportAddress.importAddreses();
-    if (context.mounted && addresses != null) {
-      showMacosSheet(
-        context: context,
-        builder: (_) => BlocProvider.value(value: BlocProvider.of<DataBloc>(dataBlocContext), child: MacuiImport(addresses: addresses)),
-      );
-    }
-  }
-
-  _exportAddresses(BuildContext context, BuildContext dataBlocContext) async {
-    showMacosSheet(
-      context: context,
-      builder: (_) => BlocProvider.value(value: BlocProvider.of<DataBloc>(dataBlocContext), child: const MacuiExport()),
-    );
-  }
-
-  _toggleArchiveAddress(BuildContext dataBlocContext, AddressData? address) async {
-    if (address == null) {
-      return;
-    }
-    final choice = await AlertService.getConformation<bool>(
-      context: context,
-      title: 'Alert',
-      content: 'Are you sure you want to ${address.archived ? 'unarchive' : 'archive'} this address?',
-    );
-    if (choice == true && dataBlocContext.mounted) {
-      if (address.archived) {
-        BlocProvider.of<DataBloc>(dataBlocContext).add(UnarchiveAddressEvent(address));
-      } else {
-        BlocProvider.of<DataBloc>(dataBlocContext).add(ArchiveAddressEvent(address));
-      }
-    }
-  }
-
-  _deleteAddress(BuildContext dataBlocContext, AddressData? address) async {
-    if (address == null) {
-      return;
-    }
-    final choice = await AlertService.getConformation<bool>(
-      context: context,
-      title: 'Alert',
-      content: 'Are you sure you want to delete this address?',
-    );
-    if (choice == true && dataBlocContext.mounted) {
-      BlocProvider.of<DataBloc>(dataBlocContext).add(DeleteAddressEvent(address));
-    }
-  }
 
   _showAddressInfo(BuildContext dataBlocContext, AddressData? address) {
     if (address == null) {
@@ -123,6 +74,36 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
         message: dataState.selectedMessage!,
       ));
     }
+  }
+
+  _importAddresses(BuildContext context, BuildContext dataBlocContext) async {
+    List<AddressData>? addresses = await ExportImportAddress.importAddreses();
+    if (context.mounted && addresses != null) {
+      showMacosSheet(
+        context: context,
+        builder: (_) => BlocProvider.value(value: BlocProvider.of<DataBloc>(dataBlocContext), child: MacuiImport(addresses: addresses)),
+      );
+    }
+  }
+
+  _exportAddresses(BuildContext context, BuildContext dataBlocContext) async {
+    await Future.delayed(
+      const Duration(milliseconds: 50),
+      () => showMacosSheet(
+        context: context,
+        builder: (_) => BlocProvider.value(value: BlocProvider.of<DataBloc>(dataBlocContext), child: const MacuiExport()),
+      ),
+    );
+  }
+
+  _removedAddresses(BuildContext context, BuildContext dataBlocContext) async {
+    await Future.delayed(
+      const Duration(milliseconds: 50),
+      () => showMacosSheet(
+        context: context,
+        builder: (_) => BlocProvider.value(value: BlocProvider.of<DataBloc>(dataBlocContext), child: const MacUiRemovedAddresses()),
+      ),
+    );
   }
 
   @override
@@ -175,20 +156,6 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
                 showLabel: false,
                 tooltipMessage: 'Address information',
               ),
-              ToolBarIconButton(
-                icon: MacosIcon(dataState.selectedAddress?.archived == false ? CupertinoIcons.archivebox : CupertinoIcons.archivebox_fill),
-                onPressed: dataState.selectedAddress == null ? null : () => _toggleArchiveAddress(dataBlocContext, dataState.selectedAddress),
-                label: dataState.selectedAddress?.archived == false ? 'Archive' : 'Unarchive',
-                showLabel: false,
-                tooltipMessage: dataState.selectedAddress?.archived == false ? 'Archive Address' : 'Unarchive Address',
-              ),
-              ToolBarIconButton(
-                icon: const MacosIcon(CupertinoIcons.trash),
-                onPressed: dataState.selectedAddress == null ? null : () => _deleteAddress(dataBlocContext, dataState.selectedAddress),
-                label: 'Delete',
-                showLabel: false,
-                tooltipMessage: 'Delete address',
-              ),
               const ToolBarSpacer(),
               const ToolBarDivider(),
               const ToolBarSpacer(),
@@ -218,21 +185,29 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
               const ToolBarSpacer(),
               const ToolBarDivider(),
               const ToolBarSpacer(),
-              ToolBarIconButton(
-                icon: const MacosIcon(FluentIcons.import),
-                onPressed: () => _importAddresses(context, dataBlocContext),
-                label: 'Import',
-                showLabel: false,
-                tooltipMessage: 'Import addreses',
+              ToolBarPullDownButton(
+                label: 'Actions',
+                icon: CupertinoIcons.ellipsis_circle,
+                tooltipMessage: 'Perform tasks with the selected items',
+                items: [
+                  MacosPulldownMenuItem(
+                    label: 'Import Addresses',
+                    title: const Text('Import Addresses'),
+                    onTap: () => _importAddresses(context, dataBlocContext),
+                  ),
+                  MacosPulldownMenuItem(
+                    label: 'Export Addresses',
+                    title: const Text('Export Addresses'),
+                    onTap: () => _exportAddresses(context, dataBlocContext),
+                  ),
+                  const MacosPulldownMenuDivider(),
+                  MacosPulldownMenuItem(
+                    label: 'Removed Addresses',
+                    title: const Text('Removed Addresses'),
+                    onTap: () => _removedAddresses(context, dataBlocContext),
+                  ),
+                ],
               ),
-              if (dataState.addressList.isNotEmpty)
-                ToolBarIconButton(
-                  icon: const MacosIcon(FluentIcons.export),
-                  onPressed: () => _exportAddresses(context, dataBlocContext),
-                  label: 'Export',
-                  showLabel: false,
-                  tooltipMessage: 'Export addreses',
-                ),
             ],
           ),
           children: [
