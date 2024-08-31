@@ -29,35 +29,6 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
   double capacitorValue = 0;
   double sliderValue = 0.3;
 
-  _removeAddress(BuildContext dataBlocContext, AddressData? address) async {
-    if (address == null) {
-      return;
-    }
-    final choice = await AlertService.getConformation<bool>(
-      context: context,
-      title: 'Alert',
-      content:
-          'Are you sure you want to remove this address?\nThis address will not be deleted, just removed from the list here.\nYou can bring it back from the removed addresses section.',
-    );
-    if (choice == true && dataBlocContext.mounted) {
-      BlocProvider.of<DataBloc>(dataBlocContext).add(RemoveAddressEvent(address));
-    }
-  }
-
-  _deleteAddress(BuildContext dataBlocContext, AddressData? address) async {
-    if (address == null) {
-      return;
-    }
-    final choice = await AlertService.getConformation<bool>(
-      context: context,
-      title: 'Alert',
-      content: 'Are you sure you want to delete this address?',
-    );
-    if (choice == true && dataBlocContext.mounted) {
-      BlocProvider.of<DataBloc>(dataBlocContext).add(DeleteAddressEvent(address));
-    }
-  }
-
   _showAddressInfo(BuildContext dataBlocContext, AddressData? address) {
     if (address == null) {
       return;
