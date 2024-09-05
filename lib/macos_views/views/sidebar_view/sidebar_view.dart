@@ -22,17 +22,11 @@ class SidebarView extends StatelessWidget {
     return index >= 0 ? index : 0;
   }
 
-  _refreshInbox(BuildContext dataBlocContext, AddressData? address) {
-    if (address == null) {
-      return;
-    }
+  _refreshInbox(BuildContext dataBlocContext, AddressData address) {
     BlocProvider.of<DataBloc>(dataBlocContext).add(GetMessagesEvent(addressData: address));
   }
 
-  _showAddressInfo(BuildContext dataBlocContext, AddressData? address, BuildContext context) async {
-    if (address == null) {
-      return;
-    }
+  _showAddressInfo(BuildContext dataBlocContext, AddressData address, BuildContext context) async {
     await Future.delayed(
       const Duration(milliseconds: 50),
       () => showMacosSheet(
@@ -45,10 +39,7 @@ class SidebarView extends StatelessWidget {
     );
   }
 
-  _removeAddress(BuildContext dataBlocContext, AddressData? address, BuildContext context) async {
-    if (address == null) {
-      return;
-    }
+  _removeAddress(BuildContext dataBlocContext, AddressData address, BuildContext context) async {
     await Future.delayed(const Duration(milliseconds: 50), () async {
       final choice = await AlertService.getConformation<bool>(
         context: context,
@@ -62,10 +53,7 @@ class SidebarView extends StatelessWidget {
     });
   }
 
-  _deleteAddress(BuildContext dataBlocContext, AddressData? address, BuildContext context) async {
-    if (address == null) {
-      return;
-    }
+  _deleteAddress(BuildContext dataBlocContext, AddressData address, BuildContext context) async {
     await Future.delayed(
       const Duration(milliseconds: 50),
       () async {
@@ -87,10 +75,7 @@ class SidebarView extends StatelessWidget {
       List<SidebarItem> addresses = [];
       addToList(AddressData a) => addresses.add(SidebarItem(
             leading: const MacosIcon(CupertinoIcons.tray, size: 15),
-            label: Text(
-              UiService.getAccountName(a, shortName: true),
-              style: MacosTheme.of(context).typography.body,
-            ),
+            label: Text(UiService.getAccountName(a, shortName: true), style: MacosTheme.of(context).typography.body),
             trailing: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -99,24 +84,10 @@ class SidebarView extends StatelessWidget {
                 CustomMacosPulldownButton(
                   icon: CupertinoIcons.ellipsis_circle,
                   items: [
-                    MacosPulldownMenuItem(
-                      title: const Text('Refresh Inbox'),
-                      onTap: dataState.selectedAddress == null || dataState.selectedAddress?.archived == true
-                          ? null
-                          : () => _refreshInbox(dataBlocContext, dataState.selectedAddress),
-                    ),
-                    MacosPulldownMenuItem(
-                      title: const Text('Address Info'),
-                      onTap: dataState.selectedAddress == null ? null : () => _showAddressInfo(dataBlocContext, dataState.selectedAddress, context),
-                    ),
-                    MacosPulldownMenuItem(
-                      title: const Text('Remove Address'),
-                      onTap: dataState.selectedAddress == null ? null : () => _removeAddress(dataBlocContext, dataState.selectedAddress, context),
-                    ),
-                    MacosPulldownMenuItem(
-                      title: const Text('Delete Address'),
-                      onTap: dataState.selectedAddress == null ? null : () => _deleteAddress(dataBlocContext, dataState.selectedAddress, context),
-                    ),
+                    MacosPulldownMenuItem(title: const Text('Refresh Inbox'), onTap: _refreshInbox(dataBlocContext, a)),
+                    MacosPulldownMenuItem(title: const Text('Address Info'), onTap: () => _showAddressInfo(dataBlocContext, a, context)),
+                    MacosPulldownMenuItem(title: const Text('Remove Address'), onTap: () => _removeAddress(dataBlocContext, a, context)),
+                    MacosPulldownMenuItem(title: const Text('Delete Address'), onTap: () => _deleteAddress(dataBlocContext, a, context)),
                   ],
                 ),
               ],

@@ -230,29 +230,28 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
               buttonBuilder: (context, onOpen) {
                 return IconButton(icon: const Icon(CupertinoIcons.ellipsis_circle), onPressed: onOpen);
               },
+              closeAfterClick: true,
               title: const Icon(FluentIcons.more, size: 15),
               items: [
                 MenuFlyoutItem(
                   leading: const Icon(CupertinoIcons.refresh_thick),
                   text: const Text('Refresh Inbox'),
-                  onPressed: state.selectedAddress == null || state.selectedAddress?.archived == true
-                      ? null
-                      : () => _refreshInbox(dataBlocContext, state.selectedAddress),
+                  onPressed: _refreshInbox(dataBlocContext, a),
                 ),
                 MenuFlyoutItem(
                   leading: const Icon(CupertinoIcons.info_circle),
                   text: const Text('Address Info'),
-                  onPressed: state.selectedAddress == null ? null : () => _showAddressInfo(dataBlocContext, state.selectedAddress),
+                  onPressed: () => _showAddressInfo(dataBlocContext, a),
                 ),
                 MenuFlyoutItem(
                   leading: const Icon(CupertinoIcons.clear_circled),
                   text: const Text('Remove Address'),
-                  onPressed: state.selectedAddress == null ? null : () => _removeAddress(dataBlocContext, state.selectedAddress),
+                  onPressed: () => _removeAddress(dataBlocContext, a),
                 ),
                 MenuFlyoutItem(
                   leading: const Icon(CupertinoIcons.trash),
                   text: const Text('Delete Address'),
-                  onPressed: state.selectedAddress == null ? null : () => _deleteAddress(dataBlocContext, state.selectedAddress),
+                  onPressed: () => _deleteAddress(dataBlocContext, a),
                 ),
               ],
             )

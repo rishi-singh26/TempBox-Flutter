@@ -60,13 +60,11 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
     on<DeleteAddressEvent>((DeleteAddressEvent event, Emitter<DataState> emit) async {
       try {
         List<AddressData> addresses = state.addressList.where((a) => a != event.addressData).toList();
-        bool result = await event.addressData.authenticatedUser.delete();
-        if (result) {
-          emit(state.copyWith(
-            addressList: addresses,
-            setSelectedAddressToNull: state.selectedAddress != null && state.selectedAddress == event.addressData,
-          ));
-        }
+        await event.addressData.authenticatedUser.delete();
+        emit(state.copyWith(
+          addressList: addresses,
+          setSelectedAddressToNull: state.selectedAddress != null && state.selectedAddress == event.addressData,
+        ));
       } catch (e) {
         debugPrint(e.toString());
       }
@@ -78,7 +76,7 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
         emit(state.copyWith(
           addressList: addresses,
           removedAddresses: [...state.removedAddresses, event.addressData],
-          setSelectedAddressToNull: true,
+          setSelectedAddressToNull: state.selectedAddress != null && state.selectedAddress == event.addressData,
         ));
       } catch (e) {
         debugPrint(e.toString());
@@ -91,10 +89,7 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
         final set2 = event.addresses.toSet();
         // Symmetric difference (users unique to each list)
         final removedAddresses = set1.union(set2).difference(set1.intersection(set2));
-        emit(state.copyWith(
-          addressList: [...state.addressList, ...event.addresses],
-          removedAddresses: removedAddresses.toList(),
-        ));
+        emit(state.copyWith(addressList: [...state.addressList, ...event.addresses], removedAddresses: removedAddresses.toList()));
         add(const LoginToAccountsEvent());
       } catch (e) {
         debugPrint(e.toString());
