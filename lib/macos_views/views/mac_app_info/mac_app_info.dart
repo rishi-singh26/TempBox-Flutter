@@ -68,7 +68,7 @@ class _MacAppInfoState extends State<MacAppInfo> {
                   child: ListView(
                     shrinkWrap: true,
                     children: [
-                      const CustomTile(isFirst: true, icon: FluentIcons.verified_brand, title: 'Version 1.1.0', showTrailing: false),
+                      const CustomTile(isFirst: true, icon: FluentIcons.verified_brand, title: 'Version 1.2.1', showTrailing: false),
                       const CustomTile(isLast: true, icon: FluentIcons.power_button, title: 'Powered by Mail.tm', showTrailing: false),
                       vGap(20),
                       GestureDetector(
