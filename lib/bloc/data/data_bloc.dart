@@ -44,6 +44,7 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
           addressList: updateAddressList,
           accountIdToMessagesMap: accountIdToAddressesMap,
           messageIdToMessageMap: updatedMessageIdToMessageMap,
+          didRefreshAddressData: true,
         ));
       } catch (e) {
         debugPrint(e.toString());

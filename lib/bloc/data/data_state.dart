@@ -23,6 +23,12 @@ class DataState extends Equatable {
   /// List of removed addresses, these addresses can be restored
   final List<AddressData> removedAddresses;
 
+  /// on app launch, [LoginToAccountsEvent] get the information for all saved addresses
+  /// Post that this flag will be set to true, when this flag is true, [LoginToAccountsEvent] will not be allowed
+  /// Unless refrsh is requested by user from UI
+  /// This flag will not be persisted through app sessions
+  final bool didRefreshAddressData;
+
   const DataState({
     required this.addressList,
     required this.selectedAddress,
@@ -30,6 +36,7 @@ class DataState extends Equatable {
     required this.accountIdToMessagesMap,
     required this.messageIdToMessageMap,
     required this.removedAddresses,
+    required this.didRefreshAddressData,
   });
 
   DataState.initial()
@@ -38,7 +45,8 @@ class DataState extends Equatable {
         selectedMessage = null,
         accountIdToMessagesMap = {},
         messageIdToMessageMap = {},
-        removedAddresses = [];
+        removedAddresses = [],
+        didRefreshAddressData = false;
 
   Map<String, dynamic> toJson() => {
         'addressList': addressList.map((e) => e.toJson()).toList(),
@@ -49,6 +57,7 @@ class DataState extends Equatable {
         ),
         'messageIdToMessageMap': messageIdToMessageMap.map((key, value) => MapEntry(key, value.toJson())),
         'removedAddresses': removedAddresses.map((e) => e.toJson()).toList(),
+        'didRefreshAddressData': false,
       };
 
   factory DataState.fromJson(Map<String, dynamic> json) => DataState(
@@ -62,6 +71,7 @@ class DataState extends Equatable {
         ),
         messageIdToMessageMap: (json['messageIdToMessageMap'] as Map<String, dynamic>).map((key, value) => MapEntry(key, Message.fromJson(value))),
         removedAddresses: json.containsKey('removedAddresses') ? (json['removedAddresses'] as List).map((e) => AddressData.fromJson(e)).toList() : [],
+        didRefreshAddressData: false,
       );
 
   @override
@@ -72,6 +82,7 @@ class DataState extends Equatable {
         accountIdToMessagesMap,
         messageIdToMessageMap,
         removedAddresses,
+        didRefreshAddressData,
       ];
 
   copyWith({
@@ -83,6 +94,7 @@ class DataState extends Equatable {
     Map<String, List<Message>>? accountIdToMessagesMap,
     Map<String, Message>? messageIdToMessageMap,
     List<AddressData>? removedAddresses,
+    bool? didRefreshAddressData,
   }) {
     return DataState(
       addressList: addressList ?? this.addressList,
@@ -91,6 +103,7 @@ class DataState extends Equatable {
       accountIdToMessagesMap: accountIdToMessagesMap ?? this.accountIdToMessagesMap,
       messageIdToMessageMap: messageIdToMessageMap ?? this.messageIdToMessageMap,
       removedAddresses: removedAddresses ?? this.removedAddresses,
+      didRefreshAddressData: didRefreshAddressData ?? this.didRefreshAddressData,
     );
   }
 }

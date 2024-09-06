@@ -71,7 +71,9 @@ class WinuiStarter extends StatelessWidget {
     return BlocBuilder<DataBloc, DataState>(
       buildWhen: (previous, current) => false,
       builder: (dataBlocContext, dataState) {
-        BlocProvider.of<DataBloc>(dataBlocContext).add(const LoginToAccountsEvent());
+        if (!dataState.didRefreshAddressData) {
+          BlocProvider.of<DataBloc>(dataBlocContext).add(const LoginToAccountsEvent());
+        }
         return const WindowsView();
       },
     );
