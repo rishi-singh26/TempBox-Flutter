@@ -98,11 +98,17 @@ class _AddAddressState extends State<AddAddress> {
         password = passwordController.text.isNotEmpty && !useRandomPassword
             ? passwordController.text
             : UiService.generateRandomString(12, useNumbers: true, useSpecialCharacters: true, useUpperCase: true);
-        authenticatedUser = await MailTm.register(
-          username: addressController.text.isNotEmpty ? addressController.text : UiService.generateRandomString(10),
-          password: password,
-          domain: selectedDomain,
+        CreateAddressResponse addressResponse = await HttpService.createAddress(
+          addressController.text.isNotEmpty ? addressController.text : UiService.generateRandomString(10),
+          password,
+          selectedDomain,
         );
+        authenticatedUser = addressResponse.authenticatedUser;
+        if (addressResponse.message != null && dataBlocContext.mounted) {
+          AlertService.showSnackBar(dataBlocContext, 'Alert', addressResponse.message!);
+          setState(() => showSpinner = false);
+          return;
+        }
       } else {
         password = loginPasswordController.text;
         authenticatedUser = await HttpService.login(loginAddressController.text, password);
