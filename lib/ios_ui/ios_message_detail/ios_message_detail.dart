@@ -28,6 +28,8 @@ class IosMessageDetail extends StatelessWidget {
       return CupertinoPageScaffold(
         backgroundColor: CupertinoColors.systemGroupedBackground,
         navigationBar: CupertinoNavigationBar(
+          backgroundColor: AppColors.navBarColor,
+          border: null,
           middle: Text(UiService.getMessageFromName(messageWithHtml)),
           previousPageTitle: dataState.selectedAddress!.addressName,
         ),

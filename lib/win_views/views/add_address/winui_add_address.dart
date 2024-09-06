@@ -7,6 +7,7 @@ import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/alert_service.dart';
+import 'package:tempbox/services/http_service.dart';
 import 'package:tempbox/services/regex.dart';
 import 'package:tempbox/services/ui_service.dart';
 
@@ -108,7 +109,7 @@ class _WinuiAddAddressState extends State<WinuiAddAddress> {
         );
       } else {
         password = loginPasswordController.text;
-        authenticatedUser = await UiService.login(loginAddressController.text, password);
+        authenticatedUser = await HttpService.login(loginAddressController.text, password);
       }
 
       if (authenticatedUser != null && dataBlocContext.mounted) {
