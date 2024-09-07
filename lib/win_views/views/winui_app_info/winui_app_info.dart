@@ -47,7 +47,7 @@ class WinUIAppInfo extends StatelessWidget {
           ],
         ),
         content: ListView(children: [
-          const ListTile(leading: Icon(FluentIcons.verified_brand), title: Text('Version 1.2.1')),
+          const ListTile(leading: Icon(FluentIcons.verified_brand), title: Text('Version 1.2.2')),
           const ListTile(leading: Icon(FluentIcons.power_button), title: Text('Powered by Mail.tm')),
           ListTile(
             leading: const Icon(FluentIcons.assign_policy),
