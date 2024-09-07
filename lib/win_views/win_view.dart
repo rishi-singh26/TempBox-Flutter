@@ -21,7 +21,6 @@ import 'package:tempbox/shared/components/app_logo.dart';
 import 'package:tempbox/win_views/views/add_address/winui_add_address.dart';
 import 'package:tempbox/win_views/views/selected_address_view/winui_selected_address_view.dart';
 import 'package:tempbox/win_views/views/winui_address_info/winui_address_info.dart';
-// ignore: unused_import
 import 'package:tempbox/win_views/views/winui_app_info/winui_app_info.dart';
 import 'package:tempbox/win_views/views/winui_import_export/winui_export.dart';
 import 'package:tempbox/win_views/views/winui_import_export/winui_import.dart';
@@ -417,31 +416,48 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
           selected: selectedIndex,
           footerItems: [
             PaneItemHeader(
-              header: Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: RichText(
-                  text: TextSpan(
-                    text: "Powered by ",
-                    style: FluentTheme.of(context).typography.body,
-                    children: <TextSpan>[
-                      TextSpan(
-                        text: 'mail.tm',
-                        style: TextStyle(color: FluentTheme.of(context).accentColor),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () async {
-                            bool? choice = await AlertService.getConformation(
-                              context: context,
-                              title: 'Do you want to continue?',
-                              content: 'This will open mail.tm website.',
-                            );
-                            if (choice == true) {
-                              await launchUrl(Uri.parse('https://mail.tm'));
-                            }
-                          },
+              header: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: RichText(
+                      text: TextSpan(
+                        text: "Powered by ",
+                        style: FluentTheme.of(context).typography.body,
+                        children: <TextSpan>[
+                          TextSpan(
+                            text: 'mail.tm',
+                            style: TextStyle(color: FluentTheme.of(context).accentColor),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () async {
+                                bool? choice = await AlertService.getConformation(
+                                  context: context,
+                                  title: 'Do you want to continue?',
+                                  content: 'This will open mail.tm website.',
+                                );
+                                if (choice == true) {
+                                  await launchUrl(Uri.parse('https://mail.tm'));
+                                }
+                              },
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
+                  IconButton(
+                    icon: const Icon(FluentIcons.info),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => BlocProvider.value(
+                          value: BlocProvider.of<DataBloc>(dataBlocContext),
+                          child: const WinUIAppInfo(),
+                        ),
+                      );
+                    },
+                  )
+                ],
               ),
             ),
             PaneItemSeparator(thickness: 0),
