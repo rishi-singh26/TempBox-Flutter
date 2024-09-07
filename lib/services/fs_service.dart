@@ -6,16 +6,11 @@ class FSService {
   /// Pick file
   /// pass allowedExtns array to add accepted file types
   /// pass allowedMultiple = true if you want to pick multiple files
-  static Future<PickFileResp> pickFile([
-    List<String> allowedExtns = const [],
-    bool allowMultiple = false,
-  ]) async {
+  static Future<PickFileResp> pickFile([List<String> allowedExtns = const [], bool allowMultiple = false]) async {
     try {
       // Check if allowedExtns is empty
       FilePickerResult? result = allowedExtns.isEmpty
-          ? await FilePicker.platform.pickFiles(
-              allowMultiple: allowMultiple,
-            )
+          ? await FilePicker.platform.pickFiles(allowMultiple: allowMultiple)
           : await FilePicker.platform.pickFiles(
               type: FileType.custom,
               allowedExtensions: allowedExtns,
@@ -38,23 +33,11 @@ class FSService {
       String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
       if (selectedDirectory == null) {
         // User canceled the picker
-        return PickDirResp(
-          path: '',
-          status: false,
-          message: 'Picker cancelled',
-        );
+        return PickDirResp(path: '', status: false, message: 'Picker cancelled');
       }
-      return PickDirResp(
-        path: selectedDirectory,
-        status: true,
-        message: 'Success',
-      );
+      return PickDirResp(path: selectedDirectory, status: true, message: 'Success');
     } catch (e) {
-      return PickDirResp(
-        path: '',
-        status: false,
-        message: e.toString(),
-      );
+      return PickDirResp(path: '', status: false, message: e.toString());
     }
   }
 
@@ -85,11 +68,7 @@ class FSService {
 
   static Future<SaveFileResp> saveStringToFile(String fileData, String filename) async {
     if (filename.isEmpty) {
-      return SaveFileResp(
-        file: File('dummy_path'),
-        status: false,
-        message: 'Empty file name',
-      );
+      return SaveFileResp(file: File('dummy_path'), status: false, message: 'Empty file name');
     }
     String filePath = '/$filename';
     if (Platform.isIOS) {
@@ -98,27 +77,15 @@ class FSService {
     } else {
       PickDirResp dirResp = await pickDirectory();
       if (!dirResp.status) {
-        return SaveFileResp(
-          file: File('dummy_path'),
-          status: false,
-          message: dirResp.message,
-        );
+        return SaveFileResp(file: File('dummy_path'), status: false, message: dirResp.message);
       }
       filePath = '${dirResp.path}$filePath';
     }
     WriteFileResp writeFileResp = await writeFileContents(File(filePath), fileData);
     if (!writeFileResp.status) {
-      return SaveFileResp(
-        file: File('dummy_path'),
-        status: false,
-        message: writeFileResp.message,
-      );
+      return SaveFileResp(file: File('dummy_path'), status: false, message: writeFileResp.message);
     }
-    return SaveFileResp(
-      file: File(filePath),
-      status: true,
-      message: 'Success',
-    );
+    return SaveFileResp(file: File(filePath), status: true, message: 'Success');
   }
 
   // static Future<SaveFileResp> saveFile(File file) async {
