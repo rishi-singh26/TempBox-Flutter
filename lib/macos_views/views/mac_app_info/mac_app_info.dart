@@ -11,14 +11,9 @@ import 'package:tempbox/services/alert_service.dart';
 import 'package:tempbox/shared/components/app_logo.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class MacAppInfo extends StatefulWidget {
+class MacAppInfo extends StatelessWidget {
   const MacAppInfo({super.key});
 
-  @override
-  State<MacAppInfo> createState() => _MacAppInfoState();
-}
-
-class _MacAppInfoState extends State<MacAppInfo> {
   _resetAppData(BuildContext context, BuildContext dataBlocContext) async {
     bool? choice = await AlertService.getConformation(
       context: context,
@@ -70,6 +65,15 @@ class _MacAppInfoState extends State<MacAppInfo> {
                     children: [
                       const CustomTile(isFirst: true, icon: FluentIcons.verified_brand, title: 'Version 1.2.1', showTrailing: false),
                       const CustomTile(isLast: true, icon: FluentIcons.power_button, title: 'Powered by Mail.tm', showTrailing: false),
+                      vGap(20),
+                      GestureDetector(
+                        onTap: () => launchUrl(Uri.parse('https://tempbox.rishisingh.in/privacy-policy.html')),
+                        child: const CustomTile(isFirst: true, icon: FluentIcons.assign_policy, title: 'Privacy Policy'),
+                      ),
+                      GestureDetector(
+                        onTap: () => launchUrl(Uri.parse('https://tempbox.rishisingh.in/terms-of-service.html')),
+                        child: const CustomTile(isLast: true, icon: FluentIcons.service_activity, title: 'Terms of Service'),
+                      ),
                       vGap(20),
                       GestureDetector(
                         onTap: () => launchUrl(Uri.parse('https://github.com/rishi-singh26/TempBox-Flutter')),

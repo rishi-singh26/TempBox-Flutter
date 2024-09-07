@@ -52,6 +52,22 @@ class IosAppInfo extends StatelessWidget {
               CupertinoListSection.insetGrouped(
                 children: [
                   CupertinoListTile(
+                    title: const Text('Privacy Policy'),
+                    leading: const Icon(FluentIcons.assign_policy, size: 22),
+                    onTap: () => launchUrl(Uri.parse('https://tempbox.rishisingh.in/privacy-policy.html')),
+                    trailing: const CupertinoListTileChevron(),
+                  ),
+                  CupertinoListTile(
+                    title: const Text('Terms of Service'),
+                    leading: const Icon(FluentIcons.service_activity, size: 20),
+                    onTap: () => launchUrl(Uri.parse('https://tempbox.rishisingh.in/terms-of-service.html')),
+                    trailing: const CupertinoListTileChevron(),
+                  ),
+                ],
+              ),
+              CupertinoListSection.insetGrouped(
+                children: [
+                  CupertinoListTile(
                     title: const Text('Open Source Code'),
                     leading: const Icon(FluentIcons.open_source, size: 22),
                     onTap: () => launchUrl(Uri.parse('https://github.com/rishi-singh26/TempBox-Flutter')),
