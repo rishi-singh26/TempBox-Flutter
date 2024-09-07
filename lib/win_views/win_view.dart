@@ -238,7 +238,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
                 MenuFlyoutItem(
                   leading: const Icon(CupertinoIcons.refresh_thick),
                   text: const Text('Refresh Inbox'),
-                  onPressed: _refreshInbox(dataBlocContext, a),
+                  onPressed: () => _refreshInbox(dataBlocContext, a),
                 ),
                 MenuFlyoutItem(
                   leading: const Icon(CupertinoIcons.info_circle),
@@ -278,9 +278,7 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
               message: 'Refresh inbox',
               child: IconButton(
                 icon: const Icon(CupertinoIcons.refresh_thick, size: 20),
-                onPressed: dataState.selectedAddress == null || dataState.selectedAddress?.archived == true
-                    ? null
-                    : () => _refreshInbox(dataBlocContext, dataState.selectedAddress),
+                onPressed: dataState.selectedAddress == null ? null : () => _refreshInbox(dataBlocContext, dataState.selectedAddress),
               ),
             ),
             const SizedBox(width: 10),

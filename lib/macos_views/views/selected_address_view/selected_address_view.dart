@@ -142,9 +142,7 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
             actions: [
               ToolBarIconButton(
                 icon: const MacosIcon(CupertinoIcons.refresh_circled),
-                onPressed: dataState.selectedAddress == null || dataState.selectedAddress?.archived == true
-                    ? null
-                    : () => _refreshInbox(dataBlocContext, dataState.selectedAddress),
+                onPressed: dataState.selectedAddress == null ? null : () => _refreshInbox(dataBlocContext, dataState.selectedAddress),
                 label: 'Refresh',
                 showLabel: false,
                 tooltipMessage: 'Refresh inbox',
@@ -161,9 +159,7 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
               const ToolBarSpacer(),
               ToolBarIconButton(
                 icon: MacosIcon(dataState.selectedMessage?.seen ?? false ? CupertinoIcons.envelope_badge_fill : CupertinoIcons.envelope_open_fill),
-                onPressed: dataState.selectedMessage == null || dataState.selectedAddress?.archived == true
-                    ? null
-                    : () => _toggleMessageSeenStatus(dataBlocContext, dataState),
+                onPressed: dataState.selectedMessage == null ? null : () => _toggleMessageSeenStatus(dataBlocContext, dataState),
                 label: dataState.selectedMessage?.seen ?? false ? 'Mark unread' : 'Mark read',
                 showLabel: false,
                 tooltipMessage: dataState.selectedMessage?.seen ?? false ? 'Mark message as unread' : 'Mark message as read',

@@ -84,7 +84,7 @@ class SidebarView extends StatelessWidget {
                 CustomMacosPulldownButton(
                   icon: CupertinoIcons.ellipsis_circle,
                   items: [
-                    MacosPulldownMenuItem(title: const Text('Refresh Inbox'), onTap: _refreshInbox(dataBlocContext, a)),
+                    MacosPulldownMenuItem(title: const Text('Refresh Inbox'), onTap: () => _refreshInbox(dataBlocContext, a)),
                     MacosPulldownMenuItem(title: const Text('Address Info'), onTap: () => _showAddressInfo(dataBlocContext, a, context)),
                     MacosPulldownMenuItem(title: const Text('Remove Address'), onTap: () => _removeAddress(dataBlocContext, a, context)),
                     MacosPulldownMenuItem(title: const Text('Delete Address'), onTap: () => _deleteAddress(dataBlocContext, a, context)),

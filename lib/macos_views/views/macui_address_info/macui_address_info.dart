@@ -26,16 +26,14 @@ class _MacuiAddressInfoState extends State<MacuiAddressInfo> {
   @override
   void initState() {
     verifiedAddressData = widget.addressData;
-    if (!widget.addressData.archived) {
-      try {
-        final user = MailTm.getUser(widget.addressData.authenticatedUser.account.id);
-        if (user != null) {
-          verifiedAddressData = widget.addressData.copyWith(authenticatedUser: user);
-        }
-        setState(() {});
-      } catch (e) {
-        debugPrint(e.toString());
+    try {
+      final user = MailTm.getUser(widget.addressData.authenticatedUser.account.id);
+      if (user != null) {
+        verifiedAddressData = widget.addressData.copyWith(authenticatedUser: user);
       }
+      setState(() {});
+    } catch (e) {
+      debugPrint(e.toString());
     }
     super.initState();
   }

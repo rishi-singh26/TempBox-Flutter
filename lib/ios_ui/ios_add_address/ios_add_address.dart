@@ -116,7 +116,6 @@ class _IosAddAddressState extends State<IosAddAddress> {
           AddAddressDataEvent(AddressData(
             addressName: addressNameController.text,
             authenticatedUser: authenticatedUser,
-            archived: false,
             password: password,
           )),
         );
