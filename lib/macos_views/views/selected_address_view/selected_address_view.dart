@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:macos_ui/macos_ui.dart';
 // ignore: implementation_imports
 import 'package:macos_ui/src/library.dart';
 import 'package:mailtm_client/mailtm_client.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
@@ -15,6 +18,8 @@ import 'package:tempbox/macos_views/views/selected_address_view/macui_messages_l
 import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/alert_service.dart';
 import 'package:tempbox/services/export_import_address.dart';
+import 'package:tempbox/services/fs_service.dart';
+import 'package:tempbox/services/http_service.dart';
 import 'package:tempbox/services/ui_service.dart';
 
 class SelectedAddressView extends StatefulWidget {
@@ -121,9 +126,7 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
         return MacosScaffold(
           toolBar: ToolBar(
             title: Builder(builder: (context) {
-              if (dataState.selectedAddress == null) {
-                return const Text("Inbox");
-              }
+              if (dataState.selectedAddress == null) return const Text("Inbox");
               List<Message>? messages = dataState.accountIdToMessagesMap[dataState.selectedAddress!.authenticatedUser.account.id];
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,20 +142,33 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
               );
             }),
             titleWidth: 150.0,
+            leading: MacosTooltip(
+              message: 'Toggle Sidebar',
+              useMousePosition: false,
+              child: MacosIconButton(
+                icon: MacosIcon(
+                  CupertinoIcons.sidebar_left,
+                  color: MacosTheme.brightnessOf(context).resolve(const Color.fromRGBO(0, 0, 0, 0.5), const Color.fromRGBO(255, 255, 255, 0.5)),
+                  size: 20.0,
+                ),
+                boxConstraints: const BoxConstraints(minHeight: 20, minWidth: 20, maxWidth: 48, maxHeight: 38),
+                onPressed: () => MacosWindowScope.of(context).toggleSidebar(),
+              ),
+            ),
             actions: [
               ToolBarIconButton(
                 icon: const MacosIcon(CupertinoIcons.refresh_circled),
                 onPressed: dataState.selectedAddress == null ? null : () => _refreshInbox(dataBlocContext, dataState.selectedAddress),
                 label: 'Refresh',
                 showLabel: false,
-                tooltipMessage: 'Refresh inbox',
+                tooltipMessage: dataState.selectedAddress == null ? '' : 'Refresh inbox',
               ),
               ToolBarIconButton(
                 icon: const MacosIcon(CupertinoIcons.info_circle),
                 onPressed: dataState.selectedAddress == null ? null : () => _showAddressInfo(dataBlocContext, dataState.selectedAddress),
                 label: 'Info',
                 showLabel: false,
-                tooltipMessage: 'Address information',
+                tooltipMessage: dataState.selectedAddress == null ? '' : 'Address information',
               ),
               const ToolBarSpacer(),
               const ToolBarDivider(),
@@ -165,18 +181,51 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
                 tooltipMessage: dataState.selectedMessage?.seen ?? false ? 'Mark message as unread' : 'Mark message as read',
               ),
               ToolBarIconButton(
-                icon: const MacosIcon(CupertinoIcons.share),
-                onPressed: dataState.selectedMessage == null ? null : () {},
-                label: 'Share',
-                showLabel: false,
-                tooltipMessage: 'Share message',
-              ),
-              ToolBarIconButton(
                 icon: const MacosIcon(CupertinoIcons.trash),
                 onPressed: dataState.selectedMessage == null ? null : () => _deleteMessage(dataBlocContext, dataState),
                 label: 'Delete',
                 showLabel: false,
-                tooltipMessage: 'Delete message',
+                tooltipMessage: dataState.selectedMessage == null ? '' : 'Delete message',
+              ),
+              ToolBarPullDownButton(
+                label: 'Share Options',
+                icon: CupertinoIcons.share,
+                tooltipMessage: 'Share email options',
+                items: [
+                  MacosPulldownMenuItem(
+                    label: 'Download',
+                    title: const Text('Download Message'),
+                    onTap: dataState.selectedMessage == null
+                        ? null
+                        : () async {
+                            if (dataState.selectedAddress == null || dataState.selectedMessage == null) return;
+                            MessageSource? messageSource = await HttpService.getMessageSource(
+                              dataState.selectedAddress!.authenticatedUser.token,
+                              dataState.selectedMessage!.id,
+                            );
+                            if (messageSource == null) return;
+                            FSService.saveStringToFile(messageSource.data, '${dataState.selectedMessage!.subject}.eml');
+                          },
+                  ),
+                  MacosPulldownMenuItem(
+                    label: 'Share',
+                    title: const Text('Share Message'),
+                    onTap: dataState.selectedMessage == null
+                        ? null
+                        : () async {
+                            if (dataState.selectedAddress == null || dataState.selectedMessage == null) return;
+                            MessageSource? messageSource = await HttpService.getMessageSource(
+                              dataState.selectedAddress!.authenticatedUser.token,
+                              dataState.selectedMessage!.id,
+                            );
+                            if (messageSource == null) return;
+                            Share.shareXFiles(
+                              [XFile.fromData(utf8.encode(messageSource.data), mimeType: 'message/rfc822')],
+                              fileNameOverrides: ['${dataState.selectedMessage!.subject}.eml'],
+                            );
+                          },
+                  ),
+                ],
               ),
               const ToolBarSpacer(),
               const ToolBarDivider(),

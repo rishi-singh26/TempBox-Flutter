@@ -1,9 +1,12 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/gestures.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mailtm_client/mailtm_client.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:system_theme/system_theme.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
@@ -11,11 +14,15 @@ import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/alert_service.dart';
 import 'package:tempbox/services/export_import_address.dart';
+import 'package:tempbox/services/fs_service.dart';
+import 'package:tempbox/services/http_service.dart';
 import 'package:tempbox/services/ui_service.dart';
 import 'package:tempbox/shared/components/app_logo.dart';
 import 'package:tempbox/win_views/views/add_address/winui_add_address.dart';
 import 'package:tempbox/win_views/views/selected_address_view/winui_selected_address_view.dart';
 import 'package:tempbox/win_views/views/winui_address_info/winui_address_info.dart';
+// ignore: unused_import
+import 'package:tempbox/win_views/views/winui_app_info/winui_app_info.dart';
 import 'package:tempbox/win_views/views/winui_import_export/winui_export.dart';
 import 'package:tempbox/win_views/views/winui_import_export/winui_import.dart';
 import 'package:tempbox/win_views/views/winui_removed_addresses/winui_removed_addresses.dart';
@@ -301,19 +308,50 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
             ),
             const SizedBox(width: 10),
             Tooltip(
-              message: 'Share message',
-              child: IconButton(
-                icon: const Icon(FluentIcons.share, size: 20),
-                onPressed: dataState.selectedMessage == null ? null : () {},
-              ),
-            ),
-            const SizedBox(width: 10),
-            Tooltip(
               message: 'Delete message',
               child: IconButton(
                 icon: const Icon(CupertinoIcons.trash, size: 20),
                 onPressed: dataState.selectedMessage == null ? null : () => _deleteMessage(dataBlocContext, dataState),
               ),
+            ),
+            const SizedBox(width: 10),
+            DropDownButton(
+              disabled: dataState.selectedMessage == null,
+              buttonBuilder: (context, onOpen) => IconButton(icon: const Icon(CupertinoIcons.share, size: 20), onPressed: onOpen),
+              title: const Icon(FluentIcons.more, size: 15),
+              items: [
+                MenuFlyoutItem(
+                  text: const Text('Download Message'),
+                  onPressed: dataState.selectedMessage == null
+                      ? null
+                      : () async {
+                          if (dataState.selectedAddress == null || dataState.selectedMessage == null) return;
+                          MessageSource? messageSource = await HttpService.getMessageSource(
+                            dataState.selectedAddress!.authenticatedUser.token,
+                            dataState.selectedMessage!.id,
+                          );
+                          if (messageSource == null) return;
+                          FSService.saveStringToFile(messageSource.data, '${dataState.selectedMessage!.subject}.eml');
+                        },
+                ),
+                MenuFlyoutItem(
+                  text: const Text('Share Message'),
+                  onPressed: dataState.selectedMessage == null
+                      ? null
+                      : () async {
+                          if (dataState.selectedAddress == null || dataState.selectedMessage == null) return;
+                          MessageSource? messageSource = await HttpService.getMessageSource(
+                            dataState.selectedAddress!.authenticatedUser.token,
+                            dataState.selectedMessage!.id,
+                          );
+                          if (messageSource == null) return;
+                          Share.shareXFiles(
+                            [XFile.fromData(utf8.encode(messageSource.data), mimeType: 'message/rfc822')],
+                            fileNameOverrides: ['${dataState.selectedMessage!.subject}.eml'],
+                          );
+                        },
+                ),
+              ],
             ),
             const SizedBox(width: 10),
             const Divider(direction: Axis.vertical),

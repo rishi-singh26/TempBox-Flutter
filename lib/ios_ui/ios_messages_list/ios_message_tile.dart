@@ -1,13 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:mailtm_client/mailtm_client.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/ios_ui/ios_message_detail/ios_message_detail.dart';
 import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/alert_service.dart';
+import 'package:tempbox/services/http_service.dart';
 import 'package:tempbox/services/ui_service.dart';
 import 'package:tempbox/shared/components/blank_badge.dart';
 
@@ -55,6 +59,7 @@ class IosMessageTile extends StatelessWidget {
           groupTag: 'MessageItem',
           key: ValueKey(message.id),
           startActionPane: ActionPane(
+            extentRatio: 0.5,
             motion: const DrawerMotion(),
             dismissible: DismissiblePane(
               confirmDismiss: () async {
@@ -68,13 +73,33 @@ class IosMessageTile extends StatelessWidget {
             children: [
               SlidableAction(
                 onPressed: (_) => _toggleMessageReadStatus(dataBlocContext, dataState.selectedAddress!),
-                backgroundColor: const Color(0XFF0B84FF),
+                backgroundColor: CupertinoColors.systemBlue,
                 foregroundColor: CupertinoColors.white,
                 icon: message.seen ? CupertinoIcons.envelope_badge_fill : CupertinoIcons.envelope_open_fill,
+              ),
+              SlidableAction(
+                onPressed: dataState.selectedMessage == null
+                    ? null
+                    : (_) async {
+                        if (dataState.selectedAddress == null || dataState.selectedMessage == null) return;
+                        MessageSource? messageSource = await HttpService.getMessageSource(
+                          dataState.selectedAddress!.authenticatedUser.token,
+                          dataState.selectedMessage!.id,
+                        );
+                        if (messageSource == null) return;
+                        Share.shareXFiles(
+                          [XFile.fromData(utf8.encode(messageSource.data), mimeType: 'message/rfc822')],
+                          fileNameOverrides: ['${dataState.selectedMessage!.subject}.eml'],
+                        );
+                      },
+                backgroundColor: CupertinoColors.systemPurple,
+                foregroundColor: CupertinoColors.white,
+                icon: CupertinoIcons.share,
               ),
             ],
           ),
           endActionPane: ActionPane(
+            extentRatio: 0.25,
             motion: const DrawerMotion(),
             dismissible: DismissiblePane(
               confirmDismiss: () async {

@@ -1,12 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:mailtm_client/mailtm_client.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/alert_service.dart';
+import 'package:tempbox/services/http_service.dart';
 import 'package:tempbox/services/ui_service.dart';
 import 'package:tempbox/shared/components/blank_badge.dart';
 import 'package:tempbox/android_views/message_detail/message_detail.dart';
@@ -55,6 +59,7 @@ class MessageTile extends StatelessWidget {
           groupTag: 'MessageItem',
           key: ValueKey(message.id),
           startActionPane: ActionPane(
+            extentRatio: 0.5,
             motion: const DrawerMotion(),
             dismissible: DismissiblePane(
               confirmDismiss: () async {
@@ -72,9 +77,29 @@ class MessageTile extends StatelessWidget {
                 foregroundColor: Colors.white,
                 icon: message.seen ? Icons.mark_email_unread_rounded : Icons.mark_email_read_rounded,
               ),
+              SlidableAction(
+                onPressed: dataState.selectedMessage == null
+                    ? null
+                    : (_) async {
+                        if (dataState.selectedAddress == null || dataState.selectedMessage == null) return;
+                        MessageSource? messageSource = await HttpService.getMessageSource(
+                          dataState.selectedAddress!.authenticatedUser.token,
+                          dataState.selectedMessage!.id,
+                        );
+                        if (messageSource == null) return;
+                        Share.shareXFiles(
+                          [XFile.fromData(utf8.encode(messageSource.data), mimeType: 'message/rfc822')],
+                          fileNameOverrides: ['${dataState.selectedMessage!.subject}.eml'],
+                        );
+                      },
+                backgroundColor: Colors.indigo,
+                foregroundColor: Colors.white,
+                icon: Icons.share,
+              ),
             ],
           ),
           endActionPane: ActionPane(
+            extentRatio: 0.25,
             motion: const DrawerMotion(),
             dismissible: DismissiblePane(
               confirmDismiss: () async {
