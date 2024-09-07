@@ -26,6 +26,7 @@ dependencies:
   cupertino_modal_sheet: ^1.1.0
   pull_down_button: ^0.9.4
   http: ^1.2.2
+  share_plus: ^10.0.2
 
 dev_dependencies:
   flutter_test:
