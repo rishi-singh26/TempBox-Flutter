@@ -9,6 +9,7 @@ import 'package:tempbox/macos_views/views/mac_app_info/mac_license_page.dart';
 import 'package:tempbox/macos_views/views/macui_address_info/macos_card.dart';
 import 'package:tempbox/services/alert_service.dart';
 import 'package:tempbox/shared/components/app_logo.dart';
+import 'package:tempbox/shared/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MacAppInfo extends StatelessWidget {
@@ -18,7 +19,7 @@ class MacAppInfo extends StatelessWidget {
     bool? choice = await AlertService.getConformation(
       context: context,
       title: 'Alert',
-      content: 'Are you sure you want to reset app data, this will delete all addresses and you will loose access to all your emails!',
+      content: AppConstatns.resetAppData,
     );
     if (choice == true && context.mounted && dataBlocContext.mounted) {
       bool? rechoice = await AlertService.getConformation(

@@ -6,6 +6,7 @@ import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/services/alert_service.dart';
 import 'package:tempbox/shared/components/app_logo.dart';
+import 'package:tempbox/shared/constants.dart';
 import 'package:tempbox/win_views/views/winui_app_info/winui_license_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -16,7 +17,7 @@ class WinUIAppInfo extends StatelessWidget {
     bool? choice = await AlertService.getConformation(
       context: context,
       title: 'Alert',
-      content: 'Are you sure you want to reset app data, this will delete all addresses and you will loose access to all your emails!',
+      content: AppConstatns.resetAppData,
     );
     if (choice == true && context.mounted && dataBlocContext.mounted) {
       bool? rechoice = await AlertService.getConformation(
