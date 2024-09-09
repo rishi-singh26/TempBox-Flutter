@@ -174,6 +174,7 @@ class _AddAddressState extends State<AddAddress> {
                 readOnly: showSpinner,
                 controller: addressNameController,
                 decoration: TextFieldStyles.inputDecoration(context, 'Address name (Optional)'),
+                textCapitalization: TextCapitalization.words,
               ),
             ),
             Padding(
