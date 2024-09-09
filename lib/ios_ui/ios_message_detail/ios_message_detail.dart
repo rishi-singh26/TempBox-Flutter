@@ -37,6 +37,7 @@ class IosMessageDetail extends StatelessWidget {
             middle: Text(UiService.getMessageFromName(messageWithHtml)),
             previousPageTitle: dataState.selectedAddress!.addressName,
             trailing: CupertinoButton(
+              padding: EdgeInsets.zero,
               onPressed: dataState.selectedMessage == null
                   ? null
                   : () async {
@@ -53,7 +54,14 @@ class IosMessageDetail extends StatelessWidget {
                     },
               child: const Icon(CupertinoIcons.share),
             )),
-        child: RenderMessage(message: messageWithHtml),
+        child: LayoutBuilder(builder: (context, constraints) {
+          bool isVertical = constraints.maxHeight > constraints.maxWidth;
+          double horizontalPadding = isVertical ? 0 : 100;
+          return Padding(
+            padding: EdgeInsets.only(left: horizontalPadding, right: horizontalPadding, top: 5),
+            child: RenderMessage(message: messageWithHtml),
+          );
+        }),
       );
     });
   }

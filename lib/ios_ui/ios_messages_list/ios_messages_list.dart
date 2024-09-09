@@ -84,6 +84,7 @@ class IosMessagesList extends StatelessWidget {
                 border: null,
                 previousPageTitle: 'TempBox',
                 trailing: CupertinoButton(
+                  padding: EdgeInsets.zero,
                   onPressed: () => _openAddressInfoSheet(context, dataBlocContext, dataState.selectedAddress!),
                   child: const Icon(CupertinoIcons.info_circle),
                 ),
