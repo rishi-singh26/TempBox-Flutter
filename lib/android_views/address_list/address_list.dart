@@ -89,111 +89,101 @@ class _AddressListState extends State<AddressList> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return BlocBuilder<DataBloc, DataState>(
-      buildWhen: (previous, current) => false,
-      builder: (dataBlocContext, dataState) {
-        if (!dataState.didRefreshAddressData) {
-          BlocProvider.of<DataBloc>(dataBlocContext).add(const LoginToAccountsEvent());
-        }
-        return BlocBuilder<DataBloc, DataState>(
-          builder: (dataBlocContext, dataState) {
-            return SlidableAutoCloseBehavior(
-              child: Scaffold(
-                body: LayoutBuilder(builder: (context, constraints) {
-                  bool isVertical = constraints.maxHeight > constraints.maxWidth;
-                  List<Widget> actions = [
-                    PopupMenuButton<int>(
-                      initialValue: null,
-                      onSelected: (int item) => _handleOptionTap(context, dataBlocContext, item),
-                      itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-                        PopupMenuItem<int>(
-                          enabled: dataState.addressList.isNotEmpty,
-                          value: 0,
-                          child: const ListTile(leading: Icon(Icons.arrow_circle_up_rounded), title: Text('Export Addresses')),
-                        ),
-                        const PopupMenuItem<int>(
-                          value: 1,
-                          child: ListTile(leading: Icon(Icons.arrow_circle_down_rounded), title: Text('Import Addresses')),
-                        ),
-                        const PopupMenuDivider(),
-                        PopupMenuItem<int>(
-                          enabled: dataState.removedAddresses.isNotEmpty,
-                          value: 2,
-                          child: const ListTile(leading: Icon(Icons.arrow_circle_down_rounded), title: Text('Removed Addresses')),
-                        ),
-                        const PopupMenuDivider(),
-                        const PopupMenuItem<int>(
-                          value: 3,
-                          child: ListTile(leading: Icon(Icons.info_outline_rounded), title: Text('About TempBox')),
-                        ),
-                      ],
-                    ),
-                  ];
-                  if (dataState.addressList.isEmpty) {
-                    return CustomScrollView(
-                      slivers: [SliverAppBar.large(title: const Text('TempBox'), actions: actions)],
-                    );
-                  }
-                  return RefreshIndicator(
-                    onRefresh: () async {
-                      BlocProvider.of<DataBloc>(dataBlocContext).add(const LoginToAccountsEvent());
-                    },
-                    child: CustomScrollView(
-                      slivers: [
-                        if (isVertical) SliverAppBar.large(title: Text(widget.title), actions: actions),
-                        if (!isVertical) SliverAppBar(title: Text(widget.title), actions: actions, pinned: true),
-                        SliverList.builder(
-                          itemCount: dataState.addressList.length,
-                          itemBuilder: (context, index) => AddressTile(
-                            addressData: dataState.addressList[index],
-                            isFirst: index == 0,
-                            isLast: index == dataState.addressList.length - 1,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }),
-                floatingActionButton: FloatingActionButton(
-                  onPressed: () => _openNewAddressSheet(dataBlocContext),
-                  tooltip: 'New Address',
-                  child: const Icon(Icons.add),
-                ),
-                floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
-                bottomNavigationBar: BottomAppBar(
-                  child: Row(
-                    children: <Widget>[
-                      RichText(
-                        text: TextSpan(
-                          text: "Powered by ",
-                          style: theme.textTheme.bodyMedium?.copyWith(fontSize: 15),
-                          children: <TextSpan>[
-                            TextSpan(
-                              text: 'mail.tm',
-                              style: TextStyle(color: theme.hintColor),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () async {
-                                  bool? choice = await AlertService.getConformation(
-                                    context: context,
-                                    title: 'Do you want to continue?',
-                                    content: 'This will open mail.tm website.',
-                                  );
-                                  if (choice == true) {
-                                    await launchUrl(Uri.parse('https://mail.tm'));
-                                  }
-                                },
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
+    return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
+      return SlidableAutoCloseBehavior(
+        child: Scaffold(
+          body: LayoutBuilder(builder: (context, constraints) {
+            bool isVertical = constraints.maxHeight > constraints.maxWidth;
+            List<Widget> actions = [
+              PopupMenuButton<int>(
+                initialValue: null,
+                onSelected: (int item) => _handleOptionTap(context, dataBlocContext, item),
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+                  PopupMenuItem<int>(
+                    enabled: dataState.addressList.isNotEmpty,
+                    value: 0,
+                    child: const ListTile(leading: Icon(Icons.arrow_circle_up_rounded), title: Text('Export Addresses')),
                   ),
-                ),
+                  const PopupMenuItem<int>(
+                    value: 1,
+                    child: ListTile(leading: Icon(Icons.arrow_circle_down_rounded), title: Text('Import Addresses')),
+                  ),
+                  const PopupMenuDivider(),
+                  PopupMenuItem<int>(
+                    enabled: dataState.removedAddresses.isNotEmpty,
+                    value: 2,
+                    child: const ListTile(leading: Icon(Icons.arrow_circle_down_rounded), title: Text('Removed Addresses')),
+                  ),
+                  const PopupMenuDivider(),
+                  const PopupMenuItem<int>(
+                    value: 3,
+                    child: ListTile(leading: Icon(Icons.info_outline_rounded), title: Text('About TempBox')),
+                  ),
+                ],
+              ),
+            ];
+            if (dataState.addressList.isEmpty) {
+              return CustomScrollView(
+                slivers: [SliverAppBar.large(title: const Text('TempBox'), actions: actions)],
+              );
+            }
+            return RefreshIndicator(
+              onRefresh: () async {
+                BlocProvider.of<DataBloc>(dataBlocContext).add(const LoginToAccountsEvent());
+              },
+              child: CustomScrollView(
+                slivers: [
+                  if (isVertical) SliverAppBar.large(title: Text(widget.title), actions: actions),
+                  if (!isVertical) SliverAppBar(title: Text(widget.title), actions: actions, pinned: true),
+                  SliverList.builder(
+                    itemCount: dataState.addressList.length,
+                    itemBuilder: (context, index) => AddressTile(
+                      addressData: dataState.addressList[index],
+                      isFirst: index == 0,
+                      isLast: index == dataState.addressList.length - 1,
+                    ),
+                  ),
+                ],
               ),
             );
-          },
-        );
-      },
-    );
+          }),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () => _openNewAddressSheet(dataBlocContext),
+            tooltip: 'New Address',
+            child: const Icon(Icons.add),
+          ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
+          bottomNavigationBar: BottomAppBar(
+            child: Row(
+              children: <Widget>[
+                RichText(
+                  text: TextSpan(
+                    text: "Powered by ",
+                    style: theme.textTheme.bodyMedium?.copyWith(fontSize: 15),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: 'mail.tm',
+                        style: TextStyle(color: theme.hintColor),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () async {
+                            bool? choice = await AlertService.getConformation(
+                              context: context,
+                              title: 'Do you want to continue?',
+                              content: 'This will open mail.tm website.',
+                            );
+                            if (choice == true) {
+                              await launchUrl(Uri.parse('https://mail.tm'));
+                            }
+                          },
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      );
+    });
   }
 }
