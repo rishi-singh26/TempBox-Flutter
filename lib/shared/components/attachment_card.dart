@@ -32,7 +32,7 @@ class _AttachmentCardState extends State<AttachmentCard> {
       Directory appDocDir = await getApplicationDocumentsDirectory();
       String filePath = '${appDocDir.path}/${widget.attachment.filename}';
       File file = File(filePath);
-      file.writeAsBytes(attachmentBytes);
+      await file.writeAsBytes(attachmentBytes);
       await OpenFile.open(filePath);
       setState(() => isDownloading = false);
     } catch (e) {
