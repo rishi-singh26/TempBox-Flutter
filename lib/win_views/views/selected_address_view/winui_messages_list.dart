@@ -71,6 +71,8 @@ class _WinuiMessagesListState extends State<WinuiMessagesList> {
           itemCount: messages.length,
           itemBuilder: (context, index) {
             MessageData message = messages[index];
+            String title = UiService.getMessageFromName(message);
+            title = title.length > 22 ? title.substring(0, 21) : title;
             return ListTile.selectable(
               selected: _selectedIndex == index,
               onSelectionChange: (v) {
@@ -80,7 +82,7 @@ class _WinuiMessagesListState extends State<WinuiMessagesList> {
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(UiService.getMessageFromName(message)),
+                  Text(title),
                   Text(
                     UiService.formatTimeTo12Hour(message.createdAt),
                     style: FluentTheme.of(context).typography.caption,

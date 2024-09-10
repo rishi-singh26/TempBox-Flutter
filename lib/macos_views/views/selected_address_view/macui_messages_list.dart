@@ -18,6 +18,7 @@ class MacuiMessagesList extends StatefulWidget {
 }
 
 class _MacuiMessagesListState extends State<MacuiMessagesList> {
+  final scrollController = ScrollController();
   final FocusNode _focusNode = FocusNode();
   int _selectedIndex = 0;
 
@@ -70,72 +71,74 @@ class _MacuiMessagesListState extends State<MacuiMessagesList> {
           }
           return KeyEventResult.ignored;
         },
-        child: ListView.separated(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          itemCount: messages.length,
-          separatorBuilder: (context, index) => index == _selectedIndex || index == _selectedIndex - 1
-              ? const SizedBox.shrink()
-              : const Divider(indent: 15, endIndent: 15, thickness: 0, height: 0),
-          itemBuilder: (context, index) {
-            MessageData message = messages[index];
-            return Container(
-              margin: const EdgeInsets.symmetric(horizontal: 8),
-              padding: const EdgeInsets.only(left: 8, right: 8, top: 6, bottom: 6),
-              decoration: BoxDecoration(
-                color: _selectedIndex == index
-                    ? ProvideColor.getSelectedColor(
-                        accentColor: MacosTheme.of(context).accentColor ?? AccentColor.blue,
-                        isDarkModeEnabled: MacosTheme.of(context).brightness.isDark,
-                        isWindowMain: true,
-                      )
-                    : Colors.transparent,
-                borderRadius: const BorderRadius.all(Radius.circular(5)),
-              ),
-              clipBehavior: Clip.hardEdge,
-              child: MacosListTile(
-                onClick: () => setState(() {
-                  _setSelectedIndex(index);
-                  BlocProvider.of<DataBloc>(dataBlocContext).add(SelectMessageEvent(message: message, addressData: dataState.selectedAddress!));
-                }),
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            if (!message.seen)
-                              BlankBadge(
-                                color: index == _selectedIndex
-                                    ? MacosColors.white
-                                    : ProvideColor.getSelectedColor(
-                                        accentColor: MacosTheme.of(context).accentColor ?? AccentColor.blue,
-                                        isDarkModeEnabled: MacosTheme.of(context).brightness.isDark,
-                                        isWindowMain: true,
-                                      ),
-                              ),
-                            if (!message.seen) const SizedBox(width: 7),
-                            Text(
-                              UiService.getMessageFromName(message),
-                              style: typography.body.copyWith(fontWeight: MacosFontWeight.w510),
-                              maxLines: 1,
-                            ),
-                          ],
-                        ),
-                        Text(
-                          UiService.formatTimeTo12Hour(message.createdAt),
-                          style: typography.callout,
-                        ),
-                      ],
-                    ),
-                    Text(message.subject, style: typography.callout, maxLines: 2),
-                    if (message.intro.isNotEmpty) Text(message.intro, style: typography.callout, maxLines: 2),
-                  ],
+        child: Scrollbar(
+          controller: scrollController,
+          child: ListView.separated(
+            controller: scrollController,
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            itemCount: messages.length,
+            separatorBuilder: (context, index) => index == _selectedIndex || index == _selectedIndex - 1
+                ? const SizedBox.shrink()
+                : const Divider(indent: 15, endIndent: 15, thickness: 0, height: 0),
+            itemBuilder: (context, index) {
+              MessageData message = messages[index];
+              String title = UiService.getMessageFromName(message);
+              title = title.length > 22 ? title.substring(0, 21) : title;
+              return Container(
+                margin: const EdgeInsets.symmetric(horizontal: 8),
+                padding: const EdgeInsets.only(left: 8, right: 8, top: 6, bottom: 6),
+                decoration: BoxDecoration(
+                  color: _selectedIndex == index
+                      ? ProvideColor.getSelectedColor(
+                          accentColor: MacosTheme.of(context).accentColor ?? AccentColor.blue,
+                          isDarkModeEnabled: MacosTheme.of(context).brightness.isDark,
+                          isWindowMain: true,
+                        )
+                      : Colors.transparent,
+                  borderRadius: const BorderRadius.all(Radius.circular(5)),
                 ),
-              ),
-            );
-          },
+                clipBehavior: Clip.hardEdge,
+                child: MacosListTile(
+                  onClick: () => setState(() {
+                    _setSelectedIndex(index);
+                    BlocProvider.of<DataBloc>(dataBlocContext).add(SelectMessageEvent(message: message, addressData: dataState.selectedAddress!));
+                  }),
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              if (!message.seen)
+                                BlankBadge(
+                                  color: index == _selectedIndex
+                                      ? MacosColors.white
+                                      : ProvideColor.getSelectedColor(
+                                          accentColor: MacosTheme.of(context).accentColor ?? AccentColor.blue,
+                                          isDarkModeEnabled: MacosTheme.of(context).brightness.isDark,
+                                          isWindowMain: true,
+                                        ),
+                                ),
+                              if (!message.seen) const SizedBox(width: 7),
+                              Text(title, style: typography.body.copyWith(fontWeight: MacosFontWeight.w510), maxLines: 1),
+                            ],
+                          ),
+                          Text(
+                            UiService.formatTimeTo12Hour(message.createdAt),
+                            style: typography.callout,
+                          ),
+                        ],
+                      ),
+                      Text(message.subject, style: typography.callout, maxLines: 2),
+                      if (message.intro.isNotEmpty) Text(message.intro, style: typography.callout, maxLines: 2),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
         ),
       );
     });
