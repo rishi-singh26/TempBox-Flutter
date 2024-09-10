@@ -41,7 +41,7 @@ class IosAppInfo extends StatelessWidget {
               CupertinoListSection.insetGrouped(
                 children: const [
                   CupertinoListTile(
-                    title: Text('Version 1.2.2'),
+                    title: Text(AppConstatns.appVersion),
                     leading: Icon(FluentIcons.verified_brand),
                   ),
                   CupertinoListTile(

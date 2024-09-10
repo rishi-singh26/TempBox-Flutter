@@ -30,7 +30,7 @@ class AndroidAppInfo extends StatelessWidget {
               const PaddedCard(
                 child: Column(
                   children: [
-                    ListTile(title: Text('Version 1.2.2'), leading: Icon(FluentIcons.verified_brand)),
+                    ListTile(title: Text(AppConstatns.appVersion), leading: Icon(FluentIcons.verified_brand)),
                     ListTile(title: Text('Powered by Mail.tm'), leading: Icon(FluentIcons.power_button)),
                   ],
                 ),

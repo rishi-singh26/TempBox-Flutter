@@ -64,7 +64,7 @@ class MacAppInfo extends StatelessWidget {
                   child: ListView(
                     shrinkWrap: true,
                     children: [
-                      const CustomTile(isFirst: true, icon: FluentIcons.verified_brand, title: 'Version 1.2.2', showTrailing: false),
+                      const CustomTile(isFirst: true, icon: FluentIcons.verified_brand, title: AppConstatns.appVersion, showTrailing: false),
                       const CustomTile(isLast: true, icon: FluentIcons.power_button, title: 'Powered by Mail.tm', showTrailing: false),
                       vGap(20),
                       GestureDetector(
