@@ -27,6 +27,7 @@ dependencies:
   pull_down_button: ^0.9.4
   http: ^1.2.2
   share_plus: ^10.0.2
+  open_file: ^3.5.3
 
 dev_dependencies:
   flutter_test:

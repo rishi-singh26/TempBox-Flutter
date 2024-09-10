@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  open_file_linux
   screen_retriever
   system_theme
   url_launcher_linux
