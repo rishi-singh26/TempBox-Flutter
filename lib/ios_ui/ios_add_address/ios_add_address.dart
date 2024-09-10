@@ -197,6 +197,7 @@ class _IosAddAddressState extends State<IosAddAddress> {
                   controller: addressNameController,
                   placeholder: 'Address name (Optional)',
                   padding: const EdgeInsetsDirectional.fromSTEB(10, 6, 10, 6),
+                  textCapitalization: TextCapitalization.words,
                 ),
               ],
             ),
@@ -293,6 +294,7 @@ class _IosAddAddressState extends State<IosAddAddress> {
                         controller: loginAddressController,
                         padding: const EdgeInsetsDirectional.fromSTEB(17, 15, 17, 15),
                         placeholder: 'Email',
+                        keyboardType: TextInputType.emailAddress,
                       ),
                       CupertinoTextFormFieldRow(
                         controller: loginPasswordController,

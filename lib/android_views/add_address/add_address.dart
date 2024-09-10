@@ -290,6 +290,7 @@ class _AddAddressState extends State<AddAddress> {
                       readOnly: showSpinner,
                       controller: loginAddressController,
                       decoration: TextFieldStyles.inputDecoration(context, 'Email'),
+                      keyboardType: TextInputType.emailAddress,
                     ),
                   ),
                   vGap(10),
