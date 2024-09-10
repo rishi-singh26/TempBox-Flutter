@@ -1,20 +1,16 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mailtm_client/mailtm_client.dart';
-import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/ios_ui/colors.dart';
-import 'package:tempbox/models/attachment_data.dart';
 import 'package:tempbox/models/message_data.dart';
-import 'package:tempbox/services/byte_converter_service.dart';
 import 'package:tempbox/services/http_service.dart';
 import 'package:tempbox/services/ui_service.dart';
+import 'package:tempbox/shared/components/attachment_card.dart';
 import 'package:tempbox/shared/components/render_message.dart';
 
 class IosMessageDetail extends StatelessWidget {
@@ -75,62 +71,15 @@ class IosMessageDetail extends StatelessWidget {
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: messageWithHtml.attachments.length,
-                      itemBuilder: (context, index) => AttachmentCard(attachment: messageWithHtml.attachments[index]),
+                      itemBuilder: (context, index) {
+                        return AttachmentCard(key: Key(messageWithHtml.attachments[index].id), attachment: messageWithHtml.attachments[index]);
+                      },
                     ),
                   )
               ],
             ),
           );
         }),
-      );
-    });
-  }
-}
-
-class AttachmentCard extends StatefulWidget {
-  final AttachmentData attachment;
-  const AttachmentCard({super.key, required this.attachment});
-
-  @override
-  State<AttachmentCard> createState() => _AttachmentCardState();
-}
-
-class _AttachmentCardState extends State<AttachmentCard> {
-  bool isDownloading = false;
-
-  _downloadFile(AuthenticatedUser authenticatedUser) async {
-    try {
-      setState(() => isDownloading = true);
-      List<int> attachmentBytes = await authenticatedUser.downloadAttachment(widget.attachment.downloadUrl);
-      Directory appDocDir = await getApplicationDocumentsDirectory();
-      String filePath = '${appDocDir.path}/${widget.attachment.filename}';
-      File file = File(filePath);
-      file.writeAsBytes(attachmentBytes);
-      await OpenFile.open(filePath);
-      setState(() => isDownloading = false);
-    } catch (e) {
-      setState(() => isDownloading = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
-      return Container(
-        width: 300,
-        padding: const EdgeInsets.all(8),
-        child: Container(
-          clipBehavior: Clip.hardEdge,
-          decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))),
-          child: CupertinoListTile(
-            backgroundColor: CupertinoTheme.of(context).barBackgroundColor,
-            padding: const EdgeInsets.all(16),
-            title: Text(widget.attachment.filename, maxLines: 2, overflow: TextOverflow.ellipsis),
-            subtitle: Text(ByteConverterService.fromKiloBytes(widget.attachment.size.toDouble()).toHumanReadable(SizeUnit.mb)),
-            onTap: () => _downloadFile(dataState.selectedAddress!.authenticatedUser),
-            trailing: isDownloading ? const CupertinoActivityIndicator() : null,
-          ),
-        ),
       );
     });
   }
