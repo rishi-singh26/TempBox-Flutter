@@ -64,11 +64,11 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
     on<DeleteAddressEvent>((DeleteAddressEvent event, Emitter<DataState> emit) async {
       try {
         List<AddressData> addresses = state.addressList.where((a) => a != event.addressData).toList();
-        await event.addressData.authenticatedUser.delete();
         emit(state.copyWith(
           addressList: addresses,
           setSelectedAddressToNull: state.selectedAddress != null && state.selectedAddress == event.addressData,
         ));
+        await event.addressData.authenticatedUser.delete();
       } catch (e) {
         debugPrint(e.toString());
       }
@@ -76,9 +76,8 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
 
     on<RemoveAddressEvent>((RemoveAddressEvent event, Emitter<DataState> emit) async {
       try {
-        List<AddressData> addresses = state.addressList.where((a) => a != event.addressData).toList();
         emit(state.copyWith(
-          addressList: addresses,
+          addressList: state.addressList.where((a) => a != event.addressData).toList(),
           removedAddresses: [...state.removedAddresses, event.addressData],
           setSelectedAddressToNull: state.selectedAddress != null && state.selectedAddress == event.addressData,
         ));
