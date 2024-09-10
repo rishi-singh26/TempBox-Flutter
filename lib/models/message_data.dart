@@ -75,8 +75,8 @@ class MessageData {
       attachments: json.containsKey('attachments') ? List<AttachmentData>.from(json['attachments'].map((item) => AttachmentData.fromJson(item))) : [],
       size: json.containsKey('size') ? json['size'] : 0,
       downloadUrl: json.containsKey('downloadUrl') ? json['downloadUrl'] : '',
-      createdAt: json.containsKey('createdAt') ? DateTime.parse(json['createdAt']) : DateTime.now(),
-      updatedAt: json.containsKey('updatedAt') ? DateTime.parse(json['updatedAt']) : DateTime.now(),
+      createdAt: json.containsKey('createdAt') ? DateTime.parse(json['createdAt']).toLocal() : DateTime.now(),
+      updatedAt: json.containsKey('updatedAt') ? DateTime.parse(json['updatedAt']).toLocal() : DateTime.now(),
     );
   }
 
