@@ -13,12 +13,13 @@ class RenderMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isMobile = Platform.isAndroid || Platform.isIOS;
     String headerHTML =
-        "<div style='display: flex; margin-bottom: 10px;'><div style='display: flex; width: 40px; height: 40px; border-radius: 20px; background-color: #007AFF; align-items: center; justify-content: center; color: white; font-weight: bold;'>${UiService.getMessageFromName(message).substring(0, 1)}</div><div style='margin-left: 10px;'><div style='font-weight: bold;'>${UiService.getMessageFromName(message)}</div><a href='mailto:${message.from['address'] ?? ''}'>${message.from['address'] ?? ''}</a></div></div>";
+        "<div style='display: flex; ${isMobile ? 'margin-left: 10px;' : ''} margin-bottom: 10px;'><div style='display: flex; width: 40px; height: 40px; border-radius: 20px; background-color: #007AFF; align-items: center; justify-content: center; color: white; font-weight: bold;'>${UiService.getMessageFromName(message).substring(0, 1)}</div><div style='margin-left: 10px;'><div style='font-weight: bold;'>${UiService.getMessageFromName(message)}</div><a href='mailto:${message.from['address'] ?? ''}'>${message.from['address'] ?? ''}</a></div></div>";
 
     final html = message.html.isEmpty ? '<p>Loading...</p>' : headerHTML + message.html.join('');
     return Padding(
-      padding: (Platform.isAndroid || Platform.isIOS) ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      padding: isMobile ? EdgeInsets.zero : const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       child: HtmlWidget(
         html,
         onTapUrl: (url) async {
