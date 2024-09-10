@@ -16,6 +16,7 @@ import 'package:tempbox/macos_views/views/macui_removed_addresses/macui_removed_
 import 'package:tempbox/macos_views/views/message_detail/macui_message_detail.dart';
 import 'package:tempbox/macos_views/views/selected_address_view/macui_messages_list.dart';
 import 'package:tempbox/models/address_data.dart';
+import 'package:tempbox/models/message_data.dart';
 import 'package:tempbox/services/alert_service.dart';
 import 'package:tempbox/services/export_import_address.dart';
 import 'package:tempbox/services/fs_service.dart';
@@ -127,7 +128,7 @@ class _SelectedAddressViewState extends State<SelectedAddressView> {
           toolBar: ToolBar(
             title: Builder(builder: (context) {
               if (dataState.selectedAddress == null) return const Text("Inbox");
-              List<Message>? messages = dataState.accountIdToMessagesMap[dataState.selectedAddress!.authenticatedUser.account.id];
+              List<MessageData>? messages = dataState.accountIdToMessagesMap[dataState.selectedAddress!.authenticatedUser.account.id];
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,

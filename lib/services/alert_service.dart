@@ -168,7 +168,9 @@ class AlertService {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(title),
-          content: Text(truncateContent ? '${content.substring(0, truncateContentLength - 1)}...' : content),
+          content: Text(
+            truncateContent && content.length >= truncateContentLength ? '${content.substring(0, truncateContentLength - 1)}...' : content,
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).canPop() ? Navigator.of(context).pop(true) : null,

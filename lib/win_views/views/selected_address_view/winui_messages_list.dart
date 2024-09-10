@@ -1,10 +1,10 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mailtm_client/mailtm_client.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
+import 'package:tempbox/models/message_data.dart';
 import 'package:tempbox/services/ui_service.dart';
 import 'package:tempbox/shared/components/blank_badge.dart';
 
@@ -39,7 +39,7 @@ class _WinuiMessagesListState extends State<WinuiMessagesList> {
       if (dataState.selectedAddress == null) {
         return const Center(child: Text('No address selected'));
       }
-      List<Message>? messages = dataState.accountIdToMessagesMap[dataState.selectedAddress!.authenticatedUser.account.id];
+      List<MessageData>? messages = dataState.accountIdToMessagesMap[dataState.selectedAddress!.authenticatedUser.account.id];
       if (messages == null || messages.isEmpty) {
         return const Center(child: Text('No Messages'));
       }
@@ -70,7 +70,7 @@ class _WinuiMessagesListState extends State<WinuiMessagesList> {
         child: ListView.builder(
           itemCount: messages.length,
           itemBuilder: (context, index) {
-            Message message = messages[index];
+            MessageData message = messages[index];
             return ListTile.selectable(
               selected: _selectedIndex == index,
               onSelectionChange: (v) {

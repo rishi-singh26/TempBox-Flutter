@@ -4,6 +4,7 @@ import 'package:mailtm_client/mailtm_client.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/models/address_data.dart';
+import 'package:tempbox/models/message_data.dart';
 import 'package:tempbox/services/http_service.dart';
 
 class DataBloc extends HydratedBloc<DataEvent, DataState> {
@@ -15,8 +16,8 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
     on<LoginToAccountsEvent>((LoginToAccountsEvent event, Emitter<DataState> emit) async {
       try {
         List<AddressData> updateAddressList = [];
-        Map<String, List<Message>> accountIdToAddressesMap = {...state.accountIdToMessagesMap};
-        Map<String, Message> updatedMessageIdToMessageMap = {...state.messageIdToMessageMap};
+        Map<String, List<MessageData>> accountIdToAddressesMap = {...state.accountIdToMessagesMap};
+        Map<String, MessageData> updatedMessageIdToMessageMap = {...state.messageIdToMessageMap};
         for (var address in state.addressList) {
           if (address.isAddressActive) {
             AuthenticatedUser? loggedInUser;
@@ -28,11 +29,12 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
             if (loggedInUser == null) {
               updateAddressList.add(address);
             } else {
-              final messages = await loggedInUser.messagesAt(1);
+              final messages = await HttpService.getMessages(loggedInUser.token);
+              if (messages == null) return;
               messages.isNotEmpty ? accountIdToAddressesMap[loggedInUser.account.id] = messages : null;
               updateAddressList.add(address.copyWith(authenticatedUser: loggedInUser));
               // get messageIdToMessages map for this account
-              Map<String, Message> messagesMap = await _getMessagesWithHTMlFor(messages, loggedInUser);
+              Map<String, MessageData> messagesMap = await _getMessagesWithHTMlFor(messages, loggedInUser);
               // update updatedMessageIdToMessages map with updated messages for this account
               updatedMessageIdToMessageMap.addAll(messagesMap);
             }
@@ -100,11 +102,12 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
 
     on<GetMessagesEvent>((GetMessagesEvent event, Emitter<DataState> emit) async {
       try {
-        final messages = await event.addressData.authenticatedUser.messagesAt(1);
+        final messages = await HttpService.getMessages(event.addressData.authenticatedUser.token);
+        if (messages == null) return;
         final updatesMessagesMap = {...state.accountIdToMessagesMap};
         messages.isNotEmpty ? updatesMessagesMap[event.addressData.authenticatedUser.account.id] = messages : null;
         // updated the selected message with updated data
-        Message? selectedMessage = messages.where((m) => m.id == state.selectedMessage?.id).firstOrNull;
+        MessageData? selectedMessage = messages.where((m) => m.id == state.selectedMessage?.id).firstOrNull;
         emit(state.copyWith(accountIdToMessagesMap: updatesMessagesMap));
         if (selectedMessage != null) {
           add(SelectMessageEvent(message: selectedMessage, addressData: event.addressData, shouldUpdateMessage: false));
@@ -147,13 +150,14 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
           await event.addressData.authenticatedUser.readMessage(event.message.id);
           emit(state.copyWith(selectedMessage: event.message));
         }
-        Message message = await event.addressData.authenticatedUser.messageFrom(event.message.id);
+        MessageData? message = await HttpService.getMessageFromId(event.addressData.authenticatedUser.token, event.message.id);
+        if (message == null) return;
         // all messages in selected address
-        List<Message>? messages = state.accountIdToMessagesMap[state.selectedAddress!.authenticatedUser.account.id];
+        List<MessageData>? messages = state.accountIdToMessagesMap[state.selectedAddress!.authenticatedUser.account.id];
         final updatedAccountIdToMessgesMap = {...state.accountIdToMessagesMap};
         if (messages != null) {
           // in all messages list, update the newly fetched message
-          List<Message> updatedMessages = messages.map((m) {
+          List<MessageData> updatedMessages = messages.map((m) {
             if (m.id == message.id) return message;
             return m;
           }).toList();
@@ -176,7 +180,7 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
 
     on<DeleteMessageEvent>((DeleteMessageEvent event, Emitter<DataState> emit) async {
       try {
-        List<Message> messages =
+        List<MessageData> messages =
             (state.accountIdToMessagesMap[event.addressData.authenticatedUser.account.id] ?? []).where((m) => m.id != event.message.id).toList();
         event.addressData.isAddressActive ? await event.addressData.authenticatedUser.deleteMessage(event.message.id) : null;
         final updatesMessagesMap = {...state.accountIdToMessagesMap};
@@ -192,14 +196,14 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
     on<ImportAddresses>((ImportAddresses event, Emitter<DataState> emit) async {
       try {
         List<AddressData> loggedInAddresses = [];
-        Map<String, List<Message>> accountIdToAddressesMap = {};
+        Map<String, List<MessageData>> accountIdToAddressesMap = {};
         for (var address in event.addresses) {
           AuthenticatedUser? user = await MailTm.login(address: address.authenticatedUser.account.address, password: address.password);
           if (user == null) {
             loggedInAddresses.add(address.copyWith(archived: false));
           } else {
-            final messages = await user.messagesAt(1);
-            messages.isNotEmpty ? accountIdToAddressesMap[user.account.id] = messages : null;
+            final messages = await HttpService.getMessages(user.token);
+            messages != null && messages.isNotEmpty ? accountIdToAddressesMap[user.account.id] = messages : null;
             address.copyWith(authenticatedUser: user);
           }
           loggedInAddresses.add(user != null ? address.copyWith(authenticatedUser: user) : address.copyWith(archived: false));
@@ -220,27 +224,27 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
     });
   }
 
-  Map<String, List<Message>> _mergeMaps(Map<String, List<Message>> map1, Map<String, List<Message>> map2) {
-    final result = <String, List<Message>>{};
+  Map<String, List<MessageData>> _mergeMaps(Map<String, List<MessageData>> map1, Map<String, List<MessageData>> map2) {
+    final result = <String, List<MessageData>>{};
     map1.forEach((key, value) {
-      result[key] = List<Message>.from(value);
+      result[key] = List<MessageData>.from(value);
     });
     map2.forEach((key, value) {
       if (result.containsKey(key)) {
         result[key]!.addAll(value);
       } else {
-        result[key] = List<Message>.from(value);
+        result[key] = List<MessageData>.from(value);
       }
     });
     return result;
   }
 
-  Future<Map<String, Message>> _getMessagesWithHTMlFor(List<Message> messages, AuthenticatedUser user) async {
-    Map<String, Message> updatedMessageIdToMessageMap = {...state.messageIdToMessageMap};
+  Future<Map<String, MessageData>> _getMessagesWithHTMlFor(List<MessageData> messages, AuthenticatedUser user) async {
+    Map<String, MessageData> updatedMessageIdToMessageMap = {...state.messageIdToMessageMap};
     for (var m in messages) {
       try {
-        Message mes = await user.messageFrom(m.id);
-        updatedMessageIdToMessageMap[mes.id] = mes;
+        MessageData? mes = await HttpService.getMessageFromId(user.token, m.id);
+        if (mes != null) updatedMessageIdToMessageMap[mes.id] = mes;
       } catch (e) {
         debugPrint(e.toString());
       }

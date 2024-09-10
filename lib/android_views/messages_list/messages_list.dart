@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:mailtm_client/mailtm_client.dart';
 import 'package:tempbox/android_views/address_info/address_info.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/models/address_data.dart';
+import 'package:tempbox/models/message_data.dart';
 import 'package:tempbox/services/overlay_service.dart';
 import 'package:tempbox/services/ui_service.dart';
 import 'package:tempbox/android_views/messages_list/message_tile.dart';
@@ -71,14 +71,14 @@ class MessageList extends StatelessWidget {
       if (dataState.selectedAddress == null) {
         return const SliverToBoxAdapter(child: Center(child: Text('Address not selected')));
       }
-      List<Message>? messages = dataState.accountIdToMessagesMap[dataState.selectedAddress!.authenticatedUser.account.id];
+      List<MessageData>? messages = dataState.accountIdToMessagesMap[dataState.selectedAddress!.authenticatedUser.account.id];
       if (messages == null) {
         return const SliverToBoxAdapter(child: Center(child: Text('Inbox empty')));
       }
       return SliverList.separated(
         itemCount: messages.length,
         itemBuilder: (context, index) {
-          Message message = messages[index];
+          MessageData message = messages[index];
           return MessageTile(message: message, selectedAddress: dataState.selectedAddress!);
         },
         separatorBuilder: (context, index) => const Divider(indent: 20, height: 1),

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:mailtm_client/mailtm_client.dart';
 import 'package:http/http.dart' as http;
+import 'package:tempbox/models/message_data.dart';
 
 class CreateAddressResponse {
   final AuthenticatedUser? authenticatedUser;
@@ -48,16 +49,55 @@ class HttpService {
     final url = Uri.parse('https://api.mail.tm/me');
 
     try {
-      final response = await http.get(
-        url,
-        headers: {
-          HttpHeaders.contentTypeHeader: 'application/ld+json',
-          HttpHeaders.authorizationHeader: 'Bearer ${token.token}',
-        },
-      );
+      final response = await http.get(url, headers: {
+        HttpHeaders.contentTypeHeader: 'application/ld+json',
+        HttpHeaders.authorizationHeader: 'Bearer ${token.token}',
+      });
 
       if (response.statusCode == HttpStatus.ok) {
         return AuthenticatedUser(account: Account.fromJson(jsonDecode(response.body)), password: password, token: token.token);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      // print('Error: $e');
+      return null;
+    }
+  }
+
+  static Future<List<MessageData>?> getMessages(String token) async {
+    final url = Uri.parse('https://api.mail.tm/messages');
+
+    try {
+      final response = await http.get(url, headers: {
+        HttpHeaders.contentTypeHeader: 'application/ld+json',
+        HttpHeaders.authorizationHeader: 'Bearer $token',
+      });
+
+      if (response.statusCode == HttpStatus.ok) {
+        Map<String, dynamic> decodedJson = jsonDecode(response.body);
+        List<dynamic> json = decodedJson['hydra:member'] as List<dynamic>;
+        List<MessageData> messages = json.map((json) => MessageData.fromJson(json)).toList();
+        return messages;
+      }
+      return null;
+    } catch (e) {
+      // print('Error: $e');
+      return null;
+    }
+  }
+
+  static Future<MessageData?> getMessageFromId(String token, String messageId) async {
+    final url = Uri.parse('https://api.mail.tm/messages/$messageId');
+
+    try {
+      final response = await http.get(url, headers: {
+        HttpHeaders.contentTypeHeader: 'application/ld+json',
+        HttpHeaders.authorizationHeader: 'Bearer $token',
+      });
+
+      if (response.statusCode == HttpStatus.ok) {
+        return MessageData.fromJson(jsonDecode(response.body));
       } else {
         return null;
       }
@@ -71,13 +111,10 @@ class HttpService {
     final url = Uri.parse('https://api.mail.tm/messages/$messageId/download');
 
     try {
-      final response = await http.get(
-        url,
-        headers: {
-          HttpHeaders.contentTypeHeader: 'message/rfc822',
-          HttpHeaders.authorizationHeader: 'Bearer $token',
-        },
-      );
+      final response = await http.get(url, headers: {
+        HttpHeaders.contentTypeHeader: 'message/rfc822',
+        HttpHeaders.authorizationHeader: 'Bearer $token',
+      });
 
       if (response.statusCode == HttpStatus.ok) {
         return MessageSource(id: messageId, data: response.body);

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:macos_ui/macos_ui.dart';
-import 'package:mailtm_client/mailtm_client.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/macos_views/provide_color.dart';
+import 'package:tempbox/models/message_data.dart';
 import 'package:tempbox/services/ui_service.dart';
 import 'package:tempbox/shared/components/blank_badge.dart';
 
@@ -42,7 +42,7 @@ class _MacuiMessagesListState extends State<MacuiMessagesList> {
       if (dataState.selectedAddress == null) {
         return const Center(child: Text('No address selected'));
       }
-      List<Message>? messages = dataState.accountIdToMessagesMap[dataState.selectedAddress!.authenticatedUser.account.id];
+      List<MessageData>? messages = dataState.accountIdToMessagesMap[dataState.selectedAddress!.authenticatedUser.account.id];
       if (messages == null || messages.isEmpty) {
         return const Center(child: Text('Inbox empty'));
       }
@@ -77,7 +77,7 @@ class _MacuiMessagesListState extends State<MacuiMessagesList> {
               ? const SizedBox.shrink()
               : const Divider(indent: 15, endIndent: 15, thickness: 0, height: 0),
           itemBuilder: (context, index) {
-            Message message = messages[index];
+            MessageData message = messages[index];
             return Container(
               margin: const EdgeInsets.symmetric(horizontal: 8),
               padding: const EdgeInsets.only(left: 8, right: 8, top: 6, bottom: 6),

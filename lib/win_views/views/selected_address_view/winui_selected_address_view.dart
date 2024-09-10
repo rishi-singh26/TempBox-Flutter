@@ -1,8 +1,8 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mailtm_client/mailtm_client.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
+import 'package:tempbox/models/message_data.dart';
 import 'package:tempbox/shared/components/render_message.dart';
 import 'package:tempbox/win_views/views/selected_address_view/winui_messages_list.dart';
 
@@ -41,7 +41,7 @@ class WinuiSelectedAddressView extends StatelessWidget {
               if (dataState.selectedMessage == null) {
                 return const Center(child: Text(''));
               }
-              Message messageWithHtml = dataState.messageIdToMessageMap[dataState.selectedMessage!.id] ?? dataState.selectedMessage!;
+              MessageData messageWithHtml = dataState.messageIdToMessageMap[dataState.selectedMessage!.id] ?? dataState.selectedMessage!;
               return ScaffoldPage(
                 padding: const EdgeInsets.symmetric(vertical: 3),
                 content: RenderMessage(key: Key(messageWithHtml.id), message: messageWithHtml),

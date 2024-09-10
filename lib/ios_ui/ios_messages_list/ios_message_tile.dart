@@ -10,6 +10,7 @@ import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/ios_ui/ios_message_detail/ios_message_detail.dart';
 import 'package:tempbox/models/address_data.dart';
+import 'package:tempbox/models/message_data.dart';
 import 'package:tempbox/services/alert_service.dart';
 import 'package:tempbox/services/http_service.dart';
 import 'package:tempbox/services/ui_service.dart';
@@ -22,7 +23,7 @@ class IosMessageTile extends StatelessWidget {
     required this.selectedAddress,
   });
 
-  final Message message;
+  final MessageData message;
   final AddressData selectedAddress;
 
   _navigateToMessagesDetail(BuildContext context, BuildContext dataBlocContext, AddressData addressData) {

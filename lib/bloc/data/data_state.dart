@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:mailtm_client/mailtm_client.dart';
 import 'package:tempbox/models/address_data.dart';
+import 'package:tempbox/models/message_data.dart';
 
 class DataState extends Equatable {
   /// list of addresses, saved to persistan storage
@@ -10,15 +10,15 @@ class DataState extends Equatable {
   final AddressData? selectedAddress;
 
   /// The currently selected address, does not persist app restart
-  final Message? selectedMessage;
+  final MessageData? selectedMessage;
 
   /// map of account id to list of messages
-  final Map<String, List<Message>> accountIdToMessagesMap;
+  final Map<String, List<MessageData>> accountIdToMessagesMap;
 
   /// Map of messageId to message data, used to store the complete message data that includes the html
   /// so we dont need to fetch the message every time and messages can be accessed offline.
   /// It will store message which user has opened and all messages for archived accounts.
-  final Map<String, Message> messageIdToMessageMap;
+  final Map<String, MessageData> messageIdToMessageMap;
 
   /// List of removed addresses, these addresses can be restored
   final List<AddressData> removedAddresses;
@@ -67,9 +67,10 @@ class DataState extends Equatable {
         // selectedMessage: json.containsKey('selectedMessage') && json['selectedMessage'] != null ? Message.fromJson(json['selectedMessage']) : null,
         selectedMessage: null,
         accountIdToMessagesMap: (json['accountIdToMessagesMap'] as Map<String, dynamic>).map(
-          (key, value) => MapEntry(key, (value as List).map((e) => Message.fromJson(e)).toList()),
+          (key, value) => MapEntry(key, (value as List).map((e) => MessageData.fromJson(e)).toList()),
         ),
-        messageIdToMessageMap: (json['messageIdToMessageMap'] as Map<String, dynamic>).map((key, value) => MapEntry(key, Message.fromJson(value))),
+        messageIdToMessageMap:
+            (json['messageIdToMessageMap'] as Map<String, dynamic>).map((key, value) => MapEntry(key, MessageData.fromJson(value))),
         removedAddresses: json.containsKey('removedAddresses') ? (json['removedAddresses'] as List).map((e) => AddressData.fromJson(e)).toList() : [],
         didRefreshAddressData: false,
       );
@@ -89,10 +90,10 @@ class DataState extends Equatable {
     List<AddressData>? addressList,
     AddressData? selectedAddress,
     bool? setSelectedAddressToNull,
-    Message? selectedMessage,
+    MessageData? selectedMessage,
     bool? setSelectedMessageToNull,
-    Map<String, List<Message>>? accountIdToMessagesMap,
-    Map<String, Message>? messageIdToMessageMap,
+    Map<String, List<MessageData>>? accountIdToMessagesMap,
+    Map<String, MessageData>? messageIdToMessageMap,
     List<AddressData>? removedAddresses,
     bool? didRefreshAddressData,
   }) {

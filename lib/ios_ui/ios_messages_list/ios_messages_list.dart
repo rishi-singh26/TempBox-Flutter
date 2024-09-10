@@ -2,7 +2,6 @@ import 'package:cupertino_modal_sheet/cupertino_modal_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:mailtm_client/mailtm_client.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
@@ -10,6 +9,7 @@ import 'package:tempbox/ios_ui/colors.dart';
 import 'package:tempbox/ios_ui/ios_address_info/ios_address_info.dart';
 import 'package:tempbox/ios_ui/ios_messages_list/ios_message_tile.dart';
 import 'package:tempbox/models/address_data.dart';
+import 'package:tempbox/models/message_data.dart';
 import 'package:tempbox/services/ui_service.dart';
 
 class IosMessagesList extends StatelessWidget {
@@ -48,7 +48,7 @@ class IosMessagesList extends StatelessWidget {
           ]),
         );
       }
-      List<Message>? messages = dataState.accountIdToMessagesMap[dataState.selectedAddress!.authenticatedUser.account.id];
+      List<MessageData>? messages = dataState.accountIdToMessagesMap[dataState.selectedAddress!.authenticatedUser.account.id];
       if (messages == null || messages.isEmpty) {
         return CupertinoPageScaffold(
           backgroundColor: CupertinoColors.systemGroupedBackground,

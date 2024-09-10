@@ -3,8 +3,8 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mailtm_client/mailtm_client.dart';
 import 'package:tempbox/models/address_data.dart';
+import 'package:tempbox/models/message_data.dart';
 import 'package:tempbox/services/byte_converter_service.dart';
 
 class UiService {
@@ -19,7 +19,7 @@ class UiService {
     }
   }
 
-  static String getMessageFromName(Message message) {
+  static String getMessageFromName(MessageData message) {
     if (message.from['name']!.isEmpty) {
       return message.from['address'] ?? '';
     } else {
@@ -27,8 +27,8 @@ class UiService {
     }
   }
 
-  static String getInboxSubtitleFromMessages(List<Message> messages) {
-    Iterable<Message> unreadMessages = messages.where((m) => !m.seen);
+  static String getInboxSubtitleFromMessages(List<MessageData> messages) {
+    Iterable<MessageData> unreadMessages = messages.where((m) => !m.seen);
     String messageSuffix = messages.length > 1 ? 's' : '';
     if (unreadMessages.isEmpty) {
       return '${messages.length} Message$messageSuffix';
