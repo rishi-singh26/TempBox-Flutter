@@ -60,8 +60,49 @@ class UiService {
     // Format the minute to always have two digits
     String minuteStr = minute.toString().padLeft(2, '0');
 
-    // Return the formatted time string
-    return '$hour:$minuteStr $period';
+    // Get today's date and yesterday's date
+    DateTime today = DateTime.now();
+    DateTime yesterday = today.subtract(const Duration(days: 1));
+
+    // Format the date portion
+    String formattedDate;
+    if (dateTime.year == today.year && dateTime.month == today.month && dateTime.day == today.day) {
+      formattedDate = ''; // No date for today
+    } else if (dateTime.year == yesterday.year && dateTime.month == yesterday.month && dateTime.day == yesterday.day) {
+      formattedDate = 'Yesterday, ';
+    } else {
+      // Handle ordinal suffix for the day
+      String daySuffix;
+      int day = dateTime.day;
+      if (day >= 11 && day <= 13) {
+        daySuffix = 'th';
+      } else {
+        switch (day % 10) {
+          case 1:
+            daySuffix = 'st';
+            break;
+          case 2:
+            daySuffix = 'nd';
+            break;
+          case 3:
+            daySuffix = 'rd';
+            break;
+          default:
+            daySuffix = 'th';
+        }
+      }
+
+      String monthStr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][dateTime.month - 1];
+
+      if (dateTime.year == today.year) {
+        formattedDate = '$day$daySuffix $monthStr, ';
+      } else {
+        formattedDate = '$day$daySuffix $monthStr ${dateTime.year}, ';
+      }
+    }
+
+    // Return the formatted time string with date
+    return '$formattedDate$hour:$minuteStr $period';
   }
 
   static String generateRandomString(int length, {bool useUpperCase = false, bool useNumbers = false, bool useSpecialCharacters = false}) {
