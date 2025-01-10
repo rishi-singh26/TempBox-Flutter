@@ -3,11 +3,11 @@
 <a href="https://raw.githubusercontent.com/rishi-singh26/TempBox-Flutter/main/LICENSE"><img src="https://img.shields.io/github/license/rishi-singh26/TempBox-Flutter"></a>
 <a href="https://github.com/rishi-singh26/TempBox-Flutter/releases/"><img src="https://img.shields.io/github/v/release/rishi-singh26/TempBox-Flutter?display_name=tag"></a>
 
-<a href="https://apps.apple.com/us/app/tempbox/id6575345984?itscg=30200&itsct=apps_box_badge&mttnsubad=6575345984" style="display: inline-block;">
-  <img src="https://toolbox.marketingtools.apple.com/api/v2/badges/download-on-the-app-store/black/en-us?releaseDate=1722038400" alt="Download on the App Store" style="width: 245px; height: 82px; vertical-align: middle; object-fit: contain;" />
-</a>
-
-<a href="https://apps.apple.com/us/app/tempbox-anonymous-emails/id6633421717?mt=12&amp;itsct=apps_box_badge&amp;itscg=30200" style="display: inline-block; overflow: hidden; border-radius: 13px; width: 250px; height: 83px;"><img src="https://tools.applemediaservices.com/api/badges/download-on-the-mac-app-store/black/en-us?size=250x83&amp;releaseDate=1723593600" alt="Download on the Mac App Store" style="border-radius: 13px; width: 250px; height: 83px;"></a>
+| Platform | Download Link |
+|----------|---------------|
+| iOS | <a href="https://apps.apple.com/us/app/tempbox/id6575345984?itscg=30200&itsct=apps_box_badge&mttnsubad=6575345984" style="display: inline-block;"><img src="https://toolbox.marketingtools.apple.com/api/v2/badges/download-on-the-app-store/black/en-us?releaseDate=1722038400" alt="Download on the App Store" style="width: 245px; height: 82px; vertical-align: middle; object-fit: contain;" /></a> |
+| MacOS | <a href="https://apps.apple.com/us/app/tempbox-anonymous-emails/id6633421717?mt=12&itscg=30200&itsct=apps_box_badge&mttnsubad=6633421717" style="display: inline-block;"><img src="https://toolbox.marketingtools.apple.com/api/v2/badges/download-on-the-app-store/black/en-us?releaseDate=1723593600" alt="Download on the App Store" style="width: 245px; height: 82px; vertical-align: middle; object-fit: contain;" /></a> |
+    
 
 
 Instant disposable emails for Mac powered by [Mail.tm](https://mail.tm)
