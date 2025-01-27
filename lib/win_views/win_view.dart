@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:fluent_ui/fluent_ui.dart';
@@ -6,7 +5,6 @@ import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/gestures.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mailtm_client/mailtm_client.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:system_theme/system_theme.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
@@ -307,50 +305,27 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
             ),
             const SizedBox(width: 10),
             Tooltip(
-              message: 'Delete message',
+              message: 'Delete Message',
               child: IconButton(
                 icon: const Icon(CupertinoIcons.trash, size: 20),
                 onPressed: dataState.selectedMessage == null ? null : () => _deleteMessage(dataBlocContext, dataState),
               ),
             ),
             const SizedBox(width: 10),
-            DropDownButton(
-              disabled: dataState.selectedMessage == null,
-              buttonBuilder: (context, onOpen) => IconButton(icon: const Icon(CupertinoIcons.share, size: 20), onPressed: onOpen),
-              title: const Icon(FluentIcons.more, size: 15),
-              items: [
-                MenuFlyoutItem(
-                  text: const Text('Download Message'),
-                  onPressed: dataState.selectedMessage == null
-                      ? null
-                      : () async {
-                          if (dataState.selectedAddress == null || dataState.selectedMessage == null) return;
-                          MessageSource? messageSource = await HttpService.getMessageSource(
-                            dataState.selectedAddress!.authenticatedUser.token,
-                            dataState.selectedMessage!.id,
-                          );
-                          if (messageSource == null) return;
-                          FSService.saveStringToFile(messageSource.data, '${dataState.selectedMessage!.subject}.eml');
-                        },
-                ),
-                MenuFlyoutItem(
-                  text: const Text('Share Message'),
-                  onPressed: dataState.selectedMessage == null
-                      ? null
-                      : () async {
-                          if (dataState.selectedAddress == null || dataState.selectedMessage == null) return;
-                          MessageSource? messageSource = await HttpService.getMessageSource(
-                            dataState.selectedAddress!.authenticatedUser.token,
-                            dataState.selectedMessage!.id,
-                          );
-                          if (messageSource == null) return;
-                          Share.shareXFiles(
-                            [XFile.fromData(utf8.encode(messageSource.data), mimeType: 'message/rfc822')],
-                            fileNameOverrides: ['${dataState.selectedMessage!.subject}.eml'],
-                          );
-                        },
-                ),
-              ],
+            Tooltip(
+              message: 'Download Message',
+              child: IconButton(
+                icon: const Icon(CupertinoIcons.download_circle, size: 20),
+                onPressed: dataState.selectedMessage == null ? null : () async {
+                  if (dataState.selectedAddress == null || dataState.selectedMessage == null) return;
+                  MessageSource? messageSource = await HttpService.getMessageSource(
+                    dataState.selectedAddress!.authenticatedUser.token,
+                    dataState.selectedMessage!.id,
+                  );
+                  if (messageSource == null) return;
+                  FSService.saveStringToFile(messageSource.data, '${dataState.selectedMessage!.subject}.eml');
+                },
+              ),
             ),
             const SizedBox(width: 10),
             const Divider(direction: Axis.vertical),
