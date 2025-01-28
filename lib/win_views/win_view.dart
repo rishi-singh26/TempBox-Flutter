@@ -451,9 +451,18 @@ class _WindowsViewState extends State<WindowsView> with WindowListener {
   @override
   void onWindowClose() async {
     bool isPreventClose = await windowManager.isPreventClose();
-    if (isPreventClose) {
-      // windowManager.destroy();
-      debugPrint('Dont let close');
+    if (isPreventClose && context.mounted) {
+      final choice = await AlertService.getConformation<bool>(
+      // ignore: use_build_context_synchronously
+        context: context,
+        title: "Alert",
+        content: "Are you sure you want to close TempBox?",
+      );
+      if (choice == true) {
+        windowManager.destroy();
+      }
+    } else {
+      windowManager.destroy();
     }
   }
 }
