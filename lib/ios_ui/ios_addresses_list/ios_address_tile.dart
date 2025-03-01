@@ -78,11 +78,14 @@ class IosAddressTile extends StatelessWidget {
             dismissThreshold: 0.5,
           ),
           children: [
-            SlidableAction(
-              onPressed: (_) => _openAddressInfoSheet(context, dataBlocContext, addressData),
-              backgroundColor: Colors.amber,
-              foregroundColor: Colors.white,
-              icon: CupertinoIcons.info_circle_fill,
+            CupertinoTheme(
+              data: CupertinoTheme.of(context).copyWith(primaryColor: CupertinoColors.white),
+              child: SlidableAction(
+                onPressed: (_) => _openAddressInfoSheet(context, dataBlocContext, addressData),
+                backgroundColor: Colors.amber,
+                // foregroundColor: Colors.white,
+                icon: CupertinoIcons.info_circle_fill,
+              ),
             ),
           ],
         ),
@@ -99,17 +102,23 @@ class IosAddressTile extends StatelessWidget {
             dismissThreshold: 0.5,
           ),
           children: [
-            SlidableAction(
-              onPressed: (_) => _removeAddress(context, dataBlocContext, addressData),
-              backgroundColor: CupertinoColors.systemIndigo,
-              foregroundColor: Colors.white,
-              icon: CupertinoIcons.clear_circled,
+            CupertinoTheme(
+              data: CupertinoTheme.of(context).copyWith(primaryColor: CupertinoColors.white),
+              child: SlidableAction(
+                onPressed: (_) => _removeAddress(context, dataBlocContext, addressData),
+                backgroundColor: CupertinoColors.systemIndigo,
+                // foregroundColor: Colors.white,
+                icon: CupertinoIcons.clear_circled,
+              ),
             ),
-            SlidableAction(
-              onPressed: (_) => _deleteAddress(context, dataBlocContext, addressData),
-              backgroundColor: CupertinoColors.systemRed,
-              foregroundColor: Colors.white,
-              icon: CupertinoIcons.trash_fill,
+            CupertinoTheme(
+              data: CupertinoTheme.of(context).copyWith(primaryColor: CupertinoColors.white),
+              child: SlidableAction(
+                onPressed: (_) => _deleteAddress(context, dataBlocContext, addressData),
+                backgroundColor: CupertinoColors.systemRed,
+                // foregroundColor: Colors.white,
+                icon: CupertinoIcons.trash_fill,
+              ),
             ),
           ],
         ),

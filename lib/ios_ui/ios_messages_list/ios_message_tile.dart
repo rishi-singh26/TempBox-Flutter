@@ -72,30 +72,36 @@ class IosMessageTile extends StatelessWidget {
               dismissThreshold: 0.5,
             ),
             children: [
-              SlidableAction(
-                onPressed: (_) => _toggleMessageReadStatus(dataBlocContext, dataState.selectedAddress!),
-                backgroundColor: CupertinoColors.systemBlue,
-                foregroundColor: CupertinoColors.white,
-                icon: message.seen ? CupertinoIcons.envelope_badge_fill : CupertinoIcons.envelope_open_fill,
+              CupertinoTheme(
+                data: CupertinoTheme.of(context).copyWith(primaryColor: CupertinoColors.white),
+                child: SlidableAction(
+                  onPressed: (_) => _toggleMessageReadStatus(dataBlocContext, dataState.selectedAddress!),
+                  backgroundColor: CupertinoColors.systemBlue,
+                  // foregroundColor: CupertinoColors.white,
+                  icon: message.seen ? CupertinoIcons.envelope_badge_fill : CupertinoIcons.envelope_open_fill,
+                ),
               ),
-              SlidableAction(
-                onPressed: dataState.selectedMessage == null
-                    ? null
-                    : (_) async {
-                        if (dataState.selectedAddress == null || dataState.selectedMessage == null) return;
-                        MessageSource? messageSource = await HttpService.getMessageSource(
-                          dataState.selectedAddress!.authenticatedUser.token,
-                          dataState.selectedMessage!.id,
-                        );
-                        if (messageSource == null) return;
-                        Share.shareXFiles(
-                          [XFile.fromData(utf8.encode(messageSource.data), mimeType: 'message/rfc822')],
-                          fileNameOverrides: ['${dataState.selectedMessage!.subject}.eml'],
-                        );
-                      },
-                backgroundColor: CupertinoColors.systemPurple,
-                foregroundColor: CupertinoColors.white,
-                icon: CupertinoIcons.share,
+              CupertinoTheme(
+                data: CupertinoTheme.of(context).copyWith(primaryColor: CupertinoColors.white),
+                child: SlidableAction(
+                  onPressed: dataState.selectedMessage == null
+                      ? null
+                      : (_) async {
+                          if (dataState.selectedAddress == null || dataState.selectedMessage == null) return;
+                          MessageSource? messageSource = await HttpService.getMessageSource(
+                            dataState.selectedAddress!.authenticatedUser.token,
+                            dataState.selectedMessage!.id,
+                          );
+                          if (messageSource == null) return;
+                          Share.shareXFiles(
+                            [XFile.fromData(utf8.encode(messageSource.data), mimeType: 'message/rfc822')],
+                            fileNameOverrides: ['${dataState.selectedMessage!.subject}.eml'],
+                          );
+                        },
+                  backgroundColor: CupertinoColors.systemPurple,
+                  // foregroundColor: CupertinoColors.white,
+                  icon: CupertinoIcons.share,
+                ),
               ),
             ],
           ),
@@ -112,11 +118,14 @@ class IosMessageTile extends StatelessWidget {
               dismissThreshold: 0.5,
             ),
             children: [
-              SlidableAction(
-                onPressed: (_) => _deleteMessage(context, dataBlocContext, dataState.selectedAddress!),
-                backgroundColor: CupertinoColors.systemRed,
-                foregroundColor: CupertinoColors.white,
-                icon: CupertinoIcons.trash_fill,
+              CupertinoTheme(
+                data: CupertinoTheme.of(context).copyWith(primaryColor: CupertinoColors.white),
+                child: SlidableAction(
+                  onPressed: (_) => _deleteMessage(context, dataBlocContext, dataState.selectedAddress!),
+                  backgroundColor: CupertinoColors.systemRed,
+                  // foregroundColor: CupertinoColors.white,
+                  icon: CupertinoIcons.trash_fill,
+                ),
               ),
             ],
           ),

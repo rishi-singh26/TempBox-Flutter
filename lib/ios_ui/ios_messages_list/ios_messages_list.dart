@@ -8,12 +8,20 @@ import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/ios_ui/colors.dart';
 import 'package:tempbox/ios_ui/ios_address_info/ios_address_info.dart';
 import 'package:tempbox/ios_ui/ios_messages_list/ios_message_tile.dart';
+import 'package:tempbox/ios_ui/ios_search_bar.dart';
 import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/models/message_data.dart';
 import 'package:tempbox/services/ui_service.dart';
 
-class IosMessagesList extends StatelessWidget {
+class IosMessagesList extends StatefulWidget {
   const IosMessagesList({super.key});
+
+  @override
+  State<IosMessagesList> createState() => _IosMessagesListState();
+}
+
+class _IosMessagesListState extends State<IosMessagesList> {
+  String _searchFieldText = "";
 
   _onRefresh(BuildContext dataBlocContext, AddressData address) async {
     BlocProvider.of<DataBloc>(dataBlocContext).add(GetMessagesEvent(addressData: address));
@@ -70,6 +78,17 @@ class IosMessagesList extends StatelessWidget {
           ]),
         );
       }
+      List<MessageData>? filteredMessages = _searchFieldText.isNotEmpty ? [] : messages;
+      if (_searchFieldText.isNotEmpty) {
+        for (var i = 0; i < messages.length; i++) {
+          final MessageData message = messages[i];
+          if (message.subject.toLowerCase().contains(_searchFieldText.toLowerCase()) ||
+              (message.from['name'] ?? '').toLowerCase().contains(_searchFieldText.toLowerCase()) ||
+              (message.from['address'] ?? '').toLowerCase().contains(_searchFieldText.toLowerCase())) {
+            filteredMessages.add(message);
+          }
+        }
+      }
       return CupertinoPageScaffold(
         backgroundColor: CupertinoColors.systemGroupedBackground,
         child: SlidableAutoCloseBehavior(
@@ -89,17 +108,23 @@ class IosMessagesList extends StatelessWidget {
                   child: const Icon(CupertinoIcons.info_circle),
                 ),
               ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: isVertical ? 22 : 82),
+                  child: IosSearchBar(onChange: (val) => setState(() => _searchFieldText = val)),
+                ),
+              ),
               SliverList.separated(
                 separatorBuilder: (context, index) => Container(
                   margin: const EdgeInsetsDirectional.only(start: 34),
                   color: CupertinoColors.separator.resolveFrom(context),
                   height: 1.0,
                 ),
-                itemCount: messages.length,
+                itemCount: filteredMessages.length,
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                    child: IosMessageTile(message: messages[index], selectedAddress: dataState.selectedAddress!),
+                    child: IosMessageTile(message: filteredMessages[index], selectedAddress: dataState.selectedAddress!),
                   );
                 },
               ),

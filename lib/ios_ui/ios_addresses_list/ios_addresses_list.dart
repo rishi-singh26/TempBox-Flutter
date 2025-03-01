@@ -7,6 +7,7 @@ import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_event.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/ios_ui/colors.dart';
+import 'package:tempbox/ios_ui/ios_search_bar.dart';
 import 'package:tempbox/ios_ui/ios_addresses_list/bottom_bar.dart';
 import 'package:tempbox/ios_ui/ios_addresses_list/ios_address_tile.dart';
 import 'package:tempbox/ios_ui/app_info/ios_app_info.dart';
@@ -16,8 +17,15 @@ import 'package:tempbox/ios_ui/ios_removed_addresses/ios_removed_addresses.dart'
 import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/export_import_address.dart';
 
-class IosAddressesList extends StatelessWidget {
+class IosAddressesList extends StatefulWidget {
   const IosAddressesList({super.key});
+
+  @override
+  IosAddressesListState createState() => IosAddressesListState();
+}
+
+class IosAddressesListState extends State<IosAddressesList> {
+  String _searchFieldText = "";
 
   _handleOptionTap(BuildContext context, BuildContext dataBlocContext, int value) async {
     if (value == 0) {
@@ -52,6 +60,7 @@ class IosAddressesList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: CupertinoColors.systemGroupedBackground,
       child: BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
         return Stack(
@@ -106,16 +115,27 @@ class IosAddressesList extends StatelessWidget {
                         ),
                       ),
                     ),
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: isVertical ? 22 : 82),
+                        child: IosSearchBar(onChange: (val) => setState(() => _searchFieldText = val)),
+                      ),
+                    ),
                     Builder(builder: (context) {
                       if (dataState.addressList.isEmpty) {
                         return const SliverToBoxAdapter(child: Center(child: Text('')));
                       }
                       List<Widget> children = [];
                       for (var i = 0; i < dataState.addressList.length; i++) {
-                        children.add(IosAddressTile(
-                          addressData: dataState.addressList[i],
-                          key: Key(dataState.addressList[i].authenticatedUser.account.id),
-                        ));
+                        final AddressData address = dataState.addressList[i];
+                        if (_searchFieldText.isNotEmpty) {
+                          if (address.addressName.toLowerCase().contains(_searchFieldText.toLowerCase()) ||
+                              address.authenticatedUser.account.address.toLowerCase().contains(_searchFieldText.toLowerCase())) {
+                            children.add(IosAddressTile(addressData: address, key: Key(address.authenticatedUser.account.id)));
+                          }
+                        } else {
+                          children.add(IosAddressTile(addressData: address, key: Key(address.authenticatedUser.account.id)));
+                        }
                       }
                       return SliverList.list(
                         children: [
@@ -132,7 +152,7 @@ class IosAddressesList extends StatelessWidget {
                 ),
               );
             }),
-            const BottomBar(),
+            const Positioned(bottom: 0, left: 0, right: 0, child: BottomBar()),
           ],
         );
       }),

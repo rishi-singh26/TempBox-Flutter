@@ -15,7 +15,7 @@ class RenderMessage extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isMobile = Platform.isAndroid || Platform.isIOS;
     String headerHTML =
-        "<div style='display: flex; ${isMobile ? 'margin-left: 10px;' : ''} margin-bottom: 10px;'><div style='display: flex; width: 40px; height: 40px; border-radius: 20px; background-color: #007AFF; align-items: center; justify-content: center; color: white; font-weight: bold;'>${UiService.getMessageFromName(message).substring(0, 1)}</div><div style='margin-left: 10px;'><div style='font-weight: bold;'>${UiService.getMessageFromName(message)}</div><a href='mailto:${message.from['address'] ?? ''}'>${message.from['address'] ?? ''}</a></div></div>";
+        "<div style='display: flex; ${isMobile ? 'margin-left: 10px;' : ''} margin-bottom: 10px;'><div style='display: flex; width: 40px; height: 40px; border-radius: 20px; background-color: #007AFF; align-items: center; justify-content: center; color: white; font-weight: bold;'>${UiService.getMessageFromName(message).substring(0, 1)}</div><div style='margin-left: 10px;'><div style='font-weight: bold;'>${UiService.getMessageFromName(message)}</div><a href='mailto:${message.from['address'] ?? ''}'>${message.from['address'] ?? ''}</a></div></div><div style='display: flex; flex-direction: row; justify-content: flex-end; align-items: center; color: #8f8f8f; font-size: 16px; padding: 5px 15px;'>${UiService.formatTimeTo12Hour(message.createdAt)}</div>";
 
     final html = message.html.isEmpty ? '<p>Loading...</p>' : headerHTML + message.html.join('');
     return Padding(

@@ -37,7 +37,6 @@ class IosMessageDetail extends StatelessWidget {
           backgroundColor: AppColors.navBarColor,
           border: null,
           middle: Text(UiService.getMessageFromName(messageWithHtml)),
-          previousPageTitle: dataState.selectedAddress!.addressName,
           trailing: CupertinoButton(
             padding: EdgeInsets.zero,
             onPressed: dataState.selectedMessage == null
