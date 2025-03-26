@@ -67,17 +67,10 @@ This project is heavely inspired by [TempBox](https://github.com/devwaseem/TempB
 |[pull_down_button](https://pub.dev/packages/pull_down_button) | for iOS style dropdown button |
 |[cupertino_modal_sheet](https://pub.dev/packages/cupertino_modal_sheet) | for iOS style modal sheet |
 
-## Contribute 🤝
 
 If you want to contribute to this project, you're always welcome!
 You can contribute by filing issues, bugs and PRs.
 
-### Contributing guidelines:
-- Open issue regarding proposed change.
-- Repo owner will contact you there.
-- If your proposed change is approved, Fork this repo and do changes.
-- Open PR against latest `develop` branch. Add nice description in PR.
-- You're done!
 
 ## 📱 Contact
 Connect with us on [Linkedin](https://www.linkedin.com/in/rishi-singh-b2226415b/)
