@@ -88,6 +88,28 @@ class FSService {
     return SaveFileResp(file: File(filePath), status: true, message: 'Success');
   }
 
+  static Future<SaveFileResp> saveStringToFileInSupportDir(String fileData, String filename) async {
+    if (filename.isEmpty) {
+      return SaveFileResp(file: File('dummy_path'), status: false, message: 'Empty file name');
+    }
+    String filePath = '/$filename';
+    if (Platform.isIOS) {
+      Directory docsDir = await getApplicationSupportDirectory();
+      filePath = '${docsDir.path}$filePath';
+    } else {
+      PickDirResp dirResp = await pickDirectory();
+      if (!dirResp.status) {
+        return SaveFileResp(file: File('dummy_path'), status: false, message: dirResp.message);
+      }
+      filePath = '${dirResp.path}$filePath';
+    }
+    WriteFileResp writeFileResp = await writeFileContents(File(filePath), fileData);
+    if (!writeFileResp.status) {
+      return SaveFileResp(file: File('dummy_path'), status: false, message: writeFileResp.message);
+    }
+    return SaveFileResp(file: File(filePath), status: true, message: 'Success');
+  }
+
   // static Future<SaveFileResp> saveFile(File file) async {
   //   PickDirResp dirResp = await pickDirectory();
   //   if (!dirResp.status) {

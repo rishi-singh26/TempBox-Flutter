@@ -40,6 +40,18 @@ class ExportImportAddress {
     }
   }
 
+  static Future<bool?> prepareAddresesForMajorUpdate(List<AddressData> addresses) async {
+    try {
+      SaveFileResp saveFileResp = await FSService.saveStringToFileInSupportDir(
+        CryptoService.textToBase64(json.encode(_ExportVersionOne(exportDate: DateTime.now(), addresses: addresses).toJson())),
+        'TempBoxExportMAJOR.txt',
+      );
+      return saveFileResp.status;
+    } catch (e) {
+      return null;
+    }
+  }
+
   static Future<List<AddressData>?> importAddreses() async {
     try {
       PickFileResp pickFileResp = await FSService.pickFile();

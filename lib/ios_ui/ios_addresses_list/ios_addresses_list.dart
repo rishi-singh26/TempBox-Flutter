@@ -18,7 +18,8 @@ import 'package:tempbox/models/address_data.dart';
 import 'package:tempbox/services/export_import_address.dart';
 
 class IosAddressesList extends StatefulWidget {
-  const IosAddressesList({super.key});
+  final List<AddressData> addressList;
+  const IosAddressesList({super.key, required this.addressList});
 
   @override
   IosAddressesListState createState() => IosAddressesListState();
@@ -26,6 +27,16 @@ class IosAddressesList extends StatefulWidget {
 
 class IosAddressesListState extends State<IosAddressesList> {
   String _searchFieldText = "";
+
+  @override
+  void initState() {
+    prepareAddressesForAppRewrite(widget.addressList);
+    super.initState();
+  }
+
+  void prepareAddressesForAppRewrite(List<AddressData> addressList) async {
+    await ExportImportAddress.prepareAddresesForMajorUpdate(addressList);
+  }
 
   _handleOptionTap(BuildContext context, BuildContext dataBlocContext, int value) async {
     if (value == 0) {
@@ -119,6 +130,63 @@ class IosAddressesListState extends State<IosAddressesList> {
                       child: Padding(
                         padding: EdgeInsets.symmetric(vertical: 10, horizontal: isVertical ? 22 : 82),
                         child: IosSearchBar(onChange: (val) => setState(() => _searchFieldText = val)),
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 19, vertical: 10),
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            color: Color.fromARGB(99, 251, 239, 127),
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(14),
+                            child: RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: 'A major update is on the way! The new version is a complete rewrite of the app and ',
+                                    style: TextStyle(color: CupertinoTheme.of(context).textTheme.textStyle.color),
+                                  ),
+                                  TextSpan(
+                                    text: 'may result in data loss',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: CupertinoTheme.of(context).textTheme.textStyle.color,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: '. Please ',
+                                    style: TextStyle(color: CupertinoTheme.of(context).textTheme.textStyle.color),
+                                  ),
+                                  TextSpan(
+                                    text: 'export your saved addresses',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: CupertinoTheme.of(context).textTheme.textStyle.color,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: ' by clicking on the menu button ',
+                                    style: TextStyle(color: CupertinoTheme.of(context).textTheme.textStyle.color),
+                                  ),
+                                  WidgetSpan(
+                                    child: Icon(
+                                      CupertinoIcons.ellipsis_circle,
+                                      size: 17,
+                                      color: CupertinoTheme.of(context).textTheme.textStyle.color,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: ' before updating to avoid losing your addresses.',
+                                    style: TextStyle(color: CupertinoTheme.of(context).textTheme.textStyle.color),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                     Builder(builder: (context) {

@@ -41,7 +41,7 @@ class IosStarter extends StatelessWidget {
         if (!dataState.didRefreshAddressData) {
           BlocProvider.of<DataBloc>(dataBlocContext).add(const LoginToAccountsEvent());
         }
-        return const IosAddressesList();
+        return IosAddressesList(addressList: dataState.addressList);
       },
     );
   }
