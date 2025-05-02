@@ -120,7 +120,7 @@ class AlertService {
         truncateContentLength: truncateContentLength,
       );
     } else if (Platform.isWindows || Platform.isLinux) {
-      return await _getConfirmationWindowsAndLinux(
+      return await _getConfirmationWindowsAndLinux<T>(
         context: context,
         title: title,
         content: content,

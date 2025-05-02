@@ -82,7 +82,7 @@ class _WinuiMessagesListState extends State<WinuiMessagesList> {
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(title),
+                  SizedBox(width: message.seen ? 130 : 100, child: Text(title)),
                   Text(
                     UiService.formatTimeTo12Hour(message.createdAt),
                     style: FluentTheme.of(context).typography.caption,

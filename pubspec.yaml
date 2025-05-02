@@ -33,8 +33,17 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  msix: ^3.16.8
 
 flutter:
   uses-material-design: true
   assets:
     - assets/
+
+msix_config:
+  display_name: TempBox
+  publisher_display_name: Rishi Singh
+  identity_name: in.rishisingh.tempbox
+  msix_version: 1.0.0.0
+  logo_path: D:\MyProjects\Flutter\tempbox\windows\runner\resources\app_icon.png
+  capabilities: internetClient
