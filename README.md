@@ -3,28 +3,11 @@
 <a href="https://raw.githubusercontent.com/rishi-singh26/TempBox-Flutter/main/LICENSE"><img src="https://img.shields.io/github/license/rishi-singh26/TempBox-Flutter"></a>
 <a href="https://github.com/rishi-singh26/TempBox-Flutter/releases/"><img src="https://img.shields.io/github/v/release/rishi-singh26/TempBox-Flutter?display_name=tag"></a>
 
-| Platform | Download Link |
-|----------|---------------|
-| iOS | <a href="https://apps.apple.com/us/app/tempbox/id6575345984?itscg=30200&itsct=apps_box_badge&mttnsubad=6575345984" style="display: inline-block;"><img src="https://toolbox.marketingtools.apple.com/api/v2/badges/download-on-the-app-store/black/en-us?releaseDate=1722038400" alt="Download on the App Store" style="width: 245px; height: 82px; vertical-align: middle; object-fit: contain;" /></a> |
-| MacOS | <a href="https://apps.apple.com/us/app/tempbox-anonymous-emails/id6633421717?mt=12&itscg=30200&itsct=apps_box_badge&mttnsubad=6633421717" style="display: inline-block;"><img src="https://toolbox.marketingtools.apple.com/api/v2/badges/download-on-the-app-store/black/en-us?releaseDate=1723593600" alt="Download on the App Store" style="width: 245px; height: 82px; vertical-align: middle; object-fit: contain;" /></a> |
-    
-
 
 Instant disposable emails for Mac powered by [Mail.tm](https://mail.tm)
 
 This project is heavely inspired by [TempBox](https://github.com/devwaseem/TempBox/tree/main) by [https://github.com/devwaseem](https://github.com/devwaseem)
 
-## Windows
-
-<img src="screenshots/windows/light/WindowsApp.png" alt="Windows App Screenshot"/>
-<img src="screenshots/windows/dark/WindowsNewAddress.png" alt="Windows app screenshot showing screen for creating a new address"/>
-<img src="screenshots/windows/light/WindowsAddressInfo.png" alt="Windows app screenshot showing the address information screen"/>
-
-## MacOS
-
-<img src="screenshots/macos/light/MacOsApp.png" alt="MacOS App Screenshot"/>
-<img src="screenshots/macos/dark/MacOsNewAddress.png" alt="MacOs app screenshot showing screen for creating a new address"/>
-<img src="screenshots/macos/light/MacOsAddressInfo.png" alt="MacOS app screenshot showing the address information screen"/>
 
 ## iOS
 
@@ -32,14 +15,6 @@ This project is heavely inspired by [TempBox](https://github.com/devwaseem/TempB
 <img src="screenshots/ios/light/iOSImportExport.png" alt="iOS App screenshot highlighting import and export feature" width="49%" />
 <!-- <img src="screenshots/ios/light/iOSAddAddress.png" alt="iOS app screenshot showing screen for creating a new address" width="49%" /> -->
 <!-- <img src="screenshots/ios/light/iOSAddressInfo.png" alt="iOS app screenshot showing address information screen" width="49%" /> -->
-
-
-## Android
-
-<!-- <img src="screenshots/android/light/AndroidApp.png" alt="MacOS App Screenshot" width="49%" alt="iOS App Screenshot" /> -->
-<img src="screenshots/android/light/AndroidImportExport.png" alt="iOS App screenshot highlighting import and export feature" width="49%" />
-<!-- <img src="screenshots/android/light/AndroidAddAddress.png" alt="iOS app screenshot showing screen for creating a new address" width="49%" /> -->
-<!-- <img src="screenshots/android/light/AndroidAddressInfo.png" alt="iOS app screenshot showing address information screen" width="49%" /> -->
 
 
 
