@@ -6,7 +6,6 @@ import 'package:macos_ui/macos_ui.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:system_theme/system_theme.dart';
 import 'package:tempbox/android_views/android_app_view.dart';
-import 'package:tempbox/ios_ui/ios_view.dart';
 import 'package:tempbox/macos_views/macos_view.dart';
 import 'package:tempbox/win_views/win_view.dart';
 import 'package:window_manager/window_manager.dart';
@@ -46,8 +45,6 @@ void main() async {
     SystemTheme.fallbackColor = const Color(0xFFBA1F33);
     SystemTheme.accentColor.load();
     runApp(const WinApp());
-  } else if (Platform.isIOS) {
-    runApp(const IosView());
   } else {
     SystemTheme.fallbackColor = const Color(0xFFBA1F33);
     SystemTheme.accentColor.load();
