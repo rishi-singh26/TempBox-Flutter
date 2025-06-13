@@ -17,23 +17,21 @@ import 'package:tempbox/shared/components/blank_badge.dart';
 import 'package:tempbox/android_views/message_detail/message_detail.dart';
 
 class MessageTile extends StatelessWidget {
-  const MessageTile({
-    super.key,
-    required this.message,
-    required this.selectedAddress,
-  });
+  const MessageTile({super.key, required this.message, required this.selectedAddress});
 
   final MessageData message;
   final AddressData selectedAddress;
 
   _navigateToMessagesDetail(BuildContext context, BuildContext dataBlocContext, AddressData addressData) {
     BlocProvider.of<DataBloc>(dataBlocContext).add(SelectMessageEvent(message: message, addressData: addressData));
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => BlocProvider.value(
-        value: BlocProvider.of<DataBloc>(dataBlocContext),
-        child: MessageDetail(message: message),
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => BlocProvider.value(
+          value: BlocProvider.of<DataBloc>(dataBlocContext),
+          child: MessageDetail(message: message),
+        ),
       ),
-    ));
+    );
   }
 
   _deleteMessage(BuildContext context, BuildContext dataBlocContext, AddressData address) async {
@@ -44,10 +42,7 @@ class MessageTile extends StatelessWidget {
   }
 
   _toggleMessageReadStatus(BuildContext dataBlocContext, AddressData selectedAddress) {
-    BlocProvider.of<DataBloc>(dataBlocContext).add(ToggleMessageReadUnread(
-      addressData: selectedAddress,
-      message: message,
-    ));
+    BlocProvider.of<DataBloc>(dataBlocContext).add(ToggleMessageReadUnread(addressData: selectedAddress, message: message));
   }
 
   @override
@@ -77,6 +72,7 @@ class MessageTile extends StatelessWidget {
                 backgroundColor: const Color(0XFF0B84FF),
                 foregroundColor: Colors.white,
                 icon: message.seen ? Icons.mark_email_unread_rounded : Icons.mark_email_read_rounded,
+                label: message.seen ? "Unread" : "Read",
               ),
               SlidableAction(
                 onPressed: dataState.selectedMessage == null
@@ -88,14 +84,17 @@ class MessageTile extends StatelessWidget {
                           dataState.selectedMessage!.id,
                         );
                         if (messageSource == null) return;
-                        Share.shareXFiles(
-                          [XFile.fromData(utf8.encode(messageSource.data), mimeType: 'message/rfc822')],
-                          fileNameOverrides: ['${dataState.selectedMessage!.subject}.eml'],
+                        SharePlus.instance.share(
+                          ShareParams(
+                            files: [XFile.fromData(utf8.encode(messageSource.data), mimeType: 'message/rfc822')],
+                            fileNameOverrides: ['${dataState.selectedMessage!.subject}.eml'],
+                          ),
                         );
                       },
-                backgroundColor: Colors.indigo,
+                backgroundColor: Colors.orange,
                 foregroundColor: Colors.white,
                 icon: Icons.share,
+                label: "Share",
               ),
             ],
           ),
@@ -117,6 +116,7 @@ class MessageTile extends StatelessWidget {
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
                 icon: Icons.delete_outline,
+                label: "Delete",
               ),
             ],
           ),
@@ -129,26 +129,23 @@ class MessageTile extends StatelessWidget {
                   children: [
                     if (!message.seen) const BlankBadge(),
                     if (!message.seen) hGap(10),
-                    Text(
-                      UiService.getMessageFromName(message),
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
+                    Text(UiService.getMessageFromName(message), style: Theme.of(context).textTheme.titleLarge),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text(
-                      UiService.formatTimeTo12Hour(message.createdAt),
-                      style: Theme.of(context).textTheme.labelLarge,
-                    ),
+                    Text(UiService.formatTimeTo12Hour(message.createdAt), style: Theme.of(context).textTheme.labelLarge),
                     hGap(5),
                     const Icon(Icons.chevron_right, size: 18),
                   ],
-                )
+                ),
               ],
             ),
-            subtitle: Text(message.subject),
+            subtitle: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [Text(message.subject), if (message.hasAttachments) const Icon(Icons.attachment_rounded, size: 19)],
+            ),
             onTap: () => _navigateToMessagesDetail(context, dataBlocContext, dataState.selectedAddress!),
           ),
         );

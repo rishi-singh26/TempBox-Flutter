@@ -13,59 +13,72 @@ class WinuiSelectedAddressView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DataBloc, DataState>(builder: (dataBlocContext, dataState) {
-      return Row(
-        children: [
-          SizedBox(
-            width: 280,
-            child: Builder(builder: (context) {
-              if (dataState.selectedAddress == null) {
-                return const Center(child: Text('No Address Selected'));
-              }
-              return ScaffoldPage(
-                padding: const EdgeInsets.symmetric(vertical: 2),
-                content: Builder(builder: (context) {
+    return BlocBuilder<DataBloc, DataState>(
+      builder: (dataBlocContext, dataState) {
+        return Row(
+          children: [
+            SizedBox(
+              width: 280,
+              child: Builder(
+                builder: (context) {
                   if (dataState.selectedAddress == null) {
                     return const Center(child: Text('No Address Selected'));
                   }
-                  return const WinuiMessagesList();
-                }),
-              );
-            }),
-          ),
-          const Divider(direction: Axis.vertical),
-          Expanded(
-            child: Builder(builder: (context) {
-              if (dataState.selectedAddress == null) {
-                return const Center(child: Text(''));
-              }
-              if (dataState.selectedMessage == null) {
-                return const Center(child: Text(''));
-              }
-              MessageData messageWithHtml = dataState.messageIdToMessageMap[dataState.selectedMessage!.id] ?? dataState.selectedMessage!;
-              return ScaffoldPage(
-                padding: const EdgeInsets.symmetric(vertical: 3),
-                content: ListView(
-                  children: [
-                    RenderMessage(key: Key(messageWithHtml.id), message: messageWithHtml),
-                    if (messageWithHtml.hasAttachments)
-                      SizedBox(
-                        height: 80,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: messageWithHtml.attachments.length,
-                          itemBuilder: (context, index) {
-                            return AttachmentCard(key: Key(messageWithHtml.attachments[index].id), attachment: messageWithHtml.attachments[index]);
-                          },
-                        ),
-                      )
-                  ],
-                ),
-              );
-            }),
-          )
-        ],
-      );
-    });
+                  return ScaffoldPage(
+                    padding: const EdgeInsets.symmetric(vertical: 2),
+                    content: Builder(
+                      builder: (context) {
+                        if (dataState.selectedAddress == null) {
+                          return const Center(child: Text('No Address Selected'));
+                        }
+                        return const WinuiMessagesList();
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+            const Divider(direction: Axis.vertical),
+            Expanded(
+              child: Builder(
+                builder: (context) {
+                  if (dataState.selectedAddress == null) {
+                    return const Center(child: Text(''));
+                  }
+                  if (dataState.selectedMessage == null) {
+                    return const Center(child: Text(''));
+                  }
+                  MessageData messageWithHtml = dataState.messageIdToMessageMap[dataState.selectedMessage!.id] ?? dataState.selectedMessage!;
+                  return ScaffoldPage(
+                    padding: const EdgeInsets.symmetric(vertical: 3),
+                    content: ListView(
+                      children: [
+                        RenderMessage(key: Key(messageWithHtml.id), message: messageWithHtml),
+                        if (messageWithHtml.hasAttachments)
+                          SizedBox(
+                            height: 80,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: messageWithHtml.attachments.length,
+                              itemBuilder: (context, index) {
+                                return AttachmentCard(
+                                  key: Key(messageWithHtml.attachments[index].id),
+                                  attachment: messageWithHtml.attachments[index],
+                                  isFirst: index == 0,
+                                  isLast: index == messageWithHtml.attachments.length - 1,
+                                );
+                              },
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
