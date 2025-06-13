@@ -12,11 +12,7 @@ import 'package:tempbox/shared/styles/textfield.dart';
 class AlertService {
   // Alert setup START
 
-  static Future<T?> showAlert<T>({
-    required BuildContext context,
-    required String title,
-    required String content,
-  }) async {
+  static Future<T?> showAlert<T>({required BuildContext context, required String title, required String content}) async {
     if (Platform.isMacOS) {
       return await _showAlertMacOS(context, title, content);
     } else if (Platform.isWindows || Platform.isLinux) {
@@ -32,22 +28,12 @@ class AlertService {
     return await OverlayService.showOverLay<T>(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(15.0)),
-      ),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(15.0))),
       builder: (context) {
         return AlertDialog(
-          title: Text(
-            title,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-          ),
+          title: Text(title, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
           content: Text(content),
-          actions: [
-            FilledButton.tonal(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Ok'),
-            ),
-          ],
+          actions: [FilledButton.tonal(onPressed: () => Navigator.pop(context), child: const Text('Ok'))],
         );
       },
     );
@@ -59,9 +45,7 @@ class AlertService {
       builder: (BuildContext context) => CupertinoAlertDialog(
         title: Text(title),
         content: Text(content),
-        actions: <CupertinoDialogAction>[
-          CupertinoDialogAction(onPressed: Navigator.of(context).pop, child: const Text('Ok')),
-        ],
+        actions: <CupertinoDialogAction>[CupertinoDialogAction(onPressed: Navigator.of(context).pop, child: const Text('Ok'))],
       ),
     );
   }
@@ -72,9 +56,7 @@ class AlertService {
       builder: (context) => fluent_ui.ContentDialog(
         title: Text(title),
         content: Text(content),
-        actions: [
-          fluent_ui.FilledButton(child: const Text('Ok'), onPressed: () => Navigator.of(context).pop(true)),
-        ],
+        actions: [fluent_ui.FilledButton(child: const Text('Ok'), onPressed: () => Navigator.of(context).pop(true))],
       ),
     );
   }
@@ -87,11 +69,7 @@ class AlertService {
         title: Text(title),
         message: Text(content),
         //horizontalActions: false,
-        primaryButton: PushButton(
-          controlSize: ControlSize.large,
-          onPressed: Navigator.of(context).pop,
-          child: const Text('Ok'),
-        ),
+        primaryButton: PushButton(controlSize: ControlSize.large, onPressed: Navigator.of(context).pop, child: const Text('Ok')),
       ),
     );
   }
@@ -108,18 +86,9 @@ class AlertService {
     bool truncateContent = false,
     int truncateContentLength = 100,
     bool useDestructiveBtn = true, // when true the action button style is descrictive
+    bool dismissable = false,
   }) async {
-    if (Platform.isMacOS) {
-      return await _getConfirmationMacOS(
-        context: context,
-        title: title,
-        content: content,
-        confirmBtnTxt: confirmBtnTxt,
-        secondaryBtnTxt: secondaryBtnTxt,
-        truncateContent: truncateContent,
-        truncateContentLength: truncateContentLength,
-      );
-    } else if (Platform.isWindows || Platform.isLinux) {
+    if (Platform.isWindows || Platform.isLinux) {
       return await _getConfirmationWindowsAndLinux<T>(
         context: context,
         title: title,
@@ -128,17 +97,6 @@ class AlertService {
         secondaryBtnTxt: secondaryBtnTxt,
         truncateContent: truncateContent,
         truncateContentLength: truncateContentLength,
-      );
-    } else if (Platform.isIOS) {
-      return await _getConfirmationIos(
-        context: context,
-        title: title,
-        content: content,
-        confirmBtnTxt: confirmBtnTxt,
-        secondaryBtnTxt: secondaryBtnTxt,
-        truncateContent: truncateContent,
-        truncateContentLength: truncateContentLength,
-        useDestructiveBtn: useDestructiveBtn,
       );
     } else {
       return _getConfirmationAndroid(
@@ -149,6 +107,7 @@ class AlertService {
         secondaryBtnTxt: secondaryBtnTxt,
         truncateContent: truncateContent,
         truncateContentLength: truncateContentLength,
+        dismissable: dismissable,
       );
     }
   }
@@ -157,6 +116,7 @@ class AlertService {
     required BuildContext context,
     required String title,
     required String content,
+    bool dismissable = false,
     String confirmBtnTxt = 'Yes',
     String secondaryBtnTxt = 'Cancel',
     bool truncateContent = false,
@@ -164,7 +124,7 @@ class AlertService {
   }) async {
     return showDialog<T>(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: dismissable, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(title),
@@ -172,50 +132,11 @@ class AlertService {
             truncateContent && content.length >= truncateContentLength ? '${content.substring(0, truncateContentLength - 1)}...' : content,
           ),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).canPop() ? Navigator.of(context).pop(true) : null,
-              child: Text(confirmBtnTxt),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).canPop() ? Navigator.of(context).pop(false) : null,
-              child: Text(secondaryBtnTxt),
-            ),
+            TextButton(onPressed: () => Navigator.of(context).canPop() ? Navigator.of(context).pop(true) : null, child: Text(confirmBtnTxt)),
+            TextButton(onPressed: () => Navigator.of(context).canPop() ? Navigator.of(context).pop(false) : null, child: Text(secondaryBtnTxt)),
           ],
         );
       },
-    );
-  }
-
-  static Future<T?> _getConfirmationIos<T>({
-    required BuildContext context,
-    required String title,
-    required String content,
-    String confirmBtnTxt = 'Yes',
-    String secondaryBtnTxt = 'Cancel',
-    bool truncateContent = false,
-    int truncateContentLength = 100,
-    bool useDestructiveBtn = true, // when true the action button style is descrictive
-  }) async {
-    return await showCupertinoDialog(
-      context: context,
-      builder: (BuildContext context) => CupertinoAlertDialog(
-        title: Text(title),
-        content: Text(
-          truncateContent && content.length > truncateContentLength ? '${content.substring(0, truncateContentLength - 1)}...' : content,
-        ),
-        actions: <CupertinoDialogAction>[
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            isDestructiveAction: useDestructiveBtn,
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(confirmBtnTxt),
-          ),
-          CupertinoDialogAction(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(secondaryBtnTxt),
-          ),
-        ],
-      ),
     );
   }
 
@@ -238,50 +159,11 @@ class AlertService {
         ),
         actions: [
           fluent_ui.Button(child: Text(confirmBtnTxt), onPressed: () => Navigator.of(context).pop(true)),
-          fluent_ui.FilledButton(
-            child: Text(secondaryBtnTxt),
-            onPressed: () => Navigator.of(context).pop(false),
-          ),
+          fluent_ui.FilledButton(child: Text(secondaryBtnTxt), onPressed: () => Navigator.of(context).pop(false)),
         ],
       ),
     );
   }
-
-  static Future<T?> _getConfirmationMacOS<T>({
-    required BuildContext context,
-    required String title,
-    required String content,
-    String confirmBtnTxt = 'Yes',
-    String secondaryBtnTxt = 'Cancel',
-    bool truncateContent = false,
-    int truncateContentLength = 100,
-  }) async {
-    return await showMacosAlertDialog<T>(
-      context: context,
-      builder: (context) => MacosAlertDialog(
-        appIcon: const AppLogo(size: 50),
-        title: Text(title),
-        message: Text(
-          truncateContent && content.length > truncateContentLength ? '${content.substring(0, truncateContentLength - 1)}...' : content,
-          textAlign: TextAlign.center,
-          style: MacosTheme.of(context).typography.caption1,
-        ),
-        horizontalActions: false,
-        primaryButton: PushButton(
-          controlSize: ControlSize.large,
-          onPressed: () => Navigator.of(context).pop(true),
-          child: Text(confirmBtnTxt),
-        ),
-        secondaryButton: PushButton(
-          controlSize: ControlSize.large,
-          secondary: true,
-          onPressed: () => Navigator.of(context).pop(false),
-          child: Text(secondaryBtnTxt),
-        ),
-      ),
-    );
-  }
-
   // Confirmation setup End
 
   // Snackbar setup START
@@ -296,31 +178,29 @@ class AlertService {
   }
 
   static Future<void> _showWindowsSnackBar(BuildContext context, String title, String content) async {
-    await fluent_ui.displayInfoBar(context, builder: (context, close) {
-      return fluent_ui.InfoBar(
-        title: Text(title),
-        content: Text(content),
-        action: fluent_ui.IconButton(icon: const Icon(fluent_ui.FluentIcons.clear), onPressed: close),
-        severity: fluent_ui.InfoBarSeverity.error,
-      );
-    });
+    await fluent_ui.displayInfoBar(
+      context,
+      builder: (context, close) {
+        return fluent_ui.InfoBar(
+          title: Text(title),
+          content: Text(content),
+          action: fluent_ui.IconButton(icon: const Icon(fluent_ui.FluentIcons.clear), onPressed: close),
+          severity: fluent_ui.InfoBarSeverity.error,
+        );
+      },
+    );
   }
 
   static void _showAndroidSnackBar(BuildContext context, String title, String content) async {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        action: SnackBarAction(
-          label: 'Close',
-          onPressed: () {},
-        ),
+        action: SnackBarAction(label: 'Close', onPressed: () {}),
         content: const Text('Awesome SnackBar!'),
         duration: const Duration(milliseconds: 1500),
         width: 280.0,
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       ),
     );
   }
@@ -341,7 +221,6 @@ class AlertService {
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(15.0))),
-      showAlwaysAsDialog: true,
       builder: (context) {
         return AlertDialog(
           title: Text(title, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
@@ -357,10 +236,7 @@ class AlertService {
               onPressed: () => Navigator.of(context).canPop() ? Navigator.of(context).pop(controller.text) : null,
               child: Text(primaryButtonLabel ?? 'Done'),
             ),
-            FilledButton.tonal(
-              onPressed: () => Navigator.of(context).canPop() ? Navigator.of(context).pop() : null,
-              child: const Text('Cancel'),
-            ),
+            FilledButton.tonal(onPressed: () => Navigator.of(context).canPop() ? Navigator.of(context).pop() : null, child: const Text('Cancel')),
           ],
         );
       },
