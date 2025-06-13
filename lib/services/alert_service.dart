@@ -1,24 +1,17 @@
 import 'dart:io';
 
 import 'package:fluent_ui/fluent_ui.dart' as fluent_ui;
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:macos_ui/macos_ui.dart';
 import 'package:tempbox/services/overlay_service.dart';
-import 'package:tempbox/shared/components/app_logo.dart';
 import 'package:tempbox/shared/styles/textfield.dart';
 
 class AlertService {
   // Alert setup START
 
   static Future<T?> showAlert<T>({required BuildContext context, required String title, required String content}) async {
-    if (Platform.isMacOS) {
-      return await _showAlertMacOS(context, title, content);
-    } else if (Platform.isWindows || Platform.isLinux) {
+    if (Platform.isWindows || Platform.isLinux) {
       return await _showAlertWindowsAndLinux(context, title, content);
-    } else if (Platform.isIOS) {
-      return await _showAlertIos(context, title, content);
     } else {
       return await _showAlertAndroid(context, title, content);
     }
@@ -39,17 +32,6 @@ class AlertService {
     );
   }
 
-  static Future<T?> _showAlertIos<T>(BuildContext context, String title, String content) async {
-    return showCupertinoDialog<T>(
-      context: context,
-      builder: (BuildContext context) => CupertinoAlertDialog(
-        title: Text(title),
-        content: Text(content),
-        actions: <CupertinoDialogAction>[CupertinoDialogAction(onPressed: Navigator.of(context).pop, child: const Text('Ok'))],
-      ),
-    );
-  }
-
   static Future<T?> _showAlertWindowsAndLinux<T>(BuildContext context, String title, String content) async {
     return await fluent_ui.showDialog<T>(
       context: context,
@@ -60,20 +42,6 @@ class AlertService {
       ),
     );
   }
-
-  static Future<T?> _showAlertMacOS<T>(BuildContext context, String title, String content) async {
-    return await showMacosAlertDialog<T>(
-      context: context,
-      builder: (context) => MacosAlertDialog(
-        appIcon: const AppLogo(size: 50),
-        title: Text(title),
-        message: Text(content),
-        //horizontalActions: false,
-        primaryButton: PushButton(controlSize: ControlSize.large, onPressed: Navigator.of(context).pop, child: const Text('Ok')),
-      ),
-    );
-  }
-
   // Alert setup END
 
   // Confirmation setup START
