@@ -61,7 +61,7 @@ This project is heavely inspired by [TempBox](https://github.com/devwaseem/TempB
 |[fluent_ui](https://pub.dev/packages/fluent_ui) | for creating windows UI |
 |[window_manager](https://pub.dev/packages/window_manager) | for managing window size, title bar, window buttons etc. |
 |[url_launcher](https://pub.dev/packages/url_launcher) | for handling URLs |
-|[flutter_widget_from_html_core](https://pub.dev/packages/flutter_widget_from_html_core) | for rendering HTML |
+|[webview_flutter](https://pub.dev/packages/webview_flutter) | for rendering HTML |
 |[system_theme](https://pub.dev/packages/system_theme) | to get system accent color |
 |[file_picker](https://pub.dev/packages/file_picker) | for import feature |
 |[pull_down_button](https://pub.dev/packages/pull_down_button) | for iOS style dropdown button |
