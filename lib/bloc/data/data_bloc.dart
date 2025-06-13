@@ -42,12 +42,14 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
             updateAddressList.add(address);
           }
         }
-        emit(state.copyWith(
-          addressList: updateAddressList,
-          accountIdToMessagesMap: accountIdToAddressesMap,
-          messageIdToMessageMap: updatedMessageIdToMessageMap,
-          didRefreshAddressData: true,
-        ));
+        emit(
+          state.copyWith(
+            addressList: updateAddressList,
+            accountIdToMessagesMap: accountIdToAddressesMap,
+            messageIdToMessageMap: updatedMessageIdToMessageMap,
+            didRefreshAddressData: true,
+          ),
+        );
       } catch (e) {
         debugPrint(e.toString());
       }
@@ -64,10 +66,12 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
     on<DeleteAddressEvent>((DeleteAddressEvent event, Emitter<DataState> emit) async {
       try {
         List<AddressData> addresses = state.addressList.where((a) => a != event.addressData).toList();
-        emit(state.copyWith(
-          addressList: addresses,
-          setSelectedAddressToNull: state.selectedAddress != null && state.selectedAddress == event.addressData,
-        ));
+        emit(
+          state.copyWith(
+            addressList: addresses,
+            setSelectedAddressToNull: state.selectedAddress != null && state.selectedAddress == event.addressData,
+          ),
+        );
         await event.addressData.authenticatedUser.delete();
       } catch (e) {
         debugPrint(e.toString());
@@ -76,11 +80,13 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
 
     on<RemoveAddressEvent>((RemoveAddressEvent event, Emitter<DataState> emit) async {
       try {
-        emit(state.copyWith(
-          addressList: state.addressList.where((a) => a != event.addressData).toList(),
-          removedAddresses: [...state.removedAddresses, event.addressData],
-          setSelectedAddressToNull: state.selectedAddress != null && state.selectedAddress == event.addressData,
-        ));
+        emit(
+          state.copyWith(
+            addressList: state.addressList.where((a) => a != event.addressData).toList(),
+            removedAddresses: [...state.removedAddresses, event.addressData],
+            setSelectedAddressToNull: state.selectedAddress != null && state.selectedAddress == event.addressData,
+          ),
+        );
       } catch (e) {
         debugPrint(e.toString());
       }
@@ -167,11 +173,13 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
         // update the messageIdToMessageMap with fresh message data
         final updatedMessageIdToMessageMap = {...state.messageIdToMessageMap};
         updatedMessageIdToMessageMap[message.id] = message;
-        emit(state.copyWith(
-          accountIdToMessagesMap: updatedAccountIdToMessgesMap,
-          selectedMessage: message,
-          messageIdToMessageMap: updatedMessageIdToMessageMap,
-        ));
+        emit(
+          state.copyWith(
+            accountIdToMessagesMap: updatedAccountIdToMessgesMap,
+            selectedMessage: message,
+            messageIdToMessageMap: updatedMessageIdToMessageMap,
+          ),
+        );
       } catch (e) {
         debugPrint(e.toString());
       }
@@ -179,8 +187,9 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
 
     on<DeleteMessageEvent>((DeleteMessageEvent event, Emitter<DataState> emit) async {
       try {
-        List<MessageData> messages =
-            (state.accountIdToMessagesMap[event.addressData.authenticatedUser.account.id] ?? []).where((m) => m.id != event.message.id).toList();
+        List<MessageData> messages = (state.accountIdToMessagesMap[event.addressData.authenticatedUser.account.id] ?? [])
+            .where((m) => m.id != event.message.id)
+            .toList();
         event.addressData.isAddressActive ? await event.addressData.authenticatedUser.deleteMessage(event.message.id) : null;
         final updatesMessagesMap = {...state.accountIdToMessagesMap};
         updatesMessagesMap[event.addressData.authenticatedUser.account.id] = messages;
@@ -197,7 +206,7 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
         List<AddressData> loggedInAddresses = [];
         Map<String, List<MessageData>> accountIdToAddressesMap = {};
         for (var address in event.addresses) {
-          AuthenticatedUser? user = await MailTm.login(address: address.authenticatedUser.account.address, password: address.password);
+          AuthenticatedUser? user = await HttpService.login(address.authenticatedUser.account.address, address.password);
           if (user == null) {
             loggedInAddresses.add(address.copyWith(archived: false));
           } else {
@@ -207,9 +216,12 @@ class DataBloc extends HydratedBloc<DataEvent, DataState> {
           }
           loggedInAddresses.add(user != null ? address.copyWith(authenticatedUser: user) : address.copyWith(archived: false));
         }
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             addressList: [...state.addressList, ...loggedInAddresses],
-            accountIdToMessagesMap: _mergeMaps(state.accountIdToMessagesMap, accountIdToAddressesMap)));
+            accountIdToMessagesMap: _mergeMaps(state.accountIdToMessagesMap, accountIdToAddressesMap),
+          ),
+        );
       } catch (e) {
         debugPrint(e.toString());
       }
