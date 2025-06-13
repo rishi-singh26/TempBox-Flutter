@@ -3,6 +3,8 @@
 <a href="https://raw.githubusercontent.com/rishi-singh26/TempBox-Flutter/main/LICENSE"><img src="https://img.shields.io/github/license/rishi-singh26/TempBox-Flutter"></a>
 <a href="https://github.com/rishi-singh26/TempBox-Flutter/releases/"><img src="https://img.shields.io/github/v/release/rishi-singh26/TempBox-Flutter?display_name=tag"></a>
 
+>**🚨Note:** The iOS and macOS applications are not part of this project anymore, they  have been moved to [TempBox-SwiftUI](https://github.com/rishi-singh26/TempBox-SwiftUI) repositiry
+
 <!-- | Platform | Download Link | -->
 <!-- |----------|---------------| -->
 <!-- | iOS | <a href="https://apps.apple.com/us/app/tempbox/id6575345984?itscg=30200&itsct=apps_box_badge&mttnsubad=6575345984" style="display: inline-block;"><img src="https://toolbox.marketingtools.apple.com/api/v2/badges/download-on-the-app-store/black/en-us?releaseDate=1722038400" alt="Download on the App Store" style="width: 245px; height: 82px; vertical-align: middle; object-fit: contain;" /></a> | -->
