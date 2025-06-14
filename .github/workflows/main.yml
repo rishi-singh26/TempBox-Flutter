@@ -57,7 +57,7 @@ jobs:
     - name: Configure Keystore
       run: |
         echo "$ANDROID_KEYSTORE_FILE" | base64 -d > android/app/keystore.jks
-        echo "storeFile=keystore.jks" >> android/key.properties
+        echo "storeFile=../keystore.jks" >> android/key.properties
         echo "keyAlias=$KEYSTORE_KEY_ALIAS" >> android/key.properties
         echo "storePassword=$KEYSTORE_STORE_PASSWORD" >> android/key.properties
         echo "keyPassword=$KEYSTORE_KEY_PASSWORD" >> android/key.properties
