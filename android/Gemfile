@@ -1,0 +1,5 @@
+# Added this file for Fastlane configuration needed for github actions
+source "https://rubygems.org"
+
+gem "fastlane"
+gem "fastlane-plugin-flutter"
