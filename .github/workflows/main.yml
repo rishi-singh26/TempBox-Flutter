@@ -32,6 +32,19 @@ jobs:
     
     #- name: Run tests
     #  run: flutter test
+
+    - name: Configure Keystore
+      run: |
+        echo "$ANDROID_KEYSTORE_FILE" | base64 -d > android/app/keystore.jks
+        echo "storeFile=keystore.jks" >> android/key.properties
+        echo "keyAlias=$KEYSTORE_KEY_ALIAS" >> android/key.properties
+        echo "storePassword=$KEYSTORE_STORE_PASSWORD" >> android/key.properties
+        echo "keyPassword=$KEYSTORE_KEY_PASSWORD" >> android/key.properties
+      env:
+        ANDROID_KEYSTORE_FILE: ${{ secrets.ANDROID_KEYSTORE_FILE }}
+        KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+        KEYSTORE_STORE_PASSWORD: ${{ secrets.KEYSTORE_STORE_PASSWORD }}
+        KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
     
     - name: Build APK
       run: flutter build apk --release
@@ -54,29 +67,16 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-fastlane-
     
-    - name: Configure Keystore
+    - name: Install Fastlane
       run: |
-        echo "$ANDROID_KEYSTORE_FILE" | base64 -d > android/app/keystore.jks
-        echo "storeFile=../keystore.jks" >> android/key.properties
-        echo "keyAlias=$KEYSTORE_KEY_ALIAS" >> android/key.properties
-        echo "storePassword=$KEYSTORE_STORE_PASSWORD" >> android/key.properties
-        echo "keyPassword=$KEYSTORE_KEY_PASSWORD" >> android/key.properties
-      env:
-        ANDROID_KEYSTORE_FILE: ${{ secrets.ANDROID_KEYSTORE_FILE }}
-        KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
-        KEYSTORE_STORE_PASSWORD: ${{ secrets.KEYSTORE_STORE_PASSWORD }}
-        KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
-    
+        cd android
+        gem install fastlane
+
     - name: Create Google Play Config file
       run: |
         echo "$PLAY_CONFIG_JSON" | base64 -d > android/play_config.json
       env:
         PLAY_CONFIG_JSON: ${{ secrets.PLAY_CONFIG_JSON }}
-    
-    - name: Install Fastlane
-      run: |
-        cd android
-        gem install fastlane
     
     - name: Deploy to Play Store
       run: |
