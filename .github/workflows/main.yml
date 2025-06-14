@@ -81,7 +81,7 @@ jobs:
     - name: Deploy to Play Store
       run: |
         cd android
-        fastlane deploy
+        bundle exec fastlane deploy
       env:
         PLAY_CONFIG_JSON: ${{ secrets.PLAY_CONFIG_JSON }}
     
