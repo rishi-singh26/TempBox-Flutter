@@ -60,7 +60,7 @@ class MessageDetail extends StatelessWidget {
                   enableDrag: true,
                   builder: (context) => BlocProvider.value(
                     value: BlocProvider.of<DataBloc>(dataBlocContext),
-                    child: AttachmentsList(messageData: messageWithHtml),
+                    child: AttachmentsList(messageData: messageWithHtml, authenticatedUser: dataState.selectedAddress!.authenticatedUser),
                   ),
                 );
               },

@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tempbox/bloc/data/data_bloc.dart';
 import 'package:tempbox/bloc/data/data_state.dart';
 import 'package:tempbox/models/message_data.dart';
-import 'package:tempbox/shared/components/attachment_card.dart';
 import 'package:tempbox/shared/components/render_message.dart';
 import 'package:tempbox/win_views/views/selected_address_view/winui_messages_list.dart';
 
@@ -61,12 +60,13 @@ class WinuiSelectedAddressView extends StatelessWidget {
                               scrollDirection: Axis.horizontal,
                               itemCount: messageWithHtml.attachments.length,
                               itemBuilder: (context, index) {
-                                return AttachmentCard(
-                                  key: Key(messageWithHtml.attachments[index].id),
-                                  attachment: messageWithHtml.attachments[index],
-                                  isFirst: index == 0,
-                                  isLast: index == messageWithHtml.attachments.length - 1,
-                                );
+                                return Text(messageWithHtml.attachments[index].filename);
+                                // return AttachmentCard(
+                                //   key: Key(messageWithHtml.attachments[index].id),
+                                //   attachment: messageWithHtml.attachments[index],
+                                //   isFirst: index == 0,
+                                //   isLast: index == messageWithHtml.attachments.length - 1,
+                                // );
                               },
                             ),
                           ),
