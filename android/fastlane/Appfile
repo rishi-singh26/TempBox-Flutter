@@ -1,2 +1,2 @@
-json_key_file("play_config.json") # Path to the json secret file
-package_name("com.yourcompany.yourapp") # Replace with your package name
+json_key_file("android/play_config.json") # Path to the json secret file
+package_name("com.rishi.tempbox") # Replace with your package name
