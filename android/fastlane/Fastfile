@@ -1,0 +1,43 @@
+# Added this file for Fastlane configuration needed for github actions
+default_platform(:android)
+
+platform :android do
+  desc "Deploy a new version to the Google Play Store"
+  lane :deploy do
+    upload_to_play_store(
+      track: 'internal',
+      release_status: 'draft',
+      aab: '../build/app/outputs/bundle/release/app-release.aab',
+      skip_upload_metadata: false,
+      skip_upload_changelogs: false,
+      skip_upload_images: false,
+      skip_upload_screenshots: false,
+    )
+  end
+
+#   desc "Deploy to production"
+#   lane :production do
+#     upload_to_play_store(
+#       track: 'production',
+#       release_status: 'completed',
+#       aab: '../build/app/outputs/bundle/release/app-release.aab',
+#       skip_upload_metadata: true,
+#       skip_upload_changelogs: true,
+#       skip_upload_images: true,
+#       skip_upload_screenshots: true,
+#     )
+#   end
+
+#   desc "Deploy to beta"
+#   lane :beta do
+#     upload_to_play_store(
+#       track: 'beta',
+#       release_status: 'completed',
+#       aab: '../build/app/outputs/bundle/release/app-release.aab',
+#       skip_upload_metadata: true,
+#       skip_upload_changelogs: true,
+#       skip_upload_images: true,
+#       skip_upload_screenshots: true,
+#     )
+#   end
+end
